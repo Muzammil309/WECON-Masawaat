@@ -62,10 +62,11 @@ git push -u origin main
 2. Add the following variables for **Production**, **Preview**, and **Development**:
 
 ```
+# Fill these in Vercel → Project Settings → Environment Variables
 NEXT_PUBLIC_SUPABASE_URL=https://umywdcihqtfullbostxo.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVteXdkY2lodHFmdWxsYm9zdHhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5OTE4NTMsImV4cCI6MjA3NDU2Nzg1M30.HeAd7ihf1I8xczt5jFdW-AJVk91x_RD-AbzlPigolqk
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVteXdkY2lodHFmdWxsYm9zdHhvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODk5MTg1MywiZXhwIjoyMDc0NTY3ODUzfQ.KZLZZlAEkcqb5ccWA1TS7Wtuu2qstD4UFSiG8rjrK_s
-NEXT_PUBLIC_APP_URL=https://wecon-masawaat.com
+NEXT_PUBLIC_SUPABASE_ANON_KEY=[YOUR_SUPABASE_ANON_KEY]
+SUPABASE_SERVICE_ROLE_KEY=[YOUR_SUPABASE_SERVICE_ROLE_KEY]  # DO NOT commit this key to Git
+NEXT_PUBLIC_APP_URL=[YOUR_PRODUCTION_URL]
 ```
 
 3. **Redeploy** the application after adding environment variables
