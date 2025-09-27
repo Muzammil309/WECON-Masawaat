@@ -1,0 +1,584 @@
+/* Aivent Template Integration Styles */
+/* Adapted for Next.js + Tailwind CSS */
+
+/* CSS Variables for Aivent Theme */
+:root {
+  --primary-color: #6366f1;
+  --primary-color-2: #8b5cf6;
+  --primary-color-3: #a855f7;
+  --dark-color: #0f0f23;
+  --dark-color-2: #1a1a2e;
+  --dark-color-3: #16213e;
+  --text-light: #ffffff;
+  --text-dark: #000000;
+  --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --gradient-2: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+}
+
+/* Base Styles */
+.aivent-theme {
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Dark Theme */
+.dark-scheme {
+  background-color: var(--dark-color);
+  color: var(--text-light);
+}
+
+.section-dark {
+  background-color: var(--dark-color);
+  color: var(--text-light);
+}
+
+.bg-dark {
+  background-color: var(--dark-color) !important;
+}
+
+.bg-dark-1 {
+  background-color: var(--dark-color) !important;
+}
+
+.bg-dark-2 {
+  background-color: var(--dark-color-2) !important;
+}
+
+.bg-dark-3 {
+  background-color: var(--dark-color-3) !important;
+}
+
+.text-light {
+  color: var(--text-light) !important;
+}
+
+/* Color Scheme */
+.bg-color {
+  background: var(--gradient-1) !important;
+}
+
+.bg-color-2 {
+  background: var(--gradient-2) !important;
+}
+
+.id-color {
+  color: var(--primary-color) !important;
+}
+
+/* Typography */
+.fs-120 {
+  font-size: 120px !important;
+  line-height: 1;
+}
+
+.fs-72 {
+  font-size: 72px !important;
+}
+
+.fs-60 {
+  font-size: 60px !important;
+}
+
+.lh-1 {
+  line-height: 1 !important;
+}
+
+.subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+.btn-main {
+  background: var(--gradient-1);
+  border: none;
+  padding: 15px 30px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-main:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-line {
+  background: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-line:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Gradients */
+.gradient-edge-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(180deg, var(--primary-color) 0%, transparent 100%);
+  opacity: 0.1;
+  z-index: 1;
+}
+
+.gradient-edge-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(0deg, var(--primary-color) 0%, transparent 100%);
+  opacity: 0.1;
+  z-index: 1;
+}
+
+.gradient-edge-bottom.color {
+  background: var(--gradient-1);
+  opacity: 0.3;
+}
+
+/* Video Background */
+.jarallax {
+  position: relative;
+  z-index: 0;
+}
+
+.jarallax > .jarallax-img {
+  position: absolute;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* Overlays */
+.sw-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+
+.op-8 {
+  opacity: 0.8;
+}
+
+.op-9 {
+  opacity: 0.9;
+}
+
+/* Positioning */
+.abs {
+  position: absolute;
+}
+
+.abs-centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.relative {
+  position: relative;
+}
+
+.z-2 {
+  z-index: 2;
+}
+
+.z-3 {
+  z-index: 3;
+}
+
+.z-4 {
+  z-index: 4;
+}
+
+/* Spacing */
+.spacer-single {
+  height: 80px;
+}
+
+.spacer-double {
+  height: 160px;
+}
+
+.no-top {
+  padding-top: 0 !important;
+}
+
+.no-bottom {
+  padding-bottom: 0 !important;
+}
+
+/* Rounded corners */
+.rounded-1 {
+  border-radius: 10px;
+}
+
+.rounded-10 {
+  border-radius: 10px;
+}
+
+/* Hover effects */
+.hover-scale-1-1:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.hover-bg-color:hover {
+  background: var(--gradient-1) !important;
+}
+
+.hover-text-light:hover {
+  color: var(--text-light) !important;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.wow {
+  visibility: hidden;
+}
+
+.wow.animated {
+  visibility: visible;
+}
+
+.fadeInUp {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.scaleIn {
+  animation: scaleIn 0.6s ease forwards;
+}
+
+/* Marquee Animation */
+.de-marquee-list-1,
+.de-marquee-list-2 {
+  display: flex;
+  animation: marquee 20s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  .fs-120 {
+    font-size: 60px !important;
+  }
+  
+  .fs-72 {
+    font-size: 48px !important;
+  }
+  
+  .fs-60 {
+    font-size: 36px !important;
+  }
+  
+  .fs-sm-12vw {
+    font-size: 12vw !important;
+  }
+}
+
+/* Countdown Styles */
+.countdown-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.countdown-item {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.countdown-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--primary-color);
+  display: block;
+}
+
+.countdown-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+/* Blur Background */
+.bg-blur {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Border Utilities */
+.border-white-op-3 {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Rotation */
+.rot-2 {
+  transform: rotate(2deg);
+}
+
+.rot-min-1 {
+  transform: rotate(-1deg);
+}
+
+.mt-min-20 {
+  margin-top: -20px;
+}
+
+/* Width utilities */
+.w-80 {
+  width: 80%;
+}
+
+.w-100px {
+  width: 100px;
+}
+
+.w-60px {
+  width: 60px;
+}
+
+.w-200 {
+  width: 200px;
+}
+
+/* Height utilities */
+.mh-800 {
+  min-height: 800px;
+}
+
+.h-50 {
+  height: 50%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+/* Padding utilities */
+.p-40 {
+  padding: 40px;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Margin utilities */
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.me-3 {
+  margin-right: 1rem;
+}
+
+.ms-3 {
+  margin-left: 1rem;
+}
+
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.mx-3 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.mx-4 {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
+/* Opacity utilities */
+.op-2 {
+  opacity: 0.2;
+}
+
+.op-5 {
+  opacity: 0.5;
+}
+
+.op-6 {
+  opacity: 0.6;
+}
+
+/* Display utilities */
+.d-block {
+  display: block;
+}
+
+.d-flex {
+  display: flex;
+}
+
+/* Flex utilities */
+.justify-content-center {
+  justify-content: center;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+/* Text utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+/* List styles */
+.ul-check {
+  list-style: none;
+  padding: 0;
+}
+
+.ul-check li {
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 10px;
+}
+
+.ul-check li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+/* Hide on small screens */
+.sm-hide {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .sm-hide {
+    display: none !important;
+  }
+}
+
+/* Show on scroll */
+.show-on-scroll {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.show-on-scroll.visible {
+  opacity: 1;
+}
+
+/* Float text */
+.float-text {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  background: var(--primary-color);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.float-text a {
+  color: white;
+  text-decoration: none;
+}
+
+/* Scrollbar */
+.scrollbar-v {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 4px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+}
+
+.scrollbar-v:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--scroll-progress, 0%);
+  background: var(--primary-color);
+  transition: height 0.1s ease;
+}
