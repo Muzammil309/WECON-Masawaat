@@ -30,13 +30,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased aivent-theme`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased aivent-theme dark-scheme`}
       >
         <SkipLink href="#main-content">Skip to main content</SkipLink>
         <AuthProvider>
-          <div className="min-h-screen bg-background">
+          <div className="min-h-screen">
             <Navbar />
-            <main id="main-content" className="flex-1 pt-0">
+            <main id="main-content" className="flex-1">
               {children}
             </main>
           </div>
