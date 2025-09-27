@@ -33,11 +33,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased aivent-theme dark-scheme`}
       >
         <SkipLink href="#main-content">Skip to main content</SkipLink>
-        <div className="min-h-screen">
-          <main id="main-content" className="flex-1">
-            {children}
-          </main>
-        </div>
+        <AuthProvider>
+          <div className="min-h-screen">
+            <Navbar />
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
+          </div>
+          <Toaster />
+        </AuthProvider>
         <WebVitals />
       </body>
     </html>
