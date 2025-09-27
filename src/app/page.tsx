@@ -1,19 +1,10 @@
-import { HeroSection } from '@/components/aivent/hero-section'
-import { AboutSection } from '@/components/aivent/about-section'
-import { MarqueeSection } from '@/components/aivent/marquee-section'
-import { WhyAttendSection } from '@/components/aivent/why-attend-section'
-import { SpeakersSection } from '@/components/aivent/speakers-section'
-import { TicketsSection } from '@/components/aivent/tickets-section'
-
 export default function Home() {
   return (
-    <div className="aivent-theme dark-scheme">
-      <HeroSection />
-      <AboutSection />
-      <MarqueeSection />
-      <WhyAttendSection />
-      <SpeakersSection />
-      <TicketsSection />
+    <div className="aivent-theme dark-scheme min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-4">WECON Event Management Platform</h1>
+        <p className="text-xl">Testing basic routing - this should work!</p>
+      </div>
     </div>
   );
 }
