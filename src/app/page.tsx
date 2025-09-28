@@ -14,7 +14,7 @@ import { FooterSection } from '@/components/aivent/footer-section'
 
 export default function Home() {
   return (
-    <div id="wrapper" className="aivent-theme dark-scheme">
+    <div id="wrapper" className="aivent-theme dark-scheme" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Page preloader */}
       <div id="de-loader"></div>
 
@@ -24,18 +24,20 @@ export default function Home() {
       </div>
       <div className="scrollbar-v show-on-scroll"></div>
 
-      <HeroSection />
-      <AboutSection />
-      <MarqueeSection />
-      <WhyAttendSection />
-      <TestimonialSection />
-      <SpeakersSection />
-      <LogoCarouselSection />
-      <ScheduleSection />
-      <TicketsSection />
-      <VenueSection />
-      <FaqSection />
-      <NewsletterSection />
+      <main style={{ flex: '1' }}>
+        <HeroSection />
+        <AboutSection />
+        <MarqueeSection />
+        <WhyAttendSection />
+        <TestimonialSection />
+        <SpeakersSection />
+        <LogoCarouselSection />
+        <ScheduleSection />
+        <TicketsSection />
+        <VenueSection />
+        <FaqSection />
+        <NewsletterSection />
+      </main>
       <FooterSection />
     </div>
   );

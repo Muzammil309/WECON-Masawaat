@@ -3,6 +3,38 @@
 @import "tw-animate-css";
 @import "../styles/aivent-integration.css";
 
+/* Fix footer spacing and ensure no blank space below */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+#wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  margin-top: auto;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Responsive marquee font sizes to match original template */
+@media only screen and (max-width: 767px) {
+  .fs-60 {
+    font-size: 8vw !important;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .fs-60 {
+    font-size: 24px !important;
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
