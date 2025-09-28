@@ -9,6 +9,7 @@ import { ScheduleSection } from '@/components/aivent/schedule-section'
 import { TicketsSection } from '@/components/aivent/tickets-section'
 import { VenueSection } from '@/components/aivent/venue-section'
 import { FaqSection } from '@/components/aivent/faq-section'
+import { NewsletterSection } from '@/components/aivent/newsletter-section'
 import { FooterSection } from '@/components/aivent/footer-section'
 
 export default function Home() {
@@ -34,6 +35,7 @@ export default function Home() {
       <TicketsSection />
       <VenueSection />
       <FaqSection />
+      <NewsletterSection />
       <FooterSection />
     </div>
   );

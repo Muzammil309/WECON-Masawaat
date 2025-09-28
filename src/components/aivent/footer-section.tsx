@@ -21,13 +21,12 @@ export function FooterSection() {
                     <a href="#"><i className="fa-brands fa-instagram"></i></a>
                     <a href="#"><i className="fa-brands fa-twitter"></i></a>
                     <a href="#"><i className="fa-brands fa-youtube"></i></a>
-                    <a href="#"><i className="fa-brands fa-linkedin"></i></a>
                   </div>
                 </div>
                 <div>
-                  <h3 className="fs-20">Contact</h3>
-                  Call: +1 123 456 789<br />
-                  Email: contact@aivent.com
+                  <h3 className="fs-20">Contact Us</h3>
+                  T. +1 123 456 789<br />
+                  M. contact@aivent.com
                 </div>
               </div>
             </div>                    

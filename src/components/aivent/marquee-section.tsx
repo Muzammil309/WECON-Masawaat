@@ -14,14 +14,18 @@ export function MarqueeSection() {
     // Initialize marquee animations when component mounts
     const initializeMarquee = () => {
       if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
-        // Clear any existing marquee instances
-        window.$('.de-marquee-list-1').marquee('destroy');
-        window.$('.de-marquee-list-2').marquee('destroy');
+        try {
+          // Clear any existing marquee instances
+          window.$('.de-marquee-list-1').marquee('destroy');
+          window.$('.de-marquee-list-2').marquee('destroy');
+        } catch (e) {
+          // Ignore errors if marquee wasn't initialized yet
+        }
 
-        // Initialize marquee with exact original settings
+        // Initialize marquee with exact original settings from custom-marquee.js
         window.$('.de-marquee-list-1').marquee({
           direction: 'right',
-          duration: 60000,
+          duration: 60000,  // Exact 60 second duration from original
           gap: 0,
           delayBeforeStart: 0,
           duplicated: true,
@@ -30,27 +34,38 @@ export function MarqueeSection() {
 
         window.$('.de-marquee-list-2').marquee({
           direction: 'left',
-          duration: 60000,
+          duration: 60000,  // Exact 60 second duration from original
           gap: 0,
           delayBeforeStart: 0,
           duplicated: true,
           startVisible: true
         });
+
+        console.log('Marquee animations initialized with 60s duration');
       } else {
         // Retry if jQuery or marquee plugin not ready
-        setTimeout(initializeMarquee, 500);
+        setTimeout(initializeMarquee, 100);
       }
     };
 
-    // Wait for scripts to load with multiple retry attempts
-    const timer = setTimeout(initializeMarquee, 2000);
+    // Initialize immediately if scripts are ready, otherwise wait
+    if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
+      initializeMarquee();
+    } else {
+      // Wait for scripts to load with shorter intervals for faster initialization
+      const timer = setTimeout(initializeMarquee, 1000);
+      return () => clearTimeout(timer);
+    }
 
     return () => {
-      clearTimeout(timer);
       // Clean up marquee instances on unmount
       if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
-        window.$('.de-marquee-list-1').marquee('destroy');
-        window.$('.de-marquee-list-2').marquee('destroy');
+        try {
+          window.$('.de-marquee-list-1').marquee('destroy');
+          window.$('.de-marquee-list-2').marquee('destroy');
+        } catch (e) {
+          // Ignore cleanup errors
+        }
       }
     };
   }, []);
