@@ -345,7 +345,7 @@
 /* Marquee Animation - Handled by jQuery marquee plugin, not CSS */
 /* Custom CSS animations removed to prevent conflicts with jQuery plugin */
 
-/* Marquee Container Height Control - Match Original Template */
+/* Marquee Container - Natural Height, No Fixed Constraints */
 .section-dark[aria-label="section"] {
   height: auto;
   overflow: hidden;
@@ -354,47 +354,23 @@
 .section-dark[aria-label="section"] .bg-color,
 .section-dark[aria-label="section"] .bg-color-2 {
   height: auto;
-  min-height: 108px;
-  max-height: 108px;
+  /* Removed fixed height constraints that caused sizing inconsistencies */
   overflow: hidden;
 }
 
-/* Marquee Text Alignment and Flow */
+/* Marquee Text Alignment and Flow - Simplified for Original Template Match */
 .de-marquee-list-1,
 .de-marquee-list-2 {
   white-space: nowrap;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 100%;
+  /* Removed flex properties that interfered with marquee plugin */
 }
 
 /* Ensure marquee content is visible and properly styled */
 .de-marquee-list-1 span,
 .de-marquee-list-2 span {
-  display: inline-block;
   color: #ffffff;
   font-weight: 600;
   line-height: 1;
-}
-
-/* Ensure jQuery marquee wrapper maintains proper styling */
-.de-marquee-list-1 .js-marquee,
-.de-marquee-list-2 .js-marquee {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  width: 100%;
-  height: 100%;
-}
-
-/* Fix any potential z-index or visibility issues */
-.de-marquee-list-1,
-.de-marquee-list-2 {
-  position: relative;
-  z-index: 1;
-  visibility: visible;
-  opacity: 1;
 }
 
 /* Responsive Typography */
@@ -455,13 +431,13 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Rotation */
+/* Rotation - Match Original Template CSS */
 .rot-2 {
-  transform: rotate(2deg);
+  transform: rotateZ(2deg);
 }
 
 .rot-min-1 {
-  transform: rotate(-1deg);
+  transform: rotateZ(-1deg);
 }
 
 .mt-min-20 {

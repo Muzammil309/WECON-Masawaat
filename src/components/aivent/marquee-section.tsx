@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 // Declare global jQuery types for marquee plugin
 declare global {
@@ -16,6 +16,7 @@ declare global {
           startVisible: boolean;
         } | string) => void;
         length: number;
+        each: (callback: (index: number, element: Element) => void) => void;
       };
       fn: {
         marquee?: unknown;
@@ -25,45 +26,82 @@ declare global {
 }
 
 export function MarqueeSection() {
+  const marqueeInitialized = useRef(false);
+
   useEffect(() => {
-    // Simple initialization that matches the original custom-marquee.js exactly
+    // Prevent multiple initializations
+    if (marqueeInitialized.current) return;
+
     const initializeMarquee = () => {
       if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
-        // Initialize marquee with exact original settings
-        window.$('.de-marquee-list-1').marquee({
-          direction: 'right',
-          duration: 60000,
-          gap: 0,
-          delayBeforeStart: 0,
-          duplicated: true,
-          startVisible: true
-        });
+        try {
+          // Clean up any existing marquee instances first
+          const marquee1 = window.$('.de-marquee-list-1');
+          const marquee2 = window.$('.de-marquee-list-2');
 
-        window.$('.de-marquee-list-2').marquee({
-          direction: 'left',
-          duration: 60000,
-          gap: 0,
-          delayBeforeStart: 0,
-          duplicated: true,
-          startVisible: true
-        });
+          // Destroy existing instances if they exist
+          try {
+            marquee1.marquee('destroy');
+            marquee2.marquee('destroy');
+          } catch {
+            // Ignore if not initialized yet
+          }
 
-        console.log('Marquee animations initialized successfully');
+          // Wait a moment for cleanup, then initialize fresh
+          setTimeout(() => {
+            // Initialize marquee 1 (right direction)
+            if (marquee1.length > 0) {
+              marquee1.marquee({
+                direction: 'right',
+                duration: 60000,
+                gap: 0,
+                delayBeforeStart: 0,
+                duplicated: true,
+                startVisible: true
+              });
+              console.log('Marquee 1 initialized (right direction)');
+            }
+
+            // Initialize marquee 2 (left direction)
+            if (marquee2.length > 0) {
+              marquee2.marquee({
+                direction: 'left',
+                duration: 60000,
+                gap: 0,
+                delayBeforeStart: 0,
+                duplicated: true,
+                startVisible: true
+              });
+              console.log('Marquee 2 initialized (left direction)');
+            }
+
+            marqueeInitialized.current = true;
+            console.log('Both marquee animations initialized successfully');
+          }, 100);
+
+        } catch (error) {
+          console.error('Error initializing marquee:', error);
+          // Retry after a delay
+          setTimeout(initializeMarquee, 1000);
+        }
       } else {
         // Retry if jQuery or marquee plugin not ready
+        console.log('jQuery or marquee plugin not ready, retrying...');
         setTimeout(initializeMarquee, 500);
       }
     };
 
-    // Start initialization after a short delay to ensure DOM is ready
-    setTimeout(initializeMarquee, 100);
+    // Start initialization after DOM is ready
+    const timer = setTimeout(initializeMarquee, 200);
 
     return () => {
+      clearTimeout(timer);
       // Clean up marquee instances on unmount
       if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
         try {
           window.$('.de-marquee-list-1').marquee('destroy');
           window.$('.de-marquee-list-2').marquee('destroy');
+          marqueeInitialized.current = false;
         } catch {
           // Ignore cleanup errors
         }
