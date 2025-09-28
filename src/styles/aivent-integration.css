@@ -75,9 +75,7 @@
   font-size: 72px !important;
 }
 
-.fs-60 {
-  font-size: 60px !important;
-}
+/* .fs-60 defined in original template CSS - no override needed */
 
 .lh-1 {
   line-height: 1 !important;
@@ -344,22 +342,8 @@
   animation-delay: 1.2s;
 }
 
-/* Marquee Animation */
-.de-marquee-list-1,
-.de-marquee-list-2 {
-  display: flex;
-  animation: marquee 20s linear infinite;
-  white-space: nowrap;
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
+/* Marquee Animation - Handled by jQuery marquee plugin, not CSS */
+/* Custom CSS animations removed to prevent conflicts with jQuery plugin */
 
 /* Responsive Typography */
 @media (max-width: 768px) {
@@ -371,9 +355,7 @@
     font-size: 48px !important;
   }
   
-  .fs-60 {
-    font-size: 36px !important;
-  }
+  /* .fs-60 keeps original 60px size - no responsive override */
   
   .fs-sm-12vw {
     font-size: 12vw !important;

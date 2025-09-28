@@ -28,18 +28,8 @@ footer.section-dark {
   background-color: #101435 !important;
 }
 
-/* Responsive marquee font sizes to match original template behavior */
-@media only screen and (max-width: 767px) {
-  .fs-60 {
-    font-size: 8vw !important;
-  }
-}
-
-@media only screen and (max-width: 480px) {
-  .fs-60 {
-    font-size: 6vw !important;
-  }
-}
+/* Use original template's fixed font sizes - no responsive overrides */
+/* .fs-60 class maintains 60px as defined in original template CSS */
 
 @custom-variant dark (&:is(.dark *));
 

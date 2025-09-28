@@ -29,26 +29,38 @@ export function MarqueeSection() {
           const marquee2 = window.$('.de-marquee-list-2');
 
           if (marquee1.length && marquee2.length) {
+            // Use exact original settings - let plugin calculate optimal duration
             marquee1.marquee({
               direction: 'right',
-              duration: 60000,  // Exact 60 second duration from original
+              duration: 60000,  // Original setting - plugin will optimize
               gap: 0,
               delayBeforeStart: 0,
-              duplicated: true,
+              duplicated: true,  // Plugin handles duplication
               startVisible: true
             });
 
             marquee2.marquee({
               direction: 'left',
-              duration: 60000,  // Exact 60 second duration from original
+              duration: 60000,  // Original setting - plugin will optimize
               gap: 0,
               delayBeforeStart: 0,
-              duplicated: true,
+              duplicated: true,  // Plugin handles duplication
               startVisible: true
             });
 
-            console.log('Dual marquee animations initialized successfully');
-            console.log('Marquee 1 direction: right, Marquee 2 direction: left');
+            console.log('Marquee animations initialized with original settings');
+            console.log('Marquee 1: right direction, Marquee 2: left direction');
+
+            // Log actual animation durations after initialization
+            setTimeout(() => {
+              const wrapper1 = marquee1.find('.js-marquee-wrapper');
+              const wrapper2 = marquee2.find('.js-marquee-wrapper');
+              if (wrapper1.length && wrapper2.length) {
+                const duration1 = window.getComputedStyle(wrapper1[0]).animationDuration;
+                const duration2 = window.getComputedStyle(wrapper2[0]).animationDuration;
+                console.log('Actual animation durations:', duration1, duration2);
+              }
+            }, 500);
           } else {
             console.warn('Marquee elements not found, retrying...');
             setTimeout(initializeMarquee, 500);
