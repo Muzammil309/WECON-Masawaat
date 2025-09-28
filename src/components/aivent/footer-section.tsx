@@ -2,7 +2,7 @@
 
 export function FooterSection() {
   return (
-    <footer className="text-light section-dark" style={{ marginBottom: 0, paddingBottom: 0 }}>
+    <footer className="text-light section-dark">
       <div className="container">
         <div className="row g-4 align-items-center">
           <div className="col-md-12">
@@ -30,7 +30,7 @@ export function FooterSection() {
           </div>
         </div>
       </div>
-      <div className="subfooter" style={{ marginBottom: 0, paddingBottom: '20px' }}>
+      <div className="subfooter">
         <div className="container">
           <div className="row">
             <div className="col-md-12 text-center">

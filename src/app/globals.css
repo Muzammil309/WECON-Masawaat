@@ -22,17 +22,13 @@ footer {
   padding-bottom: 0 !important;
 }
 
-/* Responsive marquee font sizes to match original template */
-@media only screen and (max-width: 767px) {
-  .fs-60 {
-    font-size: 8vw !important;
-  }
+/* Fix footer background to match original template exactly */
+footer.section-dark {
+  background-color: #101435 !important;
 }
 
-@media only screen and (max-width: 480px) {
-  .fs-60 {
-    font-size: 24px !important;
-  }
+.section-dark {
+  background-color: #101435 !important;
 }
 
 @custom-variant dark (&:is(.dark *));
