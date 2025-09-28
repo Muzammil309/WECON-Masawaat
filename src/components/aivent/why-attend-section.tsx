@@ -109,6 +109,7 @@ export function WhyAttendSection() {
                 <div className="abs w-100 h-100 start-0 top-0 hover-op-1 radial-gradient-color"></div>
               </div>
             </div>
+          </div>
         </div>
       </div>
     </section>
