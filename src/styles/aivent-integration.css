@@ -359,6 +359,21 @@
   overflow: hidden;
 }
 
+/* Marquee Text Alignment and Flow */
+.de-marquee-list-1,
+.de-marquee-list-2 {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.de-marquee-list-1 .js-marquee,
+.de-marquee-list-2 .js-marquee {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
 /* Responsive Typography */
 @media (max-width: 768px) {
   .fs-120 {

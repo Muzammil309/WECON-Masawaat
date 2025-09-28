@@ -43,24 +43,28 @@ export function MarqueeSection() {
             // Check if already initialized to prevent over-duplication
             if (!marquee1.hasClass('js-marquee-initialized')) {
               marquee1.addClass('js-marquee-initialized');
+
+              // Use exact original settings to match template behavior
               marquee1.marquee({
                 direction: 'right',
-                duration: 60000,  // Original setting - plugin will auto-optimize
+                duration: 60000,  // Original setting from custom-marquee.js
                 gap: 0,
                 delayBeforeStart: 0,
-                duplicated: true,  // Let plugin handle duplication
+                duplicated: true,  // Plugin handles duplication
                 startVisible: true
               });
             }
 
             if (!marquee2.hasClass('js-marquee-initialized')) {
               marquee2.addClass('js-marquee-initialized');
+
+              // Use exact original settings to match template behavior
               marquee2.marquee({
                 direction: 'left',
-                duration: 60000,  // Original setting - plugin will auto-optimize
+                duration: 60000,  // Original setting from custom-marquee.js
                 gap: 0,
                 delayBeforeStart: 0,
-                duplicated: true,  // Let plugin handle duplication
+                duplicated: true,  // Plugin handles duplication
                 startVisible: true
               });
             }
