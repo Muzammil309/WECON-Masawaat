@@ -365,13 +365,36 @@
   white-space: nowrap;
   display: flex;
   align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
+/* Ensure marquee content is visible and properly styled */
+.de-marquee-list-1 span,
+.de-marquee-list-2 span {
+  display: inline-block;
+  color: #ffffff;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Ensure jQuery marquee wrapper maintains proper styling */
 .de-marquee-list-1 .js-marquee,
 .de-marquee-list-2 .js-marquee {
   display: flex;
   align-items: center;
   white-space: nowrap;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fix any potential z-index or visibility issues */
+.de-marquee-list-1,
+.de-marquee-list-2 {
+  position: relative;
+  z-index: 1;
+  visibility: visible;
+  opacity: 1;
 }
 
 /* Responsive Typography */

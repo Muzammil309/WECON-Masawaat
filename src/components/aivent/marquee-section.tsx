@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 
-// Declare global jQuery types
+// Declare global jQuery types for marquee plugin
 declare global {
   interface Window {
     $: {
@@ -15,14 +15,6 @@ declare global {
           duplicated: boolean;
           startVisible: boolean;
         } | string) => void;
-        hasClass: (className: string) => boolean;
-        addClass: (className: string) => void;
-        removeClass: (className: string) => void;
-        find: (selector: string) => {
-          remove: () => void;
-          length: number;
-          [index: number]: Element;
-        };
         length: number;
       };
       fn: {
@@ -34,110 +26,37 @@ declare global {
 
 export function MarqueeSection() {
   useEffect(() => {
-    // Initialize marquee animations when component mounts
+    // Simple initialization that matches the original custom-marquee.js exactly
     const initializeMarquee = () => {
       if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
-        try {
-          // Clear any existing marquee instances and reset state
-          const marquee1 = window.$('.de-marquee-list-1');
-          const marquee2 = window.$('.de-marquee-list-2');
+        // Initialize marquee with exact original settings
+        window.$('.de-marquee-list-1').marquee({
+          direction: 'right',
+          duration: 60000,
+          gap: 0,
+          delayBeforeStart: 0,
+          duplicated: true,
+          startVisible: true
+        });
 
-          marquee1.marquee('destroy');
-          marquee2.marquee('destroy');
+        window.$('.de-marquee-list-2').marquee({
+          direction: 'left',
+          duration: 60000,
+          gap: 0,
+          delayBeforeStart: 0,
+          duplicated: true,
+          startVisible: true
+        });
 
-          // Remove initialization flags and reset content
-          marquee1.removeClass('js-marquee-initialized');
-          marquee2.removeClass('js-marquee-initialized');
-
-          // Clear any nested wrappers that might cause duplication
-          marquee1.find('.js-marquee-wrapper').remove();
-          marquee2.find('.js-marquee-wrapper').remove();
-        } catch {
-          // Ignore errors if marquee wasn't initialized yet
-        }
-
-        // Wait a moment for DOM to be ready
-        setTimeout(() => {
-          // Initialize marquee with exact original settings from custom-marquee.js
-          const marquee1 = window.$('.de-marquee-list-1');
-          const marquee2 = window.$('.de-marquee-list-2');
-
-          if (marquee1.length && marquee2.length) {
-            // Check if already initialized to prevent over-duplication
-            if (!marquee1.hasClass('js-marquee-initialized')) {
-              marquee1.addClass('js-marquee-initialized');
-
-              // Use exact original settings to match template behavior
-              marquee1.marquee({
-                direction: 'right',
-                duration: 60000,  // Original setting from custom-marquee.js
-                gap: 0,
-                delayBeforeStart: 0,
-                duplicated: true,  // Plugin handles duplication
-                startVisible: true
-              });
-            }
-
-            if (!marquee2.hasClass('js-marquee-initialized')) {
-              marquee2.addClass('js-marquee-initialized');
-
-              // Use exact original settings to match template behavior
-              marquee2.marquee({
-                direction: 'left',
-                duration: 60000,  // Original setting from custom-marquee.js
-                gap: 0,
-                delayBeforeStart: 0,
-                duplicated: true,  // Plugin handles duplication
-                startVisible: true
-              });
-            }
-
-            console.log('Marquee animations initialized with original settings');
-            console.log('Marquee 1: right direction, Marquee 2: left direction');
-
-            // Log actual animation durations after initialization
-            setTimeout(() => {
-              const wrapper1 = marquee1.find('.js-marquee-wrapper');
-              const wrapper2 = marquee2.find('.js-marquee-wrapper');
-              if (wrapper1.length && wrapper2.length) {
-                const duration1 = window.getComputedStyle(wrapper1[0]).animationDuration;
-                const duration2 = window.getComputedStyle(wrapper2[0]).animationDuration;
-                console.log('Actual animation durations:', duration1, duration2);
-              }
-            }, 500);
-          } else {
-            console.warn('Marquee elements not found, retrying...');
-            setTimeout(initializeMarquee, 500);
-          }
-        }, 100);
+        console.log('Marquee animations initialized successfully');
       } else {
         // Retry if jQuery or marquee plugin not ready
-        console.log('jQuery or marquee plugin not ready, retrying...');
-        setTimeout(initializeMarquee, 200);
+        setTimeout(initializeMarquee, 500);
       }
     };
 
-    // Initialize with multiple retry attempts
-    const initWithRetry = () => {
-      let attempts = 0;
-      const maxAttempts = 10;
-
-      const tryInit = () => {
-        attempts++;
-        if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
-          initializeMarquee();
-        } else if (attempts < maxAttempts) {
-          setTimeout(tryInit, 500);
-        } else {
-          console.error('Failed to initialize marquee after', maxAttempts, 'attempts');
-        }
-      };
-
-      tryInit();
-    };
-
-    // Start initialization
-    initWithRetry();
+    // Start initialization after a short delay to ensure DOM is ready
+    setTimeout(initializeMarquee, 100);
 
     return () => {
       // Clean up marquee instances on unmount
@@ -159,15 +78,15 @@ export function MarqueeSection() {
           <span className="fs-60 mx-3">Next Intelligence</span>
           <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Future Now</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Empowering Innovation</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Smarter Tomorrow</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Think Forward</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Cognitive Shift</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
         </div>
       </div>
 
@@ -176,15 +95,15 @@ export function MarqueeSection() {
           <span className="fs-60 mx-3">Next Intelligence</span>
           <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Future Now</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Empowering Innovation</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Smarter Tomorrow</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Think Forward</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
           <span className="fs-60 mx-3">Cognitive Shift</span>
-          {' '}<span className="fs-60 mx-3 op-2">/</span>
+          <span className="fs-60 mx-3 op-2">/</span>
         </div>
       </div>
     </section>
