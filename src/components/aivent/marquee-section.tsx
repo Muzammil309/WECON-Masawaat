@@ -2,6 +2,13 @@
 
 import { useEffect } from 'react'
 
+// Declare global jQuery types
+declare global {
+  interface Window {
+    $: any;
+  }
+}
+
 export function MarqueeSection() {
   useEffect(() => {
     // Initialize marquee animations when component mounts
