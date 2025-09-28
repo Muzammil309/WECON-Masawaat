@@ -48,7 +48,7 @@ export function VenueSection() {
                 </div>
 
                 <div className="col-md-6">
-                  <img src="/aivent/images/misc/venue.webp" className="w-100 rounded-1" alt="Venue" />
+                  <img src="/aivent/images/misc/s2.webp" className="w-100 rounded-1" alt="Venue" />
                 </div>
               </div>
             </div>

@@ -69,9 +69,8 @@ export function HeroSection() {
     }
   }, [])
 
-  // Set target date for countdown (example: 30 days from now)
-  const targetDate = new Date()
-  targetDate.setDate(targetDate.getDate() + 30)
+  // Set target date for countdown (AI Summit 2025)
+  const targetDate = new Date('2025-10-01T09:00:00')
 
   return (
     <section 
@@ -95,59 +94,56 @@ export function HeroSection() {
       <div className="sw-overlay op-8"></div>
       {/* Main Content */}
       <div className="abs abs-centered z-2 w-80">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
+        <div className="container wow scaleIn" data-wow-duration="3s">
+          <div className="row">
+            <div className="col-lg-12 text-center">
             <div className="subtitle animate-fade-in-up">The Future of Intelligence</div>
-            <h1 className="fs-120 text-uppercase fs-sm-12vw mb-4 lh-1 animate-fade-in-up animation-delay-200">
-              WECON Summit 2025
-            </h1>
+            <h1 className="fs-120 text-uppercase fs-sm-12vw mb-4 lh-1">AI Summit 2025</h1>
 
-            <div className="flex flex-col md:flex-row justify-center items-center gap-8 mb-8">
-              <div className="flex justify-center items-center">
-                <Calendar className="w-6 h-6 id-color mr-3" />
-                <h4 className="mb-0 text-xl font-semibold">March 15–19, 2025</h4>
+            <div className="d-block d-md-flex justify-content-center">
+              <div className="d-flex justify-content-center align-items-center mx-4">
+                <i className="fa fa-calendar id-color me-3"></i>
+                <h4 className="mb-0">October 1–5, 2025</h4>
               </div>
 
-              <div className="flex justify-center items-center">
-                <MapPin className="w-6 h-6 id-color mr-3" />
-                <h4 className="mb-0 text-xl font-semibold">Dubai, UAE</h4>
+              <div className="d-flex justify-content-center align-items-center mx-4">
+                <i className="fa fa-location-pin id-color me-3"></i>
+                <h4 className="mb-0">San Francisco, CA</h4>
               </div>
             </div>
 
             <div className="spacer-single"></div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/events" className="btn-main mx-2" legacyBehavior>
-                <span>Get Tickets</span>
-              </Link>
-              <Link href="/events" className="btn-main btn-line mx-2" legacyBehavior>
-                <span>View Schedule</span>
-              </Link>
+            <a className="btn-main mx-2 fx-slide" href="#section-tickets">
+              <span>Get Tickets</span>
+            </a>
+            <a className="btn-main btn-line mx-2 fx-slide" href="#section-schedule">
+              <span>View Schedule</span>
+            </a>
             </div>
           </div>
         </div>
       </div>
-      {/* Bottom Info Card */}
-      <div className="abs w-full start-0 bottom-0 z-3">
-        <div className="container mx-auto px-4">
-          <div className="sm-hide border-white-op-3 p-40 py-4 rounded-1 bg-blur relative overflow-hidden animate-fade-in-up">
+      {/* Bottom Countdown Section */}
+      <div className="abs w-100 start-0 bottom-0 z-3">
+        <div className="container">
+          <div className="sm-hide border-white-op-3 p-40 py-4 rounded-1 bg-blur relative overflow-hidden wow fadeInUp">
             <div className="gradient-edge-bottom color start-0 h-50 op-5"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-center relative z-2">
-              <div className="text-center lg:text-left">
-                <h2 className="mb-0 text-2xl font-bold">Hurry Up!</h2>
-                <h4 className="mb-0 text-lg">Book Your Seat Now</h4>
+            <div className="row g-4 justify-content-between align-items-center relative z-2">
+              <div className="col-lg-3">
+                <h2 className="mb-0">Hurry Up!</h2>
+                <h4 className="mb-0">Book Your Seat Now</h4>
               </div>
-              <div className="flex justify-center">
-                <Countdown targetDate={targetDate} />
+              <div className="col-lg-4">
+                <div id="defaultCountdown" className="pt-2">
+                  <Countdown targetDate={targetDate} />
+                </div>
               </div>
-              <div className="flex justify-center lg:justify-end">
-                <div className="flex items-center">
-                  <MapPin className="text-6xl id-color mr-3" />
-                  <div>
-                    <h4 className="mb-0 text-lg font-semibold">
-                      Dubai World Trade Centre,<br />
-                      Sheikh Zayed Road, Dubai
-                    </h4>
+              <div className="col-lg-4">
+                <div className="d-flex">
+                  <i className="fs-60 icofont-google-map id-color"></i>
+                  <div className="ms-3">
+                    <h4 className="mb-0">121 AI Blvd,<br />San Francisco BCA 94107</h4>
                   </div>
                 </div>
               </div>
