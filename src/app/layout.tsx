@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "../styles/aivent-integration.css";
-import { Navbar } from "@/components/layout/navbar";
+import { AiventHeader } from "@/components/aivent/aivent-header";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/providers/auth-provider";
-import { SkipLink } from "@/components/ui/skip-link";
+
 import { WebVitals } from "@/components/performance/web-vitals";
 import Script from 'next/script';
 
@@ -41,11 +41,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased aivent-theme dark-scheme`}
       >
-        <SkipLink href="#main-content">Skip to main content</SkipLink>
         <AuthProvider>
           <div className="min-h-screen">
-            <Navbar />
-            <main id="main-content" className="flex-1">
+            <AiventHeader />
+            <main className="flex-1">
               {children}
             </main>
           </div>
