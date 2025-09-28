@@ -8,6 +8,7 @@ html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  height: 100%;
 }
 
 #wrapper {
@@ -16,8 +17,11 @@ html, body {
   flex-direction: column;
 }
 
+main {
+  flex: 1;
+}
+
 footer {
-  margin-top: auto;
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
 }
@@ -29,6 +33,19 @@ footer.section-dark {
 
 .section-dark {
   background-color: #101435 !important;
+}
+
+/* Responsive marquee font sizes to match original template behavior */
+@media only screen and (max-width: 767px) {
+  .fs-60 {
+    font-size: 8vw !important;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .fs-60 {
+    font-size: 6vw !important;
+  }
 }
 
 @custom-variant dark (&:is(.dark *));
