@@ -1,6 +1,38 @@
 'use client'
 
+import { useEffect } from 'react'
+
 export function MarqueeSection() {
+  useEffect(() => {
+    // Initialize marquee animations when component mounts
+    const initializeMarquee = () => {
+      if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
+        window.$('.de-marquee-list-1').marquee({
+          direction: 'right',
+          duration: 60000,
+          gap: 0,
+          delayBeforeStart: 0,
+          duplicated: true,
+          startVisible: true
+        });
+
+        window.$('.de-marquee-list-2').marquee({
+          direction: 'left',
+          duration: 60000,
+          gap: 0,
+          delayBeforeStart: 0,
+          duplicated: true,
+          startVisible: true
+        });
+      }
+    };
+
+    // Wait for scripts to load
+    const timer = setTimeout(initializeMarquee, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section id="section-marquee" className="section-dark p-0" aria-label="section">
       <div className="bg-color text-light d-flex py-4 lh-1 rot-2">
