@@ -1,18 +1,19 @@
 /* Aivent Template Integration Styles */
 /* Adapted for Next.js + Tailwind CSS */
 
-/* CSS Variables for Aivent Theme */
+/* CSS Variables for Aivent Theme - Exact Original Colors */
 :root {
-  --primary-color: #6366f1;
-  --primary-color-2: #8b5cf6;
-  --primary-color-3: #a855f7;
+  --primary-color: #764DF0;
+  --primary-color-rgb: 118, 77, 240;
+  --secondary-color: #442490;
+  --secondary-color-rgb: 68, 36, 144;
   --dark-color: #0f0f23;
   --dark-color-2: #1a1a2e;
   --dark-color-3: #16213e;
   --text-light: #ffffff;
   --text-dark: #000000;
-  --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  --gradient-2: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  --gradient-1: linear-gradient(135deg, #764DF0 0%, #442490 100%);
+  --gradient-2: linear-gradient(135deg, #442490 0%, #764DF0 100%);
 }
 
 /* Base Styles */
@@ -51,13 +52,13 @@
   color: var(--text-light) !important;
 }
 
-/* Color Scheme */
+/* Color Scheme - Exact Original Template Colors */
 .bg-color {
-  background: var(--gradient-1) !important;
+  background: var(--primary-color) !important;
 }
 
 .bg-color-2 {
-  background: var(--gradient-2) !important;
+  background: var(--secondary-color) !important;
 }
 
 .id-color {
