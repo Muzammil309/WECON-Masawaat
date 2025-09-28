@@ -29,22 +29,22 @@ export function MarqueeSection() {
           const marquee2 = window.$('.de-marquee-list-2');
 
           if (marquee1.length && marquee2.length) {
-            // Use exact original settings - let plugin calculate optimal duration
+            // Use exact original settings with controlled duplication
             marquee1.marquee({
               direction: 'right',
-              duration: 60000,  // Original setting - plugin will optimize
+              duration: 60000,  // Original setting
               gap: 0,
               delayBeforeStart: 0,
-              duplicated: true,  // Plugin handles duplication
+              duplicated: true,  // Let plugin handle duplication
               startVisible: true
             });
 
             marquee2.marquee({
               direction: 'left',
-              duration: 60000,  // Original setting - plugin will optimize
+              duration: 60000,  // Original setting
               gap: 0,
               delayBeforeStart: 0,
-              duplicated: true,  // Plugin handles duplication
+              duplicated: true,  // Let plugin handle duplication
               startVisible: true
             });
 
@@ -109,7 +109,7 @@ export function MarqueeSection() {
   }, []);
 
   return (
-    <section id="section-marquee" className="section-dark p-0" aria-label="section">
+    <section className="section-dark p-0" aria-label="section">
       {/* First Marquee - Moving Right with Primary Color Background */}
       <div className="bg-color text-light d-flex py-4 lh-1 rot-2">
         <div className="de-marquee-list-1 wow fadeInLeft" data-wow-duration="3s">

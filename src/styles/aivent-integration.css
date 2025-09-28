@@ -78,7 +78,7 @@
 /* .fs-60 defined in original template CSS - no override needed */
 
 .lh-1 {
-  line-height: 1 !important;
+  line-height: 1em !important;
 }
 
 .subtitle {
@@ -345,6 +345,20 @@
 /* Marquee Animation - Handled by jQuery marquee plugin, not CSS */
 /* Custom CSS animations removed to prevent conflicts with jQuery plugin */
 
+/* Marquee Container Height Control - Match Original Template */
+.section-dark[aria-label="section"] {
+  height: auto;
+  overflow: hidden;
+}
+
+.section-dark[aria-label="section"] .bg-color,
+.section-dark[aria-label="section"] .bg-color-2 {
+  height: auto;
+  min-height: 108px;
+  max-height: 108px;
+  overflow: hidden;
+}
+
 /* Responsive Typography */
 @media (max-width: 768px) {
   .fs-120 {
@@ -452,8 +466,8 @@
 }
 
 .py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: 24px;
+  padding-bottom: 24px;
 }
 
 /* Margin utilities */
