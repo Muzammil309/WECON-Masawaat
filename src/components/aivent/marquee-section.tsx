@@ -13,7 +13,7 @@ export function MarqueeSection() {
   ]
 
   return (
-    <section className="section-dark p-0" aria-label="section">
+    <section id="section-marquee" className="section-dark p-0" aria-label="section">
       {/* First Marquee Row */}
       <div className="bg-color text-light d-flex py-4 lh-1 rot-2 overflow-hidden">
         <div className="de-marquee-list-1 animate-fade-in-left">
