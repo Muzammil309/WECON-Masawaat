@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 export function AiventHeader() {
   return (
     <header className="transparent">
@@ -10,11 +12,11 @@ export function AiventHeader() {
               <div className="de-flex-col">
                 {/* logo begin */}
                 <div id="logo">
-                  <a href="/">
+                  <Link href="/">
                     <img className="logo-main" src="/aivent/images/logo.webp" alt="" />
                     <img className="logo-scroll" src="/aivent/images/logo.webp" alt="" />
                     <img className="logo-mobile" src="/aivent/images/logo.webp" alt="" />
-                  </a>
+                  </Link>
                 </div>
                 {/* logo close */}
               </div>
