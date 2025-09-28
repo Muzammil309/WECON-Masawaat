@@ -14,11 +14,15 @@ declare global {
           delayBeforeStart: number;
           duplicated: boolean;
           startVisible: boolean;
-        }) => void;
+        } | string) => void;
         hasClass: (className: string) => boolean;
         addClass: (className: string) => void;
         removeClass: (className: string) => void;
-        find: (selector: string) => { remove: () => void };
+        find: (selector: string) => {
+          remove: () => void;
+          length: number;
+          [index: number]: Element;
+        };
         length: number;
       };
       fn: {
