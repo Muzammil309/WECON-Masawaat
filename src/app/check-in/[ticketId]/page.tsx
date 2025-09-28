@@ -47,12 +47,7 @@ export default function CheckInPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    if (params.ticketId) {
-      fetchTicketInfo(params.ticketId as string)
-    }
-  }, [params.ticketId])
-
-  const fetchTicketInfo = async (ticketId: string) => {
+    const fetchTicketInfo = async (ticketId: string) => {
     try {
       const { data, error } = await supabase
         .from('em_tickets')
@@ -79,7 +74,12 @@ export default function CheckInPage() {
     } finally {
       setLoading(false)
     }
-  }
+    }
+
+    if (params.ticketId) {
+      fetchTicketInfo(params.ticketId as string)
+    }
+  }, [params.ticketId])
 
   const handleCheckIn = async () => {
     if (!ticket || !user) return
@@ -105,7 +105,7 @@ export default function CheckInPage() {
           checked_in_at: new Date().toISOString()
         } : null)
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setChecking(false)

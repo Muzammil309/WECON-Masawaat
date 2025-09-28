@@ -9,12 +9,11 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
-import { 
-  BarChart3, 
-  Calendar, 
-  Users, 
-  Settings, 
-  Plus, 
+import {
+  BarChart3,
+  Calendar,
+  Settings,
+  Plus,
   Eye,
   Edit,
   Ticket,
@@ -44,15 +43,10 @@ export default function AdminDashboardPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    if (user) {
-      fetchUserEvents()
-    }
-  }, [user])
+    const fetchUserEvents = async () => {
+      if (!user) return
 
-  const fetchUserEvents = async () => {
-    if (!user) return
-
-    try {
+      try {
       const { data, error } = await supabase
         .from('em_events')
         .select(`
@@ -77,12 +71,17 @@ export default function AdminDashboardPage() {
         
         setEvents(processedEvents)
       }
-    } catch (error) {
-      console.error('Error fetching events:', error)
-    } finally {
-      setLoading(false)
+      } catch (error) {
+        console.error('Error fetching events:', error)
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+
+    if (user) {
+      fetchUserEvents()
+    }
+  }, [user])
 
   const getStatusColor = (status: string) => {
     switch (status) {

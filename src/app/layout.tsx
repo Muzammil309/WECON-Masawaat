@@ -33,6 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/aivent/images/icon.webp" type="image/webp" sizes="16x16" />
+        {/* External CSS files from Aivent template - loaded from public folder */}
         <link href="/aivent/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="/aivent/css/vendors.css" rel="stylesheet" type="text/css" />
         <link href="/aivent/css/style.css" rel="stylesheet" type="text/css" />

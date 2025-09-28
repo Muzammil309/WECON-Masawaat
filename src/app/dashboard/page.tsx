@@ -34,7 +34,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-3xl font-bold">Welcome back, {user.user_metadata?.full_name || 'User'}!</h1>
         <p className="text-muted-foreground">
-          Here's an overview of your event management activities.
+          Here&apos;s an overview of your event management activities.
         </p>
       </div>
 
@@ -48,7 +48,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
-              Events you've created
+              Events you&apos;ve created
             </p>
           </CardContent>
         </Card>

@@ -1,5 +1,7 @@
 "use client";
 
+import Image from 'next/image';
+
 export default function VenuePage() {
   return (
     <div className="bg-background text-foreground">
@@ -9,7 +11,13 @@ export default function VenuePage() {
           Dubai, UAE — March 15–19, 2025. More details including maps, hotels, and travel tips will be shared with registered attendees.
         </p>
         <div className="rounded-xl overflow-hidden border border-white/10 bg-gray-900/40">
-          <img src="/aivent/images/placeholder/venue.webp" alt="Venue" className="w-full h-64 object-cover" />
+          <Image
+            src="/aivent/images/placeholder/venue.webp"
+            alt="Venue"
+            width={800}
+            height={256}
+            className="w-full h-64 object-cover"
+          />
         </div>
       </section>
     </div>

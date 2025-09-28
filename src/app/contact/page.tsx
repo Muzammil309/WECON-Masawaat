@@ -6,7 +6,7 @@ export default function ContactPage() {
       <section className="container mx-auto px-4 py-16">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-6">Contact Us</h1>
         <p className="text-muted-foreground max-w-3xl mb-10">
-          Have questions about WECON Summit 2025? Reach out and we'll get back to you.
+          Have questions about WECON Summit 2025? Reach out and we&apos;ll get back to you.
         </p>
 
         <div className="grid gap-8 md:grid-cols-2">

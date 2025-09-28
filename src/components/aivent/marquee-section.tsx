@@ -5,7 +5,26 @@ import { useEffect } from 'react'
 // Declare global jQuery types
 declare global {
   interface Window {
-    $: any;
+    $: {
+      (selector: string): {
+        marquee: (options: {
+          direction: string;
+          duration: number;
+          gap: number;
+          delayBeforeStart: number;
+          duplicated: boolean;
+          startVisible: boolean;
+        }) => void;
+        hasClass: (className: string) => boolean;
+        addClass: (className: string) => void;
+        removeClass: (className: string) => void;
+        find: (selector: string) => { remove: () => void };
+        length: number;
+      };
+      fn: {
+        marquee?: unknown;
+      };
+    };
   }
 }
 
@@ -29,7 +48,7 @@ export function MarqueeSection() {
           // Clear any nested wrappers that might cause duplication
           marquee1.find('.js-marquee-wrapper').remove();
           marquee2.find('.js-marquee-wrapper').remove();
-        } catch (e) {
+        } catch {
           // Ignore errors if marquee wasn't initialized yet
         }
 
@@ -122,7 +141,7 @@ export function MarqueeSection() {
         try {
           window.$('.de-marquee-list-1').marquee('destroy');
           window.$('.de-marquee-list-2').marquee('destroy');
-        } catch (e) {
+        } catch {
           // Ignore cleanup errors
         }
       }
