@@ -14,6 +14,11 @@ export function MarqueeSection() {
     // Initialize marquee animations when component mounts
     const initializeMarquee = () => {
       if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
+        // Clear any existing marquee instances
+        window.$('.de-marquee-list-1').marquee('destroy');
+        window.$('.de-marquee-list-2').marquee('destroy');
+
+        // Initialize marquee with exact original settings
         window.$('.de-marquee-list-1').marquee({
           direction: 'right',
           duration: 60000,
@@ -31,13 +36,23 @@ export function MarqueeSection() {
           duplicated: true,
           startVisible: true
         });
+      } else {
+        // Retry if jQuery or marquee plugin not ready
+        setTimeout(initializeMarquee, 500);
       }
     };
 
-    // Wait for scripts to load
-    const timer = setTimeout(initializeMarquee, 1000);
+    // Wait for scripts to load with multiple retry attempts
+    const timer = setTimeout(initializeMarquee, 2000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Clean up marquee instances on unmount
+      if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
+        window.$('.de-marquee-list-1').marquee('destroy');
+        window.$('.de-marquee-list-2').marquee('destroy');
+      }
+    };
   }, []);
 
   return (
