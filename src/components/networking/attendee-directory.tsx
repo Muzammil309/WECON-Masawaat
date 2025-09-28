@@ -95,7 +95,7 @@ export function AttendeeDirectory({ eventId }: AttendeeDirectoryProps) {
         .eq('status', 'accepted')
 
       if (!error && data) {
-        setConnections(new Set(data.map(c => c.connected_user_id)))
+        setConnections(new Set(data.map((c: any) => c.connected_user_id)))
       }
     } catch (error) {
       console.error('Error fetching connections:', error)

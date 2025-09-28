@@ -172,7 +172,7 @@ export function AnalyticsDashboard({ organizerId, eventId }: AnalyticsDashboardP
           .eq('event_id', eventId)
         
         if (eventSessions) {
-          const sessionIds = eventSessions.map(s => s.id)
+          const sessionIds = eventSessions.map((s: any) => s.id)
           questionsQuery = questionsQuery.in('session_id', sessionIds)
         }
       }
@@ -188,7 +188,7 @@ export function AnalyticsDashboard({ organizerId, eventId }: AnalyticsDashboardP
           .eq('organizer_id', organizerId)
 
         if (events) {
-          const statusBreakdown = events.reduce((acc, event) => {
+          const statusBreakdown = events.reduce((acc: any, event: any) => {
             const status = event.status || 'draft'
             acc[status] = (acc[status] || 0) + 1
             return acc
@@ -196,7 +196,7 @@ export function AnalyticsDashboard({ organizerId, eventId }: AnalyticsDashboardP
 
           data.eventStatusBreakdown = Object.entries(statusBreakdown).map(([status, count]) => ({
             status,
-            count
+            count: count as number
           }))
         }
       }

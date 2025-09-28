@@ -92,7 +92,7 @@ export function ChatRoom({ eventId, roomName = 'General' }: ChatRoomProps) {
           table: 'em_messages',
           filter: `event_id=eq.${eventId}`,
         },
-        async (payload) => {
+        async (payload: any) => {
           // Fetch the complete message with profile data
           const { data, error } = await supabase
             .from('em_messages')
@@ -112,13 +112,13 @@ export function ChatRoom({ eventId, roomName = 'General' }: ChatRoomProps) {
         const newState = channel.presenceState()
         setOnlineUsers(Object.keys(newState).length)
       })
-      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+      .on('presence', { event: 'join' }, ({ key, newPresences }: { key: any, newPresences: any }) => {
         setOnlineUsers(prev => prev + newPresences.length)
       })
-      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+      .on('presence', { event: 'leave' }, ({ key, leftPresences }: { key: any, leftPresences: any }) => {
         setOnlineUsers(prev => Math.max(0, prev - leftPresences.length))
       })
-      .subscribe(async (status) => {
+      .subscribe(async (status: any) => {
         if (status === 'SUBSCRIBED') {
           await channel.track({
             user_id: user?.id,
