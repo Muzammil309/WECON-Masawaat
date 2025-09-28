@@ -3,6 +3,9 @@ import { AboutSection } from '@/components/aivent/about-section'
 import { MarqueeSection } from '@/components/aivent/marquee-section'
 import { WhyAttendSection } from '@/components/aivent/why-attend-section'
 import { SpeakersSection } from '@/components/aivent/speakers-section'
+import { ScheduleSection } from '@/components/aivent/schedule-section'
+import { VenueSection } from '@/components/aivent/venue-section'
+import { FaqSection } from '@/components/aivent/faq-section'
 import { TicketsSection } from '@/components/aivent/tickets-section'
 
 export default function Home() {
@@ -22,6 +25,9 @@ export default function Home() {
       <MarqueeSection />
       <WhyAttendSection />
       <SpeakersSection />
+      <ScheduleSection />
+      <VenueSection />
+      <FaqSection />
       <TicketsSection />
     </div>
   );
