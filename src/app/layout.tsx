@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "../styles/aivent-integration.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { SkipLink } from "@/components/ui/skip-link";
 import { WebVitals } from "@/components/performance/web-vitals";
+import Script from 'next/script';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +31,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/aivent/images/icon.webp" type="image/webp" sizes="16x16" />
+        <link href="/aivent/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="/aivent/css/vendors.css" rel="stylesheet" type="text/css" />
+        <link href="/aivent/css/style.css" rel="stylesheet" type="text/css" />
+        <link href="/aivent/css/scheme-01.css" rel="stylesheet" type="text/css" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased aivent-theme dark-scheme`}
       >
@@ -43,6 +52,12 @@ export default function RootLayout({
           <Toaster />
         </AuthProvider>
         <WebVitals />
+
+        {/* Aivent Original JavaScript Files */}
+        <Script src="/aivent/js/vendors.js" strategy="beforeInteractive" />
+        <Script src="/aivent/js/designesia.js" strategy="afterInteractive" />
+        <Script src="/aivent/js/countdown-custom.js" strategy="afterInteractive" />
+        <Script src="/aivent/js/custom-marquee.js" strategy="afterInteractive" />
       </body>
     </html>
   );
