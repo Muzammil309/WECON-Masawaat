@@ -27,14 +27,28 @@ export const useAuth = () => {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isClient) return
+
+    const supabase = createClient()
+
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      setLoading(false)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        setUser(session?.user ?? null)
+      } catch (error) {
+        console.warn('Failed to get initial session:', error)
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
     }
 
     getInitialSession()
@@ -47,28 +61,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Create or update profile when user signs up or signs in
         if (event === 'SIGNED_IN' && session?.user) {
-          const { error } = await supabase
-            .from('em_profiles')
-            .upsert({
-              id: session.user.id,
-              email: session.user.email!,
-              full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
-              avatar_url: session.user.user_metadata?.avatar_url || null,
-            })
-            .select()
+          try {
+            const { error } = await supabase
+              .from('em_profiles')
+              .upsert({
+                id: session.user.id,
+                email: session.user.email!,
+                full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
+                avatar_url: session.user.user_metadata?.avatar_url || null,
+              })
+              .select()
 
-          if (error) {
-            console.error('Error creating/updating profile:', error)
+            if (error) {
+              console.error('Error creating/updating profile:', error)
+            }
+          } catch (error) {
+            console.error('Failed to create/update profile:', error)
           }
         }
       }
     )
 
     return () => subscription.unsubscribe()
-  }, [supabase])
+  }, [isClient])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    if (!isClient) return
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+    } catch (error) {
+      console.error('Failed to sign out:', error)
+    }
   }
 
   const value = {

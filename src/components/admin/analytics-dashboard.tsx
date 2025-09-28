@@ -111,17 +111,17 @@ export function AnalyticsDashboard({ organizerId, eventId }: AnalyticsDashboardP
 
       if (tickets) {
         data.totalTicketsSold = tickets.length
-        data.totalRevenue = tickets.reduce((sum, ticket) => 
+        data.totalRevenue = tickets.reduce((sum: number, ticket: any) =>
           sum + (ticket.ticket_tier?.price || 0), 0
         )
-        data.checkedInAttendees = tickets.filter(t => t.checked_in).length
-        
+        data.checkedInAttendees = tickets.filter((t: any) => t.checked_in).length
+
         // Unique attendees
-        const uniqueAttendees = new Set(tickets.map(t => t.user_id))
+        const uniqueAttendees = new Set(tickets.map((t: any) => t.user_id))
         data.totalAttendees = uniqueAttendees.size
 
         // Ticket tier breakdown
-        const tierSales = tickets.reduce((acc, ticket) => {
+        const tierSales = tickets.reduce((acc: any, ticket: any) => {
           const tierName = ticket.ticket_tier?.name || 'Unknown'
           const price = ticket.ticket_tier?.price || 0
           
@@ -151,7 +151,7 @@ export function AnalyticsDashboard({ organizerId, eventId }: AnalyticsDashboardP
           .eq('organizer_id', organizerId)
         
         if (organizerEvents) {
-          const eventIds = organizerEvents.map(e => e.id)
+          const eventIds = organizerEvents.map((e: any) => e.id)
           messagesQuery = messagesQuery.in('event_id', eventIds)
         }
       }

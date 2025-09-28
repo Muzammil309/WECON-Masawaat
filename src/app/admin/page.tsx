@@ -61,7 +61,7 @@ export default function AdminDashboardPage() {
         console.error('Error fetching events:', error)
       } else {
         // Process the data to get counts
-        const processedEvents = data?.map(event => ({
+        const processedEvents = data?.map((event: any) => ({
           ...event,
           _count: {
             tickets: event.tickets?.length || 0,
