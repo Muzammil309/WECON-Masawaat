@@ -1,4 +1,8 @@
 import { createBrowserClient } from '@supabase/ssr'
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+// Mock client type for when Supabase is not configured
+type MockSupabaseClient = any
 
 export function isSupabaseConfigured() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -17,7 +21,7 @@ export function isSupabaseConfigured() {
   return Boolean(url && key)
 }
 
-export function createClient() {
+export function createClient(): SupabaseClient | MockSupabaseClient {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
@@ -38,7 +42,45 @@ export function createClient() {
       key: !supabaseAnonKey
     })
 
-    // Return a mock client for build/prerender scenarios
+    // Return a comprehensive mock client for build/prerender scenarios
+    const mockQueryBuilder = {
+      select: () => mockQueryBuilder,
+      insert: () => mockQueryBuilder,
+      update: () => mockQueryBuilder,
+      delete: () => mockQueryBuilder,
+      upsert: () => mockQueryBuilder,
+      eq: () => mockQueryBuilder,
+      neq: () => mockQueryBuilder,
+      gt: () => mockQueryBuilder,
+      gte: () => mockQueryBuilder,
+      lt: () => mockQueryBuilder,
+      lte: () => mockQueryBuilder,
+      like: () => mockQueryBuilder,
+      ilike: () => mockQueryBuilder,
+      is: () => mockQueryBuilder,
+      in: () => mockQueryBuilder,
+      contains: () => mockQueryBuilder,
+      containedBy: () => mockQueryBuilder,
+      rangeGt: () => mockQueryBuilder,
+      rangeGte: () => mockQueryBuilder,
+      rangeLt: () => mockQueryBuilder,
+      rangeLte: () => mockQueryBuilder,
+      rangeAdjacent: () => mockQueryBuilder,
+      overlaps: () => mockQueryBuilder,
+      textSearch: () => mockQueryBuilder,
+      match: () => mockQueryBuilder,
+      not: () => mockQueryBuilder,
+      or: () => mockQueryBuilder,
+      filter: () => mockQueryBuilder,
+      order: () => mockQueryBuilder,
+      limit: () => mockQueryBuilder,
+      range: () => mockQueryBuilder,
+      abortSignal: () => mockQueryBuilder,
+      single: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+      maybeSingle: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+      then: (resolve: any) => resolve({ data: [], error: null }),
+    }
+
     return {
       auth: {
         getSession: () => Promise.resolve({ data: { session: null }, error: null }),
@@ -48,17 +90,24 @@ export function createClient() {
         signUp: () => Promise.resolve({ data: { user: null, session: null }, error: new Error('Supabase not configured') }),
         signInWithOAuth: () => Promise.resolve({ data: { user: null, session: null }, error: new Error('Supabase not configured') }),
         getUser: () => Promise.resolve({ data: { user: null }, error: new Error('Supabase not configured') }),
+        exchangeCodeForSession: () => Promise.resolve({ error: new Error('Supabase not configured') }),
       },
-      from: () => ({
-        select: () => ({ data: [], error: null }),
-        insert: () => ({ data: null, error: new Error('Supabase not configured') }),
-        update: () => ({ data: null, error: new Error('Supabase not configured') }),
-        delete: () => ({ data: null, error: new Error('Supabase not configured') }),
-        upsert: () => ({ select: () => ({ data: null, error: new Error('Supabase not configured') }) }),
-        eq: () => ({ maybeSingle: () => ({ data: null, error: new Error('Supabase not configured') }) }),
-        maybeSingle: () => ({ data: null, error: new Error('Supabase not configured') }),
+      from: () => mockQueryBuilder,
+      storage: {
+        from: () => ({
+          list: () => Promise.resolve({ data: [], error: null }),
+          upload: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+          download: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+          remove: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+          getPublicUrl: () => ({ data: { publicUrl: '' } }),
+        }),
+      },
+      channel: () => ({
+        on: () => ({ subscribe: () => {} }),
+        subscribe: () => {},
+        unsubscribe: () => {},
       }),
-    } as any
+    } as MockSupabaseClient
   }
 
   try {

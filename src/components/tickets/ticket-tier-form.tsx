@@ -69,6 +69,7 @@ export function TicketTierForm({ eventId, onSuccess }: TicketTierFormProps) {
         onSuccess?.()
       }
     } catch (error) {
+      console.error('Ticket tier creation error:', error)
       toast.error('An unexpected error occurred')
     } finally {
       setIsLoading(false)

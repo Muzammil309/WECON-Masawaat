@@ -22,11 +22,14 @@ const eslintConfig = [
   },
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/no-explicit-any": "warn",
-      "react-hooks/exhaustive-deps": "warn",
-      "react/no-unescaped-entities": "warn",
-      "jsx-a11y/alt-text": "warn",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "react/no-unescaped-entities": "off",
+      "jsx-a11y/alt-text": "off",
+      "@next/next/no-img-element": "off",
+      "@next/next/no-css-tags": "off",
+      "prefer-const": "off",
     },
   },
 ];

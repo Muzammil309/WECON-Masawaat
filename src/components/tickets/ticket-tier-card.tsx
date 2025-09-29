@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Ticket, DollarSign, Users, Calendar, Clock } from 'lucide-react'
+import { Ticket, DollarSign, Users, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface TicketTier {

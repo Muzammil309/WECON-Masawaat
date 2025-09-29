@@ -98,6 +98,7 @@ export function CheckoutForm({ ticketTier, quantity, onSuccess, onCancel }: Chec
         onSuccess?.(order.id)
       }
     } catch (error) {
+      console.error('Order creation error:', error)
       toast.error('An unexpected error occurred')
     } finally {
       setIsLoading(false)

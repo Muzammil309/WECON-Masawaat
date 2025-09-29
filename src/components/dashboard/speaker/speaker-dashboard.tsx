@@ -52,26 +52,28 @@ export function SpeakerDashboard() {
     const load = async () => {
       try {
         // Try to fetch sessions where user is the speaker
-        let { data: sess, error } = await supabase
+        const { data: sess, error: sessError } = await supabase
           .from("em_sessions")
           .select("id, title, event_id, starts_at, ends_at, event:em_events(id, title)")
           .eq("speaker_id", user.id)
           .order("starts_at", { ascending: true })
 
-        if (error) {
-          console.warn("Falling back to sessions by creator_id", error)
+        let finalSessions = sess || []
+
+        if (sessError) {
+          console.warn("Falling back to sessions by creator_id", sessError)
           const fallback = await supabase
             .from("em_sessions")
             .select("id, title, event_id, starts_at, ends_at, event:em_events(id, title)")
             .eq("creator_id", user.id)
             .order("starts_at", { ascending: true })
-          sess = fallback.data || []
+          finalSessions = fallback.data || []
         }
 
-        setSessions((sess as any) || [])
+        setSessions((finalSessions as any) || [])
 
         const evMap = new Map<string, EventRow>()
-        ;(sess || []).forEach((s: any) => {
+        ;(finalSessions || []).forEach((s: any) => {
           if (s.event) evMap.set(s.event.id, { id: s.event.id, title: s.event.title })
           else if (s.event_id) evMap.set(s.event_id, { id: s.event_id, title: `Event ${s.event_id.substring(0,6)}...` })
         })
