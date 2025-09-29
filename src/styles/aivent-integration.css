@@ -380,15 +380,19 @@
 /* Marquee Container - Natural Height, No Fixed Constraints */
 .section-dark[aria-label="section"] {
   height: auto;
-  overflow: hidden;
+  overflow: visible; /* allow rotated bands to extend without clipping */
 }
 
 .section-dark[aria-label="section"] .bg-color,
 .section-dark[aria-label="section"] .bg-color-2 {
   height: auto;
   /* Removed fixed height constraints that caused sizing inconsistencies */
-  overflow: hidden;
+  overflow: visible; /* prevent left-edge cropping on rotation */
 }
+
+/* Explicit override to avoid any ancestor overflow affecting strips */
+.section-dark[aria-label="section"] .bg-color.rot-2,
+.section-dark[aria-label="section"] .bg-color-2.rot-min-1 { overflow: visible !important; }
 
 /* Marquee Text Alignment and Flow - Simplified for Original Template Match */
 .de-marquee-list-1,
