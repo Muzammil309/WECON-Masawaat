@@ -69,8 +69,8 @@ export function HeroSection() {
     }
   }, [])
 
-  // Set target date for countdown (AI Summit 2025)
-  const targetDate = new Date('2025-10-01T09:00:00')
+  // Set target date for countdown (WECON MASAWAAT 2025)
+  const targetDate = new Date('2025-11-26T09:00:00')
 
   return (
     <section 
@@ -98,17 +98,17 @@ export function HeroSection() {
           <div className="row">
             <div className="col-lg-12 text-center">
             <div className="subtitle animate-fade-in-up">The Future of Intelligence</div>
-            <h1 className="fs-120 text-uppercase fs-sm-12vw mb-4 lh-1">AI Summit 2025</h1>
+            <h1 className="fs-100 text-uppercase fs-sm-10vw mb-4 lh-1">WECON MASAWAAT 2025</h1>
 
             <div className="d-block d-md-flex justify-content-center">
               <div className="d-flex justify-content-center align-items-center mx-4">
                 <i className="fa fa-calendar id-color me-3"></i>
-                <h4 className="mb-0">October 1–5, 2025</h4>
+                <h4 className="mb-0">November 26, 2025</h4>
               </div>
 
               <div className="d-flex justify-content-center align-items-center mx-4">
                 <i className="fa fa-location-pin id-color me-3"></i>
-                <h4 className="mb-0">San Francisco, CA</h4>
+                <h4 className="mb-0">Islamabad, Pakistan</h4>
               </div>
             </div>
 
@@ -143,7 +143,7 @@ export function HeroSection() {
                 <div className="d-flex">
                   <i className="fs-60 icofont-google-map id-color"></i>
                   <div className="ms-3">
-                    <h4 className="mb-0">121 AI Blvd,<br />San Francisco BCA 94107</h4>
+                    <h4 className="mb-0">Convention Center,<br />Islamabad, Pakistan</h4>
                   </div>
                 </div>
               </div>
