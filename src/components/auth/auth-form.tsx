@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
 import { Github, Mail } from 'lucide-react'
+import { SupabaseDiagnostics } from '@/components/debug/supabase-diagnostics'
 
 export function AuthForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -23,7 +24,8 @@ export function AuthForm() {
     setIsLoading(true)
 
     try {
-      const { error } = await supabase.auth.signUp({
+      console.log('Attempting signup with Supabase...')
+      const { error, data } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -33,13 +35,17 @@ export function AuthForm() {
         },
       })
 
+      console.log('Signup response:', { error, data })
+
       if (error) {
-        toast.error(error.message)
+        console.error('Signup error:', error)
+        toast.error(`Signup failed: ${error.message}`)
       } else {
         toast.success('Check your email for the confirmation link!')
       }
     } catch (error) {
-      toast.error('An unexpected error occurred')
+      console.error('Unexpected signup error:', error)
+      toast.error(`An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsLoading(false)
     }
@@ -50,13 +56,17 @@ export function AuthForm() {
     setIsLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Attempting signin with Supabase...')
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
+      console.log('Signin response:', { error, data })
+
       if (error) {
-        toast.error(error.message)
+        console.error('Signin error:', error)
+        toast.error(`Signin failed: ${error.message}`)
       } else {
         // Determine role-based redirect
         let next = '/dashboard'
@@ -74,13 +84,15 @@ export function AuthForm() {
             }
           }
         } catch (e) {
+          console.warn('Role check failed, using default redirect:', e)
           // fall back to attendee dashboard
         }
         toast.success('Welcome back!')
         window.location.href = next
       }
     } catch (error) {
-      toast.error('An unexpected error occurred')
+      console.error('Unexpected signin error:', error)
+      toast.error(`An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsLoading(false)
     }
@@ -229,6 +241,7 @@ export function AuthForm() {
           </div>
         </CardContent>
       </Card>
+      <SupabaseDiagnostics />
     </div>
   )
 }
