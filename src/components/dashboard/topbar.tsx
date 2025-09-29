@@ -14,7 +14,7 @@ export function Topbar() {
   const displayName = user?.user_metadata?.full_name || user?.email || "User"
 
   return (
-    <div className="h-16 border-b border-gray-700/30 bg-gray-900/60 backdrop-blur-xl px-6 flex items-center gap-4 shadow-sm">
+    <div className="h-16 border-b border-gray-200/60 bg-white/80 backdrop-blur-xl px-6 flex items-center gap-4 shadow-sm">
       {/* Search Section */}
       <div className="flex-1 max-w-xl hidden md:flex items-center gap-3">
         <div className="relative flex-1">
@@ -22,7 +22,7 @@ export function Topbar() {
           <Input
             aria-label="Search"
             placeholder="Search events, tickets, or sessions..."
-            className="h-10 pl-10 bg-gray-800/60 border-gray-600/30 rounded-xl text-gray-100 placeholder-gray-400 focus-visible:ring-2 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-400/50 transition-all duration-200"
+            className="h-10 pl-10 bg-gray-50/80 border-gray-200/60 rounded-xl text-gray-900 placeholder-gray-500 focus-visible:ring-2 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-400 transition-all duration-200"
           />
         </div>
       </div>
@@ -34,19 +34,19 @@ export function Topbar() {
           variant="ghost"
           size="icon"
           aria-label="Notifications"
-          className="relative h-10 w-10 rounded-xl hover:bg-gray-800/60 transition-colors duration-200 border border-gray-600/30"
+          className="relative h-10 w-10 rounded-xl hover:bg-gray-100/80 transition-colors duration-200"
         >
-          <Bell className="h-5 w-5 text-gray-300" />
+          <Bell className="h-5 w-5 text-gray-600" />
           <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs bg-red-500 hover:bg-red-500">
             3
           </Badge>
         </Button>
 
         {/* User Profile - Always Visible */}
-        <div className="flex items-center gap-3 pl-3 border-l border-gray-600/30">
+        <div className="flex items-center gap-3 pl-3 border-l border-gray-200/60">
           <div className="hidden sm:block text-right">
-            <p className="text-sm font-medium text-gray-100 leading-none">{displayName}</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-sm font-medium text-gray-900 leading-none">{displayName}</p>
+            <p className="text-xs text-gray-500 mt-1">
               {user?.user_metadata?.role === 'admin' ? 'Administrator' :
                user?.user_metadata?.role === 'speaker' ? 'Speaker' : 'Attendee'}
             </p>
@@ -54,8 +54,8 @@ export function Topbar() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:bg-gray-800/60 transition-all duration-200">
-                <Avatar className="h-9 w-9 border-2 border-gray-600 shadow-md">
+              <Button variant="ghost" className="relative h-10 w-10 rounded-xl p-0 hover:bg-gray-100/80 transition-all duration-200">
+                <Avatar className="h-9 w-9 border-2 border-white shadow-md">
                   <AvatarImage
                     src={(user?.user_metadata?.avatar_url as string) || ""}
                     alt={displayName}

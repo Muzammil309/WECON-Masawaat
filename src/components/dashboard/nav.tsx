@@ -47,16 +47,16 @@ export function Sidebar({ role }: { role: UserRole }) {
   const items = getNavItemsByRole(role)
 
   return (
-    <aside className="hidden lg:flex lg:flex-col w-72 bg-gray-900/95 backdrop-blur-xl border-r border-gray-700/30 shadow-2xl">
+    <aside className="hidden lg:flex lg:flex-col w-72 bg-white/95 backdrop-blur-xl border-r border-gray-200/60 shadow-xl">
       {/* Logo Section */}
-      <div className="h-16 px-6 flex items-center border-b border-gray-700/30">
+      <div className="h-16 px-6 flex items-center border-b border-gray-200/60">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <span className="text-white font-bold text-sm">W</span>
           </div>
           <div>
-            <h1 className="font-bold text-gray-100 text-lg">WECON</h1>
-            <p className="text-xs text-gray-400 -mt-1">Event Management</p>
+            <h1 className="font-bold text-gray-900 text-lg">WECON</h1>
+            <p className="text-xs text-gray-500 -mt-1">Event Management</p>
           </div>
         </div>
       </div>
@@ -74,14 +74,14 @@ export function Sidebar({ role }: { role: UserRole }) {
                     "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 relative",
                     active
                       ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25"
-                      : "text-gray-300 hover:text-gray-100 hover:bg-gray-800/60"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
                   )}
                 >
                   <div className={cn(
                     "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200",
                     active
                       ? "bg-white/20 text-white"
-                      : "bg-gray-800/60 text-gray-400 group-hover:bg-gray-700/60 group-hover:text-gray-200"
+                      : "bg-gray-100 text-gray-500 group-hover:bg-gray-200 group-hover:text-gray-700"
                   )}>
                     <Icon className="h-4 w-4" />
                   </div>
@@ -97,14 +97,14 @@ export function Sidebar({ role }: { role: UserRole }) {
 
         {/* Role Badge */}
         <div className="mt-8 px-4">
-          <div className="bg-gradient-to-r from-gray-800/80 to-gray-700/80 rounded-xl p-4 border border-gray-600/30">
+          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200/60">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-xl flex items-center justify-center">
                 <Users className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-100 capitalize">{role}</p>
-                <p className="text-xs text-gray-400">Dashboard Access</p>
+                <p className="text-sm font-semibold text-gray-900 capitalize">{role}</p>
+                <p className="text-xs text-gray-500">Dashboard Access</p>
               </div>
             </div>
           </div>

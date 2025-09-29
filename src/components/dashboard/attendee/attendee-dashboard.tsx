@@ -13,6 +13,19 @@ import { SoftCard, SoftStatCard, SoftGradientCard } from "../soft-ui/soft-card"
 import { SoftButton } from "../soft-ui/soft-button"
 import { DarkSoftCard, DarkSoftStatCard, DarkSoftGradientCard, DarkSoftButton, darkTheme } from "../soft-ui/dark-theme"
 import {
+  EnhancedStatisticsCard,
+  PrimaryStatCard,
+  SuccessStatCard,
+  WarningStatCard,
+  InfoStatCard
+} from "../soft-ui/enhanced-statistics-card"
+import {
+  EnhancedContentCard,
+  WelcomeCard,
+  EmptyStateCard,
+  QuickActionCard
+} from "../soft-ui/enhanced-content-cards"
+import {
   Calendar,
   Ticket,
   Sparkles,
@@ -146,57 +159,38 @@ export function AttendeeDashboard() {
   }
 
   return (
-    <div className="space-y-8 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen text-gray-100 p-6">
+    <div className="space-y-8">
       {/* Welcome Section */}
-      <DarkSoftGradientCard gradient="primary" className="relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-2">
-                Welcome back, {user?.user_metadata?.full_name || user?.email}!
-              </h2>
-              <p className="text-indigo-100 text-lg">
-                Ready to explore amazing events and connect with fellow attendees?
-              </p>
-            </div>
-            <div className="hidden md:block">
-              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <Sparkles className="h-10 w-10 text-white" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </DarkSoftGradientCard>
+      <WelcomeCard
+        userName={user?.user_metadata?.full_name || user?.email || "User"}
+        userRole={user?.user_metadata?.role || "attendee"}
+      />
 
       {/* KPI Statistics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <DarkSoftStatCard
+        <PrimaryStatCard
           title="Registered Events"
-          value={new Set(tickets.map(t => t.order?.event_id).filter(Boolean)).size}
-          change={{ value: "+2 this month", type: "increase" }}
+          count={new Set(tickets.map(t => t.order?.event_id).filter(Boolean)).size}
+          percentage={{ value: "+2 this month", type: "increase" }}
           icon={<CalendarIcon className="h-5 w-5" />}
-          iconGradient="primary"
         />
-        <DarkSoftStatCard
+        <SuccessStatCard
           title="Active Tickets"
-          value={tickets.filter(t => !t.checked_in).length}
-          change={{ value: "Ready to use", type: "neutral" }}
+          count={tickets.filter(t => !t.checked_in).length}
+          percentage={{ value: "Ready to use", type: "neutral" }}
           icon={<Ticket className="h-5 w-5" />}
-          iconGradient="secondary"
         />
-        <DarkSoftStatCard
+        <InfoStatCard
           title="Upcoming Sessions"
-          value={upcomingSessions.length}
-          change={{ value: "Next 30 days", type: "neutral" }}
+          count={upcomingSessions.length}
+          percentage={{ value: "Next 30 days", type: "neutral" }}
           icon={<Clock className="h-5 w-5" />}
-          iconGradient="success"
         />
-        <DarkSoftStatCard
+        <WarningStatCard
           title="Recommendations"
-          value={recommendations.length}
-          change={{ value: "Curated for you", type: "increase" }}
+          count={recommendations.length}
+          percentage={{ value: "Curated for you", type: "increase" }}
           icon={<Star className="h-5 w-5" />}
-          iconGradient="warning"
         />
       </div>
 
@@ -205,100 +199,103 @@ export function AttendeeDashboard() {
         {/* Left Column - Schedule & QR */}
         <div className="lg:col-span-2 space-y-8">
           {/* Upcoming Schedule */}
-          <DarkSoftCard id="schedule" variant="glass" className="relative">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
-                  style={{ background: darkTheme.gradients.primary }}
-                >
-                  <Calendar className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-100">Upcoming Schedule</h3>
-                  <p className="text-gray-300">Sessions from your registered events</p>
-                </div>
-              </div>
-              <DarkSoftButton variant="outlined" size="sm" asChild>
-                <Link href="/schedule">View All</Link>
-              </DarkSoftButton>
-            </div>
+          <EnhancedContentCard
+            id="schedule"
+            title="Upcoming Schedule"
+            subtitle="Sessions from your registered events"
+            icon={<Calendar className="h-5 w-5" />}
+            action={
+              <Link
+                href="/schedule"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-colors duration-200 text-sm font-medium"
+              >
+                View All
+              </Link>
+            }
+            variant="glass"
+          >
 
             {upcomingSessions.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-800/60 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CalendarIcon className="h-8 w-8 text-gray-400" />
-                </div>
-                <p className="text-gray-300 mb-2">No sessions in the next 30 days</p>
-                <p className="text-sm text-gray-400">Register for events to see your schedule</p>
-              </div>
+              <EmptyStateCard
+                icon={<CalendarIcon className="h-8 w-8" />}
+                title="No sessions in the next 30 days"
+                description="Register for events to see your schedule"
+                action={
+                  <Link
+                    href="/events"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-colors duration-200 text-sm font-medium"
+                  >
+                    Browse Events
+                  </Link>
+                }
+              />
             ) : (
               <div className="space-y-4">
                 {upcomingSessions.slice(0, 5).map((s) => (
-                  <div key={s.id} className="flex items-center gap-4 p-4 bg-gray-800/40 rounded-xl hover:bg-gray-700/40 transition-colors duration-200 border border-gray-600/20">
-                    <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-white"
-                      style={{ background: darkTheme.gradients.success }}
-                    >
+                  <div key={s.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200 border border-gray-200">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 text-white shadow-lg">
                       <Clock className="h-6 w-6" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-100 truncate">{s.title}</h4>
-                      <p className="text-sm text-gray-300">{new Date(s.starts_at).toLocaleString()}</p>
+                      <h4 className="font-semibold text-gray-900 truncate">{s.title}</h4>
+                      <p className="text-sm text-gray-600">{new Date(s.starts_at).toLocaleString()}</p>
                     </div>
-                    <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20">
+                    <Badge className="bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-100">
                       Upcoming
                     </Badge>
                   </div>
                 ))}
               </div>
             )}
-          </DarkSoftCard>
+          </EnhancedContentCard>
 
           {/* Event Recommendations */}
-          <DarkSoftCard id="recommendations" variant="glass">
-            <div className="flex items-center gap-3 mb-6">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
-                style={{ background: darkTheme.gradients.warning }}
-              >
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-100">Recommended Events</h3>
-                <p className="text-gray-300">Curated events you might enjoy</p>
-              </div>
-            </div>
+          <EnhancedContentCard
+            id="recommendations"
+            title="Recommended Events"
+            subtitle="Curated events you might enjoy"
+            icon={<Sparkles className="h-5 w-5" />}
+            variant="gradient"
+          >
 
             {recommendations.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-800/60 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Star className="h-8 w-8 text-gray-400" />
-                </div>
-                <p className="text-gray-300 mb-2">No recommendations available yet</p>
-                <p className="text-sm text-gray-400">Attend more events to get personalized suggestions</p>
-              </div>
+              <EmptyStateCard
+                icon={<Star className="h-8 w-8" />}
+                title="No recommendations available yet"
+                description="Attend more events to get personalized suggestions"
+                action={
+                  <Link
+                    href="/events"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-colors duration-200 text-sm font-medium"
+                  >
+                    Explore Events
+                  </Link>
+                }
+              />
             ) : (
               <div className="grid gap-4 md:grid-cols-2">
                 {recommendations.slice(0, 4).map((e) => (
-                  <div key={e.id} className="group p-4 bg-gray-800/40 rounded-xl hover:bg-gray-700/40 hover:shadow-lg transition-all duration-200 border border-gray-600/20">
+                  <div key={e.id} className="group p-4 bg-white border border-gray-200 rounded-xl hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
                     <div className="flex items-start justify-between mb-3">
-                      <h4 className="font-semibold text-gray-100 line-clamp-2 group-hover:text-indigo-400 transition-colors">
+                      <h4 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-indigo-600 transition-colors">
                         {e.title}
                       </h4>
-                      <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-indigo-400 transition-colors flex-shrink-0 ml-2" />
+                      <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-indigo-600 transition-colors flex-shrink-0 ml-2" />
                     </div>
-                    <p className="text-sm text-gray-300 mb-3">
+                    <p className="text-sm text-gray-600 mb-3">
                       {e.start_date ? new Date(e.start_date).toLocaleDateString() : "Date TBA"}
                     </p>
-                    <DarkSoftButton variant="outlined" size="sm" fullWidth asChild>
-                      <Link href={`/events/${e.id}`}>View Event</Link>
-                    </DarkSoftButton>
+                    <Link
+                      href={`/events/${e.id}`}
+                      className="inline-flex items-center justify-center w-full px-4 py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-colors duration-200 text-sm font-medium"
+                    >
+                      View Event
+                    </Link>
                   </div>
                 ))}
               </div>
             )}
-          </DarkSoftCard>
+          </EnhancedContentCard>
         </div>
 
         {/* Right Column - QR Code & Profile */}
@@ -306,20 +303,14 @@ export function AttendeeDashboard() {
           {/* QR Code Section */}
           <div id="qr">
             {firstActiveTicket ? (
-              <DarkSoftCard variant="glass" className="text-center">
-                <div className="flex items-center gap-3 mb-6">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
-                    style={{ background: darkTheme.gradients.success }}
-                  >
-                    <QrCode className="h-5 w-5" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="text-xl font-bold text-gray-100">Event Check-in</h3>
-                    <p className="text-gray-300">Your active ticket QR code</p>
-                  </div>
-                </div>
-                <div className="bg-gray-800/40 rounded-xl p-4 border border-gray-600/20">
+              <EnhancedContentCard
+                title="Event Check-in"
+                subtitle="Your active ticket QR code"
+                icon={<QrCode className="h-5 w-5" />}
+                variant="elevated"
+                className="text-center"
+              >
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                   <QRCodeDisplay
                     ticketId={firstActiveTicket.id}
                     qrCode={firstActiveTicket.qr_code as string}
@@ -328,116 +319,96 @@ export function AttendeeDashboard() {
                     isCheckedIn={!!firstActiveTicket.checked_in}
                   />
                 </div>
-              </DarkSoftCard>
+              </EnhancedContentCard>
             ) : (
-              <DarkSoftCard variant="glass" className="text-center">
-                <div className="flex items-center gap-3 mb-6">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
-                    style={{ background: darkTheme.gradients.dark }}
-                  >
-                    <Ticket className="h-5 w-5" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className="text-xl font-bold text-gray-100">Check-in QR</h3>
-                    <p className="text-gray-300">No active tickets found</p>
-                  </div>
-                </div>
-                <div className="py-12">
-                  <div className="w-20 h-20 bg-gray-800/60 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <QrCode className="h-10 w-10 text-gray-400" />
-                  </div>
-                  <p className="text-gray-300 mb-4">Purchase a ticket to get your QR code</p>
-                  <DarkSoftButton variant="gradient" gradient="primary" fullWidth asChild>
-                    <Link href="/events">Browse Events</Link>
-                  </DarkSoftButton>
-                </div>
-              </DarkSoftCard>
+              <EnhancedContentCard
+                title="Check-in QR"
+                subtitle="No active tickets found"
+                icon={<Ticket className="h-5 w-5" />}
+                variant="elevated"
+                className="text-center"
+              >
+                <EmptyStateCard
+                  icon={<QrCode className="h-10 w-10" />}
+                  title="Purchase a ticket to get your QR code"
+                  description="Browse available events and get your tickets"
+                  action={
+                    <Link
+                      href="/events"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-colors duration-200 font-medium"
+                    >
+                      Browse Events
+                    </Link>
+                  }
+                />
+              </EnhancedContentCard>
             )}
           </div>
 
           {/* Profile Section */}
-          <DarkSoftCard id="profile" variant="glass">
-            <div className="flex items-center gap-3 mb-6">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
-                style={{ background: darkTheme.gradients.secondary }}
-              >
-                <User className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-100">Profile Settings</h3>
-                <p className="text-gray-300">Update your personal information</p>
-              </div>
-            </div>
-
+          <EnhancedContentCard
+            id="profile"
+            title="Profile Settings"
+            subtitle="Update your personal information"
+            icon={<User className="h-5 w-5" />}
+            variant="elevated"
+          >
             <div className="space-y-4">
               <div>
-                <Label htmlFor="fullName" className="text-sm font-medium text-gray-200 mb-2 block">
+                <Label htmlFor="fullName" className="text-sm font-medium text-gray-700 mb-2 block">
                   Full Name
                 </Label>
                 <Input
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="h-11 bg-gray-800/60 border-gray-600/30 rounded-xl text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400/50"
+                  className="h-11 bg-white border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400"
                   placeholder="Enter your full name"
                 />
               </div>
 
               <div className="flex gap-3 pt-2">
-                <DarkSoftButton
+                <button
                   onClick={saveProfile}
                   disabled={profileSaving}
-                  variant="gradient"
-                  gradient="primary"
-                  className="flex-1"
+                  className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {profileSaving ? "Saving..." : "Save Changes"}
-                </DarkSoftButton>
-                <DarkSoftButton variant="outlined" asChild>
-                  <Link href="/settings">More Settings</Link>
-                </DarkSoftButton>
+                </button>
+                <Link
+                  href="/settings"
+                  className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors duration-200 font-medium"
+                >
+                  More Settings
+                </Link>
               </div>
             </div>
-          </DarkSoftCard>
+          </EnhancedContentCard>
 
           {/* Quick Actions */}
-          <DarkSoftCard variant="glass">
-            <div className="flex items-center gap-3 mb-6">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
-                style={{ background: darkTheme.gradients.info }}
-              >
-                <BarChart3 className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-100">Quick Actions</h3>
-                <p className="text-gray-300">Common tasks and shortcuts</p>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <DarkSoftButton variant="outlined" fullWidth asChild>
-                <Link href="/tickets" className="flex items-center gap-2">
-                  <Ticket className="h-4 w-4" />
-                  View My Tickets
-                </Link>
-              </DarkSoftButton>
-              <DarkSoftButton variant="outlined" fullWidth asChild>
-                <Link href="/networking" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Find Attendees
-                </Link>
-              </DarkSoftButton>
-              <DarkSoftButton variant="outlined" fullWidth asChild>
-                <Link href="/schedule" className="flex items-center gap-2">
-                  <CalendarIcon className="h-4 w-4" />
-                  Full Schedule
-                </Link>
-              </DarkSoftButton>
-            </div>
-          </DarkSoftCard>
+          <QuickActionCard
+            title="Quick Actions"
+            description="Common tasks and shortcuts"
+            actions={[
+              {
+                label: "View My Tickets",
+                icon: <Ticket className="h-4 w-4" />,
+                href: "/tickets",
+                variant: "primary"
+              },
+              {
+                label: "Find Attendees",
+                icon: <Users className="h-4 w-4" />,
+                href: "/networking",
+                variant: "secondary"
+              },
+              {
+                label: "Full Schedule",
+                icon: <CalendarIcon className="h-4 w-4" />,
+                href: "/schedule"
+              }
+            ]}
+          />
         </div>
       </div>
     </div>
