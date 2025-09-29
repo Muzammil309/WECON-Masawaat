@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
+import { useState, useMemo } from 'react'
 import { useAuth } from '@/components/providers/auth-provider'
 
 export function AiventHeader() {
@@ -53,31 +55,105 @@ export function AiventHeader() {
                 )}
 
                 {!loading && user && (
-                  <>
-                    <Link className="btn-main fx-slide w-100" href={targetPath}>
-                      <span>{role === 'admin' ? 'Admin' : 'Dashboard'}</span>
-                    </Link>
-                  </>
+                  <Link className="btn-main fx-slide w-100" href={targetPath}>
+                    <span>{role === 'admin' ? 'Admin' : 'Dashboard'}</span>
+                  </Link>
                 )}
 
-                <div className="menu_side_area">
+                <div className="menu_side_area position-relative">
                   <span id="menu-btn"></span>
+
+                  {/* Avatar / Profile Dropdown */}
                   {!loading && user && (
-                    <button
-                      type="button"
-                      onClick={signOut}
-                      className="ms-3 text-light d-none d-md-inline"
-                      aria-label="Sign out"
-                    >
-                      Logout
-                    </button>
+                    <ProfileDropdown
+                      email={user.email || ''}
+                      name={(user.user_metadata as any)?.full_name || (user.user_metadata as any)?.name || user.email || ''}
+                      avatarUrl={(user.user_metadata as any)?.avatar_url || ''}
+                      role={role}
+                      onLogout={signOut}
+                      targetPath={targetPath}
+                    />
                   )}
                 </div>
               </div>
             </div>
+
+
+
           </div>
         </div>
       </div>
     </header>
+  )
+}
+
+
+function ProfileDropdown({ email, name, avatarUrl, role, onLogout, targetPath }: {
+  email: string
+  name: string
+  avatarUrl?: string
+  role: 'admin' | 'speaker' | 'attendee' | null
+  onLogout: () => Promise<void>
+  targetPath: string
+}) {
+  const [open, setOpen] = useState(false)
+
+  const initials = useMemo(() => {
+    const src = name || email || ''
+    const parts = src.replace(/@.*/, '').split(/\s+|\.|_|-/).filter(Boolean)
+    const chars = (parts[0]?.[0] || '') + (parts[1]?.[0] || '')
+    return chars.toUpperCase() || 'U'
+  }, [name, email])
+
+  return (
+    <div className="d-inline-block ms-3 position-relative" onBlur={() => setOpen(false)}>
+      <button
+        type="button"
+        className="rounded-circle overflow-hidden border-0 p-0 bg-transparent"
+        style={{ width: 40, height: 40 }}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {avatarUrl ? (
+          <Image src={avatarUrl} alt="avatar" width={40} height={40} className="rounded-circle" />
+        ) : (
+          <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: 40, height: 40, background: 'rgba(255,255,255,0.15)', color: '#fff' }}>
+            <span className="fw-bold">{initials}</span>
+          </div>
+        )}
+      </button>
+
+      {open && (
+        <div
+          className="position-absolute end-0 mt-2"
+          style={{ minWidth: 220, zIndex: 1000 }}
+          role="menu"
+        >
+          <div className="bg-dark text-light rounded-3 shadow p-2 border border-white-10">
+            <div className="px-3 py-2 border-bottom border-white-10">
+              <div className="fw-semibold small">{name}</div>
+              <div className="text-muted small">{email}</div>
+            </div>
+            <div className="py-1">
+              <Link href="/dashboard" className="dropdown-item d-block px-3 py-2 text-light">
+                Profile Settings
+              </Link>
+              <Link href={targetPath} className="dropdown-item d-block px-3 py-2 text-light">
+                {role === 'admin' ? 'Admin' : 'Dashboard'}
+              </Link>
+            </div>
+            <div className="border-top border-white-10" />
+            <button
+              type="button"
+              onClick={onLogout}
+              className="d-block w-100 text-start px-3 py-2 text-danger bg-transparent border-0"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

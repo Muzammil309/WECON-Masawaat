@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useMemo, useState } from 'react'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,6 +16,7 @@ export function AuthForm() {
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const supabase = createClient()
+  const supabaseConfigured = useMemo(() => isSupabaseConfigured(), [])
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -107,8 +108,8 @@ export function AuthForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen section-dark">
+      <Card className="w-full max-w-md bg-white text-foreground">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Welcome to EventFlow</CardTitle>
           <CardDescription className="text-center">
@@ -116,6 +117,11 @@ export function AuthForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {!supabaseConfigured && (
+            <div className="mb-4 rounded-md border border-yellow-500/40 bg-yellow-500/10 p-3 text-yellow-200">
+              Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.
+            </div>
+          )}
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
