@@ -712,3 +712,22 @@
   background: var(--primary-color);
   transition: height 0.1s ease;
 }
+
+
+/* Auth pages layout shell: centers card, offsets for fixed/transparent header */
+:root { --header-height: 96px; }
+@media (max-width: 768px) {
+  :root { --header-height: 72px; }
+}
+.auth-shell {
+  min-height: calc(100vh - var(--header-height));
+  padding-top: var(--header-height);
+  padding-bottom: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 768px) {
+  .auth-shell { padding-bottom: 48px; }
+}

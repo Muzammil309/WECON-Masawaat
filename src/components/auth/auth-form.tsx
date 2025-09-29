@@ -108,7 +108,7 @@ export function AuthForm() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen section-dark">
+    <div className="d-flex justify-content-center">
       <Card className="w-full max-w-md bg-white text-foreground">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Welcome to EventFlow</CardTitle>
