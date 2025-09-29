@@ -1,8 +1,12 @@
 'use client'
 
 import Link from 'next/link'
+import { useAuth } from '@/components/providers/auth-provider'
 
 export function AiventHeader() {
+  const { user, role, loading, signOut } = useAuth()
+  const targetPath = role === 'admin' ? '/admin' : '/dashboard'
+
   return (
     <header className="transparent">
       <div className="container">
@@ -32,17 +36,42 @@ export function AiventHeader() {
                     <li><a className="menu-item" href="#section-tickets">Tickets</a></li>
                     <li><a className="menu-item" href="#section-venue">Venue</a></li>
                     <li><a className="menu-item" href="#section-faq">FAQ</a></li>
+                    {user && role === 'admin' && (
+                      <li>
+                        <Link className="menu-item" href="/admin">Admin</Link>
+                      </li>
+                    )}
                   </ul>
                 </div>
               </div>
 
               <div className="de-flex-col">
-                <a className="btn-main fx-slide w-100" href="#section-tickets">
-                  <span>Buy Tickets</span>
-                </a>
+                {!loading && !user && (
+                  <Link className="btn-main fx-slide w-100" href="/auth/login">
+                    <span>Login</span>
+                  </Link>
+                )}
+
+                {!loading && user && (
+                  <>
+                    <Link className="btn-main fx-slide w-100" href={targetPath}>
+                      <span>{role === 'admin' ? 'Admin' : 'Dashboard'}</span>
+                    </Link>
+                  </>
+                )}
 
                 <div className="menu_side_area">
                   <span id="menu-btn"></span>
+                  {!loading && user && (
+                    <button
+                      type="button"
+                      onClick={signOut}
+                      className="ms-3 text-light d-none d-md-inline"
+                      aria-label="Sign out"
+                    >
+                      Logout
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

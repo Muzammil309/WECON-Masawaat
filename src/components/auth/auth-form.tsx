@@ -57,8 +57,26 @@ export function AuthForm() {
       if (error) {
         toast.error(error.message)
       } else {
+        // Determine role-based redirect
+        let next = '/dashboard'
+        try {
+          const { data: userRes } = await supabase.auth.getUser()
+          const userId = userRes?.user?.id
+          if (userId) {
+            const { data: profile } = await supabase
+              .from('em_profiles')
+              .select('role')
+              .eq('id', userId)
+              .maybeSingle()
+            if ((profile as any)?.role === 'admin') {
+              next = '/admin'
+            }
+          }
+        } catch (e) {
+          // fall back to attendee dashboard
+        }
         toast.success('Welcome back!')
-        window.location.href = '/dashboard'
+        window.location.href = next
       }
     } catch (error) {
       toast.error('An unexpected error occurred')

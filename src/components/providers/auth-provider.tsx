@@ -7,12 +7,14 @@ import { User } from '@supabase/supabase-js'
 interface AuthContextType {
   user: User | null
   loading: boolean
+  role: 'admin' | 'speaker' | 'attendee' | null
   signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  role: null,
   signOut: async () => {},
 })
 
@@ -28,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [isClient, setIsClient] = useState(false)
+  const [role, setRole] = useState<'admin' | 'speaker' | 'attendee' | null>(null)
 
   useEffect(() => {
     setIsClient(true)
@@ -42,10 +45,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const getInitialSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        setUser(session?.user ?? null)
+        const authUser = session?.user ?? null
+        setUser(authUser)
+
+        // fetch role from em_profiles
+        if (authUser) {
+          try {
+            const { data, error } = await supabase
+              .from('em_profiles')
+              .select('role')
+              .eq('id', authUser.id)
+              .maybeSingle()
+            if (!error) {
+              setRole((data?.role as any) ?? 'attendee')
+            } else {
+              setRole('attendee')
+            }
+          } catch (e) {
+            setRole('attendee')
+          }
+        } else {
+          setRole(null)
+        }
       } catch (error) {
         console.warn('Failed to get initial session:', error)
         setUser(null)
+        setRole(null)
       } finally {
         setLoading(false)
       }
@@ -55,29 +80,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event: any, session: any) => {
-        setUser(session?.user ?? null)
+      async (_event: any, session: any) => {
+        const authUser = session?.user ?? null
+        setUser(authUser)
         setLoading(false)
 
-        // Create or update profile when user signs up or signs in
-        if (event === 'SIGNED_IN' && session?.user) {
+        if (authUser) {
+          // Ensure profile row exists
           try {
-            const { error } = await supabase
+            const { error: upsertError } = await supabase
               .from('em_profiles')
               .upsert({
-                id: session.user.id,
-                email: session.user.email!,
-                full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
-                avatar_url: session.user.user_metadata?.avatar_url || null,
+                id: authUser.id,
+                email: authUser.email!,
+                full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || null,
+                avatar_url: authUser.user_metadata?.avatar_url || null,
               })
               .select()
-
-            if (error) {
-              console.error('Error creating/updating profile:', error)
-            }
+            if (upsertError) console.error('Error creating/updating profile:', upsertError)
           } catch (error) {
             console.error('Failed to create/update profile:', error)
           }
+
+          // Load role
+          try {
+            const { data, error } = await supabase
+              .from('em_profiles')
+              .select('role')
+              .eq('id', authUser.id)
+              .maybeSingle()
+            if (!error) {
+              setRole((data?.role as any) ?? 'attendee')
+            } else {
+              setRole('attendee')
+            }
+          } catch (e) {
+            setRole('attendee')
+          }
+        } else {
+          setRole(null)
         }
       }
     )
@@ -98,6 +139,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     user,
     loading,
+    role,
     signOut,
   }
 
