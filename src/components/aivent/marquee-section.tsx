@@ -29,13 +29,22 @@ export function MarqueeSection() {
   const marqueeInitialized = useRef(false);
 
   useEffect(() => {
-    // Prevent multiple initializations
+    // Prevent multiple initializations and skip if already initialized by external script
     if (marqueeInitialized.current) return;
+    if (typeof document !== 'undefined') {
+      const alreadyInitialized =
+        document.querySelector('.de-marquee-list-1 .js-marquee-wrapper') ||
+        document.querySelector('.de-marquee-list-2 .js-marquee-wrapper');
+      if (alreadyInitialized) {
+        marqueeInitialized.current = true;
+        return; // custom-marquee.js already initialized animations
+      }
+    }
 
     const initializeMarquee = () => {
       if (typeof window !== 'undefined' && window.$ && window.$.fn.marquee) {
         try {
-          // Clean up any existing marquee instances first
+          // Clean up any existing marquee instances first (if any)
           const marquee1 = window.$('.de-marquee-list-1');
           const marquee2 = window.$('.de-marquee-list-2');
 
