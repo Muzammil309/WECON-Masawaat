@@ -118,6 +118,38 @@
   color: var(--primary-color);
 }
 
+/* Marquee sizing variables and alignment to match original Aivent Demo 1 */
+:root {
+  --marquee-font-size: 60px;          /* from .fs-60 */
+  --marquee-line-multiplier: 1;       /* from .lh-1 (1em) */
+  --marquee-py: 24px;                 /* Bootstrap .py-4 => 1.5rem ~ 24px */
+  --marquee-line-height: calc(var(--marquee-font-size) * var(--marquee-line-multiplier));
+  --marquee-strip-min-height: calc(var(--marquee-line-height) + (var(--marquee-py) * 2));
+}
+
+/* Lock strip vertical rhythm and center content uniformly across width */
+.section-dark .bg-color.rot-2,
+.section-dark .bg-color-2.rot-min-1 {
+  padding-top: var(--marquee-py) !important;
+  padding-bottom: var(--marquee-py) !important;
+  line-height: var(--marquee-line-height) !important;
+  min-height: var(--marquee-strip-min-height);
+  display: flex;
+  align-items: center; /* fixes left-side vertical bias */
+}
+
+/* Ensure plugin wrappers don't alter vertical alignment */
+.de-marquee-list-1,
+.de-marquee-list-2,
+.de-marquee-list-1 .js-marquee,
+.de-marquee-list-2 .js-marquee,
+.de-marquee-list-1 .js-marquee-wrapper,
+.de-marquee-list-2 .js-marquee-wrapper {
+  line-height: var(--marquee-line-height);
+  display: flex;
+  align-items: center;
+}
+
 .btn-line:hover {
   background: var(--primary-color);
   color: white;
