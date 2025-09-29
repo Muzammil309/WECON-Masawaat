@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
+import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 import {
   BarChart3,
   Calendar,
@@ -39,7 +40,7 @@ export default function AdminDashboardPage() {
   const { user } = useAuth()
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
-  
+
   const supabase = createClient()
 
   useEffect(() => {
@@ -47,30 +48,28 @@ export default function AdminDashboardPage() {
       if (!user) return
 
       try {
-      const { data, error } = await supabase
-        .from('em_events')
-        .select(`
-          *,
-          tickets:em_tickets(count),
-          sessions:em_sessions(count)
-        `)
-        .eq('organizer_id', user.id)
-        .order('created_at', { ascending: false })
+        const { data, error } = await supabase
+          .from('em_events')
+          .select(`
+            *,
+            tickets:em_tickets(count),
+            sessions:em_sessions(count)
+          `)
+          .eq('organizer_id', user.id)
+          .order('created_at', { ascending: false })
 
-      if (error) {
-        console.error('Error fetching events:', error)
-      } else {
-        // Process the data to get counts
-        const processedEvents = data?.map((event: any) => ({
-          ...event,
-          _count: {
-            tickets: event.tickets?.length || 0,
-            sessions: event.sessions?.length || 0
-          }
-        })) || []
-        
-        setEvents(processedEvents)
-      }
+        if (error) {
+          console.error('Error fetching events:', error)
+        } else {
+          const processedEvents = data?.map((event: any) => ({
+            ...event,
+            _count: {
+              tickets: event.tickets?.length || 0,
+              sessions: event.sessions?.length || 0
+            }
+          })) || []
+          setEvents(processedEvents)
+        }
       } catch (error) {
         console.error('Error fetching events:', error)
       } finally {
@@ -121,16 +120,9 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <DashboardShell role={'admin'} title="Admin Dashboard" description="Manage your events and view analytics">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">
-            Manage your events and view analytics
-          </p>
-        </div>
-        
+        <div />
         <Button asChild>
           <Link href="/events/create" legacyBehavior>
             <Plus className="mr-2 h-4 w-4" />
@@ -196,7 +188,7 @@ export default function AdminDashboardPage() {
                       </Badge>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="space-y-4">
                     <div className="text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">
@@ -205,7 +197,6 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
 
-                    {/* Quick Stats */}
                     <div className="grid grid-cols-2 gap-4 text-center">
                       <div>
                         <div className="text-2xl font-bold">{event._count?.tickets || 0}</div>
@@ -217,7 +208,6 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
 
-                    {/* Actions */}
                     <div className="grid grid-cols-2 gap-2">
                       <Button variant="outline" size="sm" asChild>
                         <Link href={`/events/${event.id}`} legacyBehavior>
@@ -282,7 +272,7 @@ export default function AdminDashboardPage() {
                     Name: {user.user_metadata?.full_name || 'Not provided'}
                   </p>
                 </div>
-                
+
                 <div>
                   <h4 className="font-medium">Notifications</h4>
                   <p className="text-sm text-muted-foreground">
@@ -294,6 +284,6 @@ export default function AdminDashboardPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+    </DashboardShell>
   );
 }
