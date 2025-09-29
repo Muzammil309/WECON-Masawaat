@@ -48,32 +48,46 @@ export function AiventHeader() {
               </div>
 
               <div className="de-flex-col">
-                {!loading && !user && (
-                  <Link className="btn-main fx-slide w-100" href="/auth/login">
-                    <span>Login</span>
-                  </Link>
-                )}
-
-                {!loading && user && (
-                  <Link className="btn-main fx-slide w-100" href={targetPath}>
-                    <span>{role === 'admin' ? 'Admin' : 'Dashboard'}</span>
-                  </Link>
-                )}
-
-                <div className="menu_side_area position-relative">
-                  <span id="menu-btn"></span>
-
-                  {/* Avatar / Profile Dropdown */}
-                  {!loading && user && (
-                    <ProfileDropdown
-                      email={user.email || ''}
-                      name={(user.user_metadata as any)?.full_name || (user.user_metadata as any)?.name || user.email || ''}
-                      avatarUrl={(user.user_metadata as any)?.avatar_url || ''}
-                      role={role}
-                      onLogout={signOut}
-                      targetPath={targetPath}
-                    />
+                <div className="d-flex align-items-center gap-3">
+                  {!loading && !user && (
+                    <Link className="btn-main fx-slide" href="/auth/login">
+                      <span>Login</span>
+                    </Link>
                   )}
+
+                  {!loading && user && (
+                    <Link
+                      className="btn-main fx-slide d-inline-flex align-items-center"
+                      href={targetPath}
+                      style={{
+                        opacity: 1,
+                        visibility: 'visible',
+                        display: 'inline-flex !important',
+                        minWidth: '120px',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <span>{role === 'admin' ? 'Admin' : 'Dashboard'}</span>
+                    </Link>
+                  )}
+
+                  <div className="menu_side_area position-relative">
+                    <span id="menu-btn"></span>
+
+                    {/* Avatar / Profile Dropdown - Always Visible */}
+                    {!loading && user && (
+                      <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
+                        <ProfileDropdown
+                          email={user.email || ''}
+                          name={(user.user_metadata as any)?.full_name || (user.user_metadata as any)?.name || user.email || ''}
+                          avatarUrl={(user.user_metadata as any)?.avatar_url || ''}
+                          role={role}
+                          onLogout={signOut}
+                          targetPath={targetPath}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -106,19 +120,50 @@ function ProfileDropdown({ email, name, avatarUrl, role, onLogout, targetPath }:
   }, [name, email])
 
   return (
-    <div className="d-inline-block ms-3 position-relative" onBlur={() => setOpen(false)}>
+    <div
+      className="d-inline-block ms-3 position-relative"
+      onBlur={() => setOpen(false)}
+      style={{ opacity: 1, visibility: 'visible', display: 'inline-block' }}
+    >
       <button
         type="button"
         className="rounded-circle overflow-hidden border-0 p-0 bg-transparent"
-        style={{ width: 40, height: 40 }}
+        style={{
+          width: 40,
+          height: 40,
+          opacity: 1,
+          visibility: 'visible',
+          display: 'block',
+          transition: 'all 0.3s ease',
+          transform: 'scale(1)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        }}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
         {avatarUrl ? (
-          <Image src={avatarUrl} alt="avatar" width={40} height={40} className="rounded-circle" />
+          <Image
+            src={avatarUrl}
+            alt="avatar"
+            width={40}
+            height={40}
+            className="rounded-circle"
+            style={{ opacity: 1, visibility: 'visible' }}
+          />
         ) : (
-          <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: 40, height: 40, background: 'rgba(255,255,255,0.15)', color: '#fff' }}>
+          <div
+            className="rounded-circle d-flex align-items-center justify-content-center"
+            style={{
+              width: 40,
+              height: 40,
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: '#fff',
+              opacity: 1,
+              visibility: 'visible',
+              boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)'
+            }}
+          >
             <span className="fw-bold">{initials}</span>
           </div>
         )}

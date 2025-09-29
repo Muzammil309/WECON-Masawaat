@@ -13118,3 +13118,51 @@ img {
     width: auto;
   }
 }
+
+/* ================================================== */
+/* WECON Header Navigation Visibility Fixes */
+/* ================================================== */
+
+/* Header Navigation Visibility Fixes */
+.btn-main,
+.menu_side_area,
+.menu_side_area *,
+header .btn-main,
+header .menu_side_area,
+header .menu_side_area * {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.btn-main.fx-slide {
+  display: inline-flex !important;
+}
+
+/* Ensure avatar and dashboard button are always visible */
+header .de-flex-col .btn-main,
+header .menu_side_area button,
+header .menu_side_area img,
+header .menu_side_area div {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Remove any hover-only visibility rules */
+header .btn-main:not(:hover),
+header .menu_side_area:not(:hover),
+header .menu_side_area:not(:hover) *,
+.menu_side_area:not(:hover),
+.menu_side_area:not(:hover) * {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Enhanced avatar styling */
+.menu_side_area button {
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.menu_side_area button:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25) !important;
+}
