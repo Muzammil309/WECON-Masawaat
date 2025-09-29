@@ -373,31 +373,54 @@
   line-height: 1;
 }
 
-/* CRITICAL FIX: Ensure consistent font sizing across entire marquee width */
-.de-marquee-list-1 .fs-60,
-.de-marquee-list-2 .fs-60,
-.de-marquee-list-1 span.fs-60,
-.de-marquee-list-2 span.fs-60 {
+/* CRITICAL FIX: Ensure absolutely uniform font sizing across entire marquee width */
+/* Force uniform 60px font size throughout the entire marquee section */
+.section-dark[aria-label="section"] .fs-60,
+.section-dark[aria-label="section"] span.fs-60,
+.section-dark[aria-label="section"] .de-marquee-list-1 .fs-60,
+.section-dark[aria-label="section"] .de-marquee-list-2 .fs-60,
+.section-dark[aria-label="section"] .de-marquee-list-1 span.fs-60,
+.section-dark[aria-label="section"] .de-marquee-list-2 span.fs-60,
+.section-dark[aria-label="section"] .de-marquee-list-1 span,
+.section-dark[aria-label="section"] .de-marquee-list-2 span {
   font-size: 60px !important;
-  /* Prevent any scaling or transform effects from affecting font size */
+  /* Prevent any scaling, transform, or zoom effects */
+  transform: none !important;
+  zoom: 1 !important;
+  /* Ensure consistent line height and spacing */
+  line-height: 1 !important;
+  /* Prevent any font scaling from parent containers */
+  font-size-adjust: none !important;
+}
+
+/* Ensure jQuery marquee wrapper and all nested elements maintain uniform sizing */
+.section-dark[aria-label="section"] .js-marquee,
+.section-dark[aria-label="section"] .js-marquee *,
+.section-dark[aria-label="section"] .js-marquee .fs-60,
+.section-dark[aria-label="section"] .js-marquee span.fs-60,
+.section-dark[aria-label="section"] .js-marquee span {
+  font-size: 60px !important;
+  transform: none !important;
+  zoom: 1 !important;
+  line-height: 1 !important;
+}
+
+/* Force uniform sizing for all marquee container elements */
+.section-dark[aria-label="section"] .bg-color,
+.section-dark[aria-label="section"] .bg-color-2,
+.section-dark[aria-label="section"] .bg-color *,
+.section-dark[aria-label="section"] .bg-color-2 * {
+  /* Prevent any container scaling effects */
   transform: none !important;
   zoom: 1 !important;
 }
 
-/* Ensure jQuery marquee wrapper doesn't affect font sizing */
-.de-marquee-list-1 .js-marquee .fs-60,
-.de-marquee-list-2 .js-marquee .fs-60,
-.de-marquee-list-1 .js-marquee span.fs-60,
-.de-marquee-list-2 .js-marquee span.fs-60 {
+/* Override any inherited font sizing from parent elements */
+.section-dark[aria-label="section"] {
+  /* Ensure the entire section has consistent font rendering */
   font-size: 60px !important;
   transform: none !important;
   zoom: 1 !important;
-}
-
-/* Prevent any container transforms from affecting text size */
-.de-marquee-list-1 *,
-.de-marquee-list-2 * {
-  font-size: inherit !important;
 }
 
 /* Responsive Typography */
@@ -458,27 +481,23 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Rotation - Match Original Template CSS */
-.rot-2 {
-  transform: rotateZ(2deg);
-  /* Ensure rotation doesn't affect font scaling */
-  transform-origin: center center;
-}
-
-.rot-min-1 {
-  transform: rotateZ(-1deg);
-  /* Ensure rotation doesn't affect font scaling */
-  transform-origin: center center;
-}
-
-/* CRITICAL FIX: Prevent rotation transforms from affecting font size consistency */
-.rot-2 .fs-60,
-.rot-min-1 .fs-60,
-.rot-2 span.fs-60,
-.rot-min-1 span.fs-60 {
-  font-size: 60px !important;
-  /* Counter any potential scaling effects from parent transforms */
+/* CRITICAL FIX: Disable rotation for marquee sections to prevent sizing issues */
+/* The rotation transforms are causing visual scaling inconsistencies */
+.section-dark[aria-label="section"] .rot-2,
+.section-dark[aria-label="section"] .rot-min-1 {
   transform: none !important;
+  /* Disable rotation entirely for marquee sections */
+}
+
+/* Keep rotation for other sections but ensure no scaling effects */
+.rot-2:not(.section-dark [aria-label="section"] *) {
+  transform: rotateZ(2deg);
+  transform-origin: center center;
+}
+
+.rot-min-1:not(.section-dark [aria-label="section"] *) {
+  transform: rotateZ(-1deg);
+  transform-origin: center center;
 }
 
 .mt-min-20 {
