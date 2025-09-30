@@ -54,7 +54,7 @@ header .de-flex {
 /* Dashboard Layout Fixes - Prevent Header Overlap */
 /* ================================================== */
 
-/* Define header height variables */
+/* Define header height variables for dashboard pages only */
 :root {
   --aivent-header-height: 96px;
 }
@@ -71,30 +71,15 @@ header .de-flex {
   }
 }
 
-/* Make header fixed on all pages for consistent behavior */
-header.transparent {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  background: rgba(15, 15, 35, 0.95) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1001 !important;
-}
+/*
+  IMPORTANT: These styles should ONLY apply to dashboard pages
+  The homepage and landing pages should keep the original Aivent header style
+  with transparent overlay and no top padding
+*/
 
-/* Ensure header maintains proper height */
-header.transparent .container {
-  min-height: var(--aivent-header-height);
-  display: flex;
-  align-items: center;
-}
-
-/* Add padding to main content on all pages to prevent header overlap */
-body > div > main {
-  padding-top: var(--aivent-header-height);
-  min-height: 100vh;
+/* Dashboard pages are identified by having the ProfessionalDarkThemeProvider class */
+/* This class is added by the dashboard layout components */
+.professional-dark-theme {
+  /* Dashboard-specific styles will be applied via inline styles in the component */
 }
 

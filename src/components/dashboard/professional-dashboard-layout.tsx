@@ -55,8 +55,8 @@ export function ProfessionalDashboardLayout({
 
   return (
     <ProfessionalDarkThemeProvider>
-      {/* Add top padding to account for the fixed AiventHeader */}
-      <div className="min-h-screen flex relative" style={{ paddingTop: 'var(--aivent-header-height, 96px)' }}>
+      {/* Dashboard layout - no padding needed, sidebar handles the layout */}
+      <div className="min-h-screen flex relative">
         {/* Sidebar */}
         <ProfessionalSidebar
           role={role}
@@ -133,11 +133,8 @@ function ProfessionalSidebar({
 }: ProfessionalSidebarProps) {
   return (
     <>
-      {/* Desktop Sidebar - Add top padding to account for header */}
-      <aside
-        className="hidden lg:flex lg:flex-col w-72 fixed left-0 h-full bg-white/5 backdrop-blur-xl border-r border-white/10 shadow-2xl z-30"
-        style={{ top: 'var(--aivent-header-height, 96px)' }}
-      >
+      {/* Desktop Sidebar - Full height, no offset */}
+      <aside className="hidden lg:flex lg:flex-col w-72 fixed left-0 top-0 h-full bg-white/5 backdrop-blur-xl border-r border-white/10 shadow-2xl z-30">
         <SidebarContent
           role={role}
           tabs={tabs}

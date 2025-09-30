@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "../styles/aivent-integration.css";
 import "../styles/navigation-fixes.css";
-import { AiventHeader } from "@/components/aivent/aivent-header";
+import { ConditionalHeader } from "@/components/layout/conditional-header";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/providers/auth-provider";
 
@@ -45,7 +45,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           <div className="min-h-screen">
-            <AiventHeader />
+            <ConditionalHeader />
             <main className="flex-1">
               {children}
             </main>
