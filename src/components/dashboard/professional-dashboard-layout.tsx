@@ -55,7 +55,8 @@ export function ProfessionalDashboardLayout({
 
   return (
     <ProfessionalDarkThemeProvider>
-      <div className="min-h-screen flex relative">
+      {/* Add top padding to account for the fixed AiventHeader */}
+      <div className="min-h-screen flex relative" style={{ paddingTop: 'var(--aivent-header-height, 96px)' }}>
         {/* Sidebar */}
         <ProfessionalSidebar
           role={role}
@@ -132,9 +133,12 @@ function ProfessionalSidebar({
 }: ProfessionalSidebarProps) {
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:flex-col w-72 fixed left-0 top-0 h-full bg-white/5 backdrop-blur-xl border-r border-white/10 shadow-2xl z-30">
-        <SidebarContent 
+      {/* Desktop Sidebar - Add top padding to account for header */}
+      <aside
+        className="hidden lg:flex lg:flex-col w-72 fixed left-0 h-full bg-white/5 backdrop-blur-xl border-r border-white/10 shadow-2xl z-30"
+        style={{ top: 'var(--aivent-header-height, 96px)' }}
+      >
+        <SidebarContent
           role={role}
           tabs={tabs}
           activeTab={activeTab}
@@ -142,14 +146,14 @@ function ProfessionalSidebar({
         />
       </aside>
 
-      {/* Mobile Sidebar */}
+      {/* Mobile Sidebar - Full height on mobile */}
       <aside className={cn(
         "fixed left-0 top-0 h-full w-72 bg-white/5 backdrop-blur-xl border-r border-white/10 shadow-2xl z-50 transform transition-transform duration-300 lg:hidden",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div 
+            <div
               className="w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-lg"
               style={{ background: professionalDarkTheme.gradients.primary }}
             >
@@ -167,7 +171,7 @@ function ProfessionalSidebar({
             <X className="h-5 w-5 text-white" />
           </button>
         </div>
-        <SidebarContent 
+        <SidebarContent
           role={role}
           tabs={tabs}
           activeTab={activeTab}
