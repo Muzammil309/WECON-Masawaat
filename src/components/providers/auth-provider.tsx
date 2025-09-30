@@ -32,40 +32,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<'admin' | 'speaker' | 'attendee' | null>(null)
 
   useEffect(() => {
+    let mounted = true
     const supabase = createClient()
 
     // Get initial session
     const getInitialSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+        if (sessionError) {
+          console.error('Session error:', sessionError)
+          if (mounted) {
+            setUser(null)
+            setRole(null)
+            setLoading(false)
+          }
+          return
+        }
+
         const authUser = session?.user ?? null
-        setUser(authUser)
+
+        if (mounted) {
+          setUser(authUser)
+        }
 
         // fetch role from em_profiles
-        if (authUser) {
+        if (authUser && mounted) {
           try {
             const { data, error } = await supabase
               .from('em_profiles')
               .select('role')
               .eq('id', authUser.id)
               .maybeSingle()
-            if (!error) {
-              setRole((data?.role as any) ?? 'attendee')
-            } else {
-              setRole('attendee')
+
+            if (mounted) {
+              if (!error && data) {
+                setRole((data.role as any) ?? 'attendee')
+              } else {
+                setRole('attendee')
+              }
             }
           } catch (e) {
-            setRole('attendee')
+            console.error('Role fetch error:', e)
+            if (mounted) {
+              setRole('attendee')
+            }
           }
-        } else {
+        } else if (mounted) {
           setRole(null)
         }
       } catch (error) {
-        console.warn('Failed to get initial session:', error)
-        setUser(null)
-        setRole(null)
+        console.error('Failed to get initial session:', error)
+        if (mounted) {
+          setUser(null)
+          setRole(null)
+        }
       } finally {
-        setLoading(false)
+        if (mounted) {
+          setLoading(false)
+        }
       }
     }
 
@@ -74,6 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event: any, session: any) => {
+        if (!mounted) return
+
         const authUser = session?.user ?? null
         setUser(authUser)
         setLoading(false)
@@ -102,21 +129,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .select('role')
               .eq('id', authUser.id)
               .maybeSingle()
-            if (!error) {
-              setRole((data?.role as any) ?? 'attendee')
-            } else {
-              setRole('attendee')
+            if (mounted) {
+              if (!error && data) {
+                setRole((data.role as any) ?? 'attendee')
+              } else {
+                setRole('attendee')
+              }
             }
           } catch (e) {
-            setRole('attendee')
+            console.error('Role fetch error:', e)
+            if (mounted) {
+              setRole('attendee')
+            }
           }
-        } else {
+        } else if (mounted) {
           setRole(null)
         }
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signOut = async () => {

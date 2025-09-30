@@ -2,12 +2,60 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '@/components/providers/auth-provider'
 
 export function AiventHeader() {
   const { user, role, loading, signOut } = useAuth()
   const targetPath = role === 'admin' ? '/admin' : '/dashboard'
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Prevent hydration mismatch by not rendering auth-dependent content until mounted
+  if (!mounted) {
+    return (
+      <header className="transparent">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <div className="de-flex">
+                <div className="de-flex-col">
+                  <div id="logo">
+                    <Link href="/">
+                      <img className="logo-main" src="/aivent/images/logo.webp" alt="" />
+                      <img className="logo-scroll" src="/aivent/images/logo.webp" alt="" />
+                      <img className="logo-mobile" src="/aivent/images/logo.webp" alt="" />
+                    </Link>
+                  </div>
+                </div>
+                <div className="de-flex-col">
+                  <div className="de-flex-col header-col-mid">
+                    <ul id="mainmenu">
+                      <li><a className="menu-item active" href="#section-hero">Home</a></li>
+                      <li><a className="menu-item" href="#section-about">About</a></li>
+                      <li><a className="menu-item" href="#section-why-attend">Why Attend</a></li>
+                      <li><a className="menu-item" href="#section-speakers">Speakers</a></li>
+                      <li><a className="menu-item" href="#section-schedule">Schedule</a></li>
+                      <li><a className="menu-item" href="#section-tickets">Tickets</a></li>
+                      <li><a className="menu-item" href="#section-venue">Venue</a></li>
+                      <li><a className="menu-item" href="#section-faq">FAQ</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="de-flex-col">
+                  {/* Placeholder during SSR */}
+                  <div className="d-flex align-items-center gap-3" style={{ position: 'relative', zIndex: 100, minHeight: '40px' }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+    )
+  }
 
   return (
     <header className="transparent">
@@ -49,57 +97,65 @@ export function AiventHeader() {
 
               <div className="de-flex-col">
                 <div className="d-flex align-items-center gap-3" style={{ position: 'relative', zIndex: 100 }}>
-                  {!loading && !user && (
+                  {/* Always render navigation elements, just hide during loading */}
+                  {!user ? (
                     <Link
                       className="btn-main fx-slide"
                       href="/auth/login"
                       style={{
-                        opacity: 1,
-                        visibility: 'visible',
+                        opacity: loading ? 0 : 1,
+                        visibility: loading ? 'hidden' : 'visible',
                         display: 'inline-flex',
                         position: 'relative',
-                        zIndex: 100
+                        zIndex: 100,
+                        transition: 'opacity 0.3s ease, visibility 0.3s ease'
                       }}
                     >
                       <span>Login</span>
                     </Link>
-                  )}
+                  ) : (
+                    <>
+                      <Link
+                        className="btn-main fx-slide d-inline-flex align-items-center"
+                        href={targetPath}
+                        style={{
+                          opacity: loading ? 0 : 1,
+                          visibility: loading ? 'hidden' : 'visible',
+                          display: 'inline-flex',
+                          minWidth: '120px',
+                          justifyContent: 'center',
+                          position: 'relative',
+                          zIndex: 100,
+                          transition: 'opacity 0.3s ease, visibility 0.3s ease'
+                        }}
+                      >
+                        <span>{role === 'admin' ? 'Admin' : 'Dashboard'}</span>
+                      </Link>
 
-                  {!loading && user && (
-                    <Link
-                      className="btn-main fx-slide d-inline-flex align-items-center"
-                      href={targetPath}
-                      style={{
-                        opacity: 1,
-                        visibility: 'visible',
-                        display: 'inline-flex',
-                        minWidth: '120px',
-                        justifyContent: 'center',
-                        position: 'relative',
-                        zIndex: 100
-                      }}
-                    >
-                      <span>{role === 'admin' ? 'Admin' : 'Dashboard'}</span>
-                    </Link>
-                  )}
+                      <div className="menu_side_area position-relative" style={{ zIndex: 100 }}>
+                        <span id="menu-btn"></span>
 
-                  <div className="menu_side_area position-relative" style={{ zIndex: 100 }}>
-                    <span id="menu-btn"></span>
-
-                    {/* Avatar / Profile Dropdown - Always Visible */}
-                    {!loading && user && (
-                      <div style={{ opacity: 1, visibility: 'visible', display: 'block', position: 'relative', zIndex: 100 }}>
-                        <ProfileDropdown
-                          email={user.email || ''}
-                          name={(user.user_metadata as any)?.full_name || (user.user_metadata as any)?.name || user.email || ''}
-                          avatarUrl={(user.user_metadata as any)?.avatar_url || ''}
-                          role={role}
-                          onLogout={signOut}
-                          targetPath={targetPath}
-                        />
+                        {/* Avatar / Profile Dropdown */}
+                        <div style={{
+                          opacity: loading ? 0 : 1,
+                          visibility: loading ? 'hidden' : 'visible',
+                          display: 'block',
+                          position: 'relative',
+                          zIndex: 100,
+                          transition: 'opacity 0.3s ease, visibility 0.3s ease'
+                        }}>
+                          <ProfileDropdown
+                            email={user.email || ''}
+                            name={(user.user_metadata as any)?.full_name || (user.user_metadata as any)?.name || user.email || ''}
+                            avatarUrl={(user.user_metadata as any)?.avatar_url || ''}
+                            role={role}
+                            onLogout={signOut}
+                            targetPath={targetPath}
+                          />
+                        </div>
                       </div>
-                    )}
-                  </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
