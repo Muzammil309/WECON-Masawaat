@@ -5,9 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { DashboardShell } from '@/components/dashboard/dashboard-shell'
-import { AttendeeDashboard } from '@/components/dashboard/attendee/attendee-dashboard'
-import { SpeakerDashboard } from '@/components/dashboard/speaker/speaker-dashboard'
+import { ProfessionalAttendeeDashboard } from '@/components/dashboard/attendee/professional-attendee-dashboard'
+import { ProfessionalSpeakerDashboard } from '@/components/dashboard/speaker/professional-speaker-dashboard'
 
 export default function DashboardPage() {
   const { user, loading } = useAuth()
@@ -21,31 +20,38 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto" />
+          <p className="text-white text-lg">Loading your dashboard...</p>
+        </div>
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="text-center space-y-4">
-        <h1 className="text-2xl font-bold">Access Denied</h1>
-        <p className="text-muted-foreground">Please sign in to access your dashboard.</p>
-        <Button asChild>
-          <Link href="/auth/login">Sign In</Link>
-        </Button>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center space-y-6 p-8 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl max-w-md mx-auto">
+          <h1 className="text-3xl font-bold text-white">Access Denied</h1>
+          <p className="text-slate-300 text-lg">Please sign in to access your dashboard.</p>
+          <Button
+            asChild
+            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0 px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            <Link href="/auth/login">Sign In</Link>
+          </Button>
+        </div>
       </div>
     )
   }
 
   const role = (user.user_metadata?.role as 'attendee' | 'speaker' | 'admin') || 'attendee'
-  const title = role === 'speaker' ? 'Speaker Dashboard' : 'My Dashboard'
-  const description = role === 'speaker' ? 'Manage sessions, materials and feedback' : 'Your tickets, schedule and recommendations'
 
-  return (
-    <DashboardShell role={role} title={title} description={description}>
-      {role === 'speaker' ? <SpeakerDashboard /> : <AttendeeDashboard />}
-    </DashboardShell>
-  )
+  // Use professional dashboard for both attendees and speakers
+  if (role === 'speaker') {
+    return <ProfessionalSpeakerDashboard />
+  }
+
+  return <ProfessionalAttendeeDashboard />
 }
