@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "../styles/aivent-integration.css";
+import "../styles/navigation-fixes.css";
 import { AiventHeader } from "@/components/aivent/aivent-header";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/providers/auth-provider";

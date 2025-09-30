@@ -48,9 +48,19 @@ export function AiventHeader() {
               </div>
 
               <div className="de-flex-col">
-                <div className="d-flex align-items-center gap-3">
+                <div className="d-flex align-items-center gap-3" style={{ position: 'relative', zIndex: 100 }}>
                   {!loading && !user && (
-                    <Link className="btn-main fx-slide" href="/auth/login">
+                    <Link
+                      className="btn-main fx-slide"
+                      href="/auth/login"
+                      style={{
+                        opacity: 1,
+                        visibility: 'visible',
+                        display: 'inline-flex',
+                        position: 'relative',
+                        zIndex: 100
+                      }}
+                    >
                       <span>Login</span>
                     </Link>
                   )}
@@ -62,21 +72,23 @@ export function AiventHeader() {
                       style={{
                         opacity: 1,
                         visibility: 'visible',
-                        display: 'inline-flex !important',
+                        display: 'inline-flex',
                         minWidth: '120px',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        position: 'relative',
+                        zIndex: 100
                       }}
                     >
                       <span>{role === 'admin' ? 'Admin' : 'Dashboard'}</span>
                     </Link>
                   )}
 
-                  <div className="menu_side_area position-relative">
+                  <div className="menu_side_area position-relative" style={{ zIndex: 100 }}>
                     <span id="menu-btn"></span>
 
                     {/* Avatar / Profile Dropdown - Always Visible */}
                     {!loading && user && (
-                      <div style={{ opacity: 1, visibility: 'visible', display: 'block' }}>
+                      <div style={{ opacity: 1, visibility: 'visible', display: 'block', position: 'relative', zIndex: 100 }}>
                         <ProfileDropdown
                           email={user.email || ''}
                           name={(user.user_metadata as any)?.full_name || (user.user_metadata as any)?.name || user.email || ''}
@@ -123,7 +135,7 @@ function ProfileDropdown({ email, name, avatarUrl, role, onLogout, targetPath }:
     <div
       className="d-inline-block ms-3 position-relative"
       onBlur={() => setOpen(false)}
-      style={{ opacity: 1, visibility: 'visible', display: 'inline-block' }}
+      style={{ opacity: 1, visibility: 'visible', display: 'inline-block', zIndex: 100 }}
     >
       <button
         type="button"
@@ -136,7 +148,9 @@ function ProfileDropdown({ email, name, avatarUrl, role, onLogout, targetPath }:
           display: 'block',
           transition: 'all 0.3s ease',
           transform: 'scale(1)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          position: 'relative',
+          zIndex: 100
         }}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -172,7 +186,7 @@ function ProfileDropdown({ email, name, avatarUrl, role, onLogout, targetPath }:
       {open && (
         <div
           className="position-absolute end-0 mt-2"
-          style={{ minWidth: 220, zIndex: 1000 }}
+          style={{ minWidth: 220, zIndex: 9999 }}
           role="menu"
         >
           <div className="bg-dark text-light rounded-3 shadow p-2 border border-white-10">

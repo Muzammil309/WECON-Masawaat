@@ -1,0 +1,58 @@
+/* Navigation Visibility Fixes */
+
+/* Ensure header navigation elements are always visible */
+header .de-flex-col .d-flex {
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Force visibility of login button */
+header .btn-main {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Force visibility of profile dropdown */
+header .menu_side_area {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Ensure avatar button is visible */
+header .menu_side_area button {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Ensure dropdown menu has high z-index */
+header .menu_side_area .position-absolute {
+  z-index: 9999 !important;
+}
+
+/* Override any conflicting Aivent styles */
+header .de-flex {
+  position: relative !important;
+  z-index: 50 !important;
+}
+
+/* Ensure all header content is above background */
+header {
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* Fix for mobile menu button */
+#menu-btn {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+

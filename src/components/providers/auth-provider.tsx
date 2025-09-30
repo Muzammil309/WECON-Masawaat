@@ -29,16 +29,9 @@ export const useAuth = () => {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [isClient, setIsClient] = useState(false)
   const [role, setRole] = useState<'admin' | 'speaker' | 'attendee' | null>(null)
 
   useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  useEffect(() => {
-    if (!isClient) return
-
     const supabase = createClient()
 
     // Get initial session
@@ -124,10 +117,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     )
 
     return () => subscription.unsubscribe()
-  }, [isClient])
+  }, [])
 
   const signOut = async () => {
-    if (!isClient) return
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
