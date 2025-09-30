@@ -1,6 +1,6 @@
 "use client"
 
-import React, { forwardRef, HTMLAttributes } from 'react'
+import React, { forwardRef, HTMLAttributes, ElementType } from 'react'
 import { cn } from '@/lib/utils'
 import { softUITheme, SoftUITypographyVariant, SoftUIFontSize } from '../theme'
 
@@ -13,7 +13,7 @@ export interface SoftTypographyProps extends HTMLAttributes<HTMLElement> {
   textGradient?: boolean
   opacity?: number
   fontSize?: SoftUIFontSize
-  component?: keyof JSX.IntrinsicElements
+  component?: ElementType
 }
 
 export const SoftTypography = forwardRef<HTMLElement, SoftTypographyProps>(
@@ -36,7 +36,7 @@ export const SoftTypography = forwardRef<HTMLElement, SoftTypographyProps>(
     ref
   ) => {
     // Determine the HTML element to use
-    const variantComponentMap: Record<SoftUITypographyVariant, keyof JSX.IntrinsicElements> = {
+    const variantComponentMap: Record<SoftUITypographyVariant, ElementType> = {
       h1: 'h1',
       h2: 'h2',
       h3: 'h3',
@@ -80,9 +80,12 @@ export const SoftTypography = forwardRef<HTMLElement, SoftTypographyProps>(
     if (color) {
       if (textGradient) {
         // For gradient text, we need to use background-clip
-        const gradientKey = color as any
-        if (softUITheme.colors.gradients[gradientKey]) {
-          inlineStyles.background = softUITheme.helpers.createGradient(gradientKey)
+        // Check if color is a valid gradient key
+        const validGradients = ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'light', 'dark'] as const
+        type GradientKey = typeof validGradients[number]
+
+        if (validGradients.includes(color as GradientKey)) {
+          inlineStyles.background = softUITheme.helpers.createGradient(color as GradientKey)
           inlineStyles.WebkitBackgroundClip = 'text'
           inlineStyles.WebkitTextFillColor = 'transparent'
           inlineStyles.backgroundClip = 'text'
