@@ -41,7 +41,12 @@ export function AuthForm() {
         console.error('Signup error:', error)
         toast.error(`Signup failed: ${error.message}`)
       } else {
-        toast.success('Check your email for the confirmation link!')
+        toast.success('Account created successfully! You can now sign in.')
+        // Switch to sign in tab after successful signup
+        setTimeout(() => {
+          const signInTab = document.querySelector('[value="signin"]') as HTMLElement
+          signInTab?.click()
+        }, 1500)
       }
     } catch (error) {
       console.error('Unexpected signup error:', error)
