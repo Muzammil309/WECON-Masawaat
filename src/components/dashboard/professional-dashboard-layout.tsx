@@ -55,9 +55,9 @@ export function ProfessionalDashboardLayout({
 
   return (
     <ProfessionalDarkThemeProvider>
-      <div className="min-h-screen flex">
+      <div className="min-h-screen flex relative">
         {/* Sidebar */}
-        <ProfessionalSidebar 
+        <ProfessionalSidebar
           role={role}
           tabs={tabs}
           activeTab={activeTab}
@@ -67,16 +67,16 @@ export function ProfessionalDashboardLayout({
         />
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col min-h-screen lg:ml-72">
+        <div className="flex-1 flex flex-col min-h-screen lg:ml-72 relative z-10">
           {/* Topbar */}
-          <ProfessionalTopbar 
+          <ProfessionalTopbar
             onMenuClick={() => setSidebarOpen(true)}
             user={user}
             onSignOut={signOut}
           />
 
           {/* Content */}
-          <main className="flex-1 p-6 space-y-8">
+          <main className="flex-1 p-6 space-y-8 relative z-10">
             {/* Header */}
             {(title || description) && (
               <header className="space-y-2">
@@ -94,7 +94,7 @@ export function ProfessionalDashboardLayout({
             )}
 
             {/* Tab Content */}
-            <div className="space-y-8">
+            <div className="space-y-8 relative z-10">
               {activeTabContent?.content}
             </div>
           </main>
@@ -102,7 +102,7 @@ export function ProfessionalDashboardLayout({
 
         {/* Mobile Sidebar Overlay */}
         {sidebarOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />

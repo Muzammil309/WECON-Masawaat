@@ -53,7 +53,7 @@ interface ProfessionalDarkThemeProviderProps {
 
 export function ProfessionalDarkThemeProvider({ children, className }: ProfessionalDarkThemeProviderProps) {
   return (
-    <div 
+    <div
       className={cn(
         "min-h-screen text-white",
         className
@@ -64,7 +64,7 @@ export function ProfessionalDarkThemeProvider({ children, className }: Professio
       }}
     >
       {/* Subtle animated background pattern */}
-      <div className="fixed inset-0 opacity-30">
+      <div className="fixed inset-0 opacity-30 pointer-events-none z-0">
         <div className="absolute inset-0" style={{
           backgroundImage: `
             radial-gradient(circle at 20% 80%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
@@ -73,7 +73,7 @@ export function ProfessionalDarkThemeProvider({ children, className }: Professio
           `
         }} />
       </div>
-      <div className="relative z-10">
+      <div className="relative z-10 min-h-screen">
         {children}
       </div>
     </div>

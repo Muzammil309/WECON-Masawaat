@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ProfessionalAttendeeDashboard } from '@/components/dashboard/attendee/professional-attendee-dashboard'
+import { EnhancedAttendeeDashboard } from '@/components/dashboard/attendee/enhanced-attendee-dashboard'
 import { ProfessionalSpeakerDashboard } from '@/components/dashboard/speaker/professional-speaker-dashboard'
 
 export default function DashboardPage() {
@@ -48,10 +48,10 @@ export default function DashboardPage() {
 
   const role = (user.user_metadata?.role as 'attendee' | 'speaker' | 'admin') || 'attendee'
 
-  // Use professional dashboard for both attendees and speakers
+  // Use enhanced dashboard for both attendees and speakers
   if (role === 'speaker') {
     return <ProfessionalSpeakerDashboard />
   }
 
-  return <ProfessionalAttendeeDashboard />
+  return <EnhancedAttendeeDashboard />
 }
