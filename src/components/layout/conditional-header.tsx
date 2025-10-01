@@ -2,14 +2,15 @@
 
 import { usePathname } from 'next/navigation'
 import { AiventHeader } from '@/components/aivent/aivent-header'
+import { useEffect, useState } from 'react'
 
 /**
  * ConditionalHeader component
- * 
+ *
  * Renders the AiventHeader only on non-dashboard pages.
  * Dashboard pages (/dashboard, /admin, etc.) have their own navigation
  * and should not display the global header.
- * 
+ *
  * This ensures:
  * 1. Homepage and landing pages keep the original Aivent header with transparent overlay
  * 2. Dashboard pages use their own sidebar navigation without the global header
@@ -17,7 +18,12 @@ import { AiventHeader } from '@/components/aivent/aivent-header'
  */
 export function ConditionalHeader() {
   const pathname = usePathname()
-  
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   // List of routes that should NOT show the AiventHeader
   // These routes have their own navigation systems
   const dashboardRoutes = [
@@ -26,16 +32,28 @@ export function ConditionalHeader() {
     '/speaker',
     '/attendee'
   ]
-  
+
   // Check if current path starts with any dashboard route
-  const isDashboardPage = dashboardRoutes.some(route => pathname.startsWith(route))
-  
-  // Don't render header on dashboard pages
-  if (isDashboardPage) {
+  const isDashboardPage = dashboardRoutes.some(route => {
+    // Normalize pathname to handle trailing slashes
+    const normalizedPath = pathname?.toLowerCase().replace(/\/$/, '') || ''
+    const normalizedRoute = route.toLowerCase().replace(/\/$/, '')
+    return normalizedPath === normalizedRoute || normalizedPath.startsWith(normalizedRoute + '/')
+  })
+
+  // Don't render anything until mounted (prevents hydration issues)
+  if (!mounted) {
     return null
   }
-  
+
+  // Don't render header on dashboard pages
+  if (isDashboardPage) {
+    console.log('[ConditionalHeader] Dashboard page detected, hiding header:', pathname)
+    return null
+  }
+
   // Render header on all other pages (homepage, landing pages, etc.)
+  console.log('[ConditionalHeader] Non-dashboard page, showing header:', pathname)
   return <AiventHeader />
 }
 

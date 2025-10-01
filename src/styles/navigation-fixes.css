@@ -83,3 +83,72 @@ header .de-flex {
   /* Dashboard-specific styles will be applied via inline styles in the component */
 }
 
+/* ================================================== */
+/* CRITICAL FIX: Hide AiventHeader on Dashboard Pages */
+/* ================================================== */
+
+/*
+  Hide the Aivent header when inside dashboard layouts
+  This prevents the header from overlapping with dashboard content
+  The ConditionalHeader component should handle this, but this is a CSS fallback
+*/
+.professional-dark-theme header.transparent {
+  display: none !important;
+}
+
+/* Also hide header when body has dashboard-specific classes */
+body:has(.professional-dark-theme) header.transparent {
+  display: none !important;
+}
+
+/* ================================================== */
+/* Dashboard Layout Spacing & Visual Separators */
+/* ================================================== */
+
+/* Ensure dashboard layouts have proper spacing and visual hierarchy */
+.professional-dark-theme .min-h-screen {
+  position: relative;
+}
+
+/* Add visual separator to dashboard topbar */
+.professional-dark-theme .h-16.border-b {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Ensure sidebar has proper visual separation */
+.professional-dark-theme aside {
+  border-right: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: 1px 0 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* ================================================== */
+/* Responsive Layout Fixes */
+/* ================================================== */
+
+/* Mobile: Ensure no header overlap */
+@media (max-width: 768px) {
+  .professional-dark-theme header.transparent {
+    display: none !important;
+  }
+
+  /* Ensure mobile sidebar doesn't conflict with header */
+  .professional-dark-theme .lg\:ml-72 {
+    margin-left: 0 !important;
+  }
+}
+
+/* Tablet: Ensure proper spacing */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .professional-dark-theme header.transparent {
+    display: none !important;
+  }
+}
+
+/* Desktop: Ensure sidebar and content are properly separated */
+@media (min-width: 1025px) {
+  .professional-dark-theme header.transparent {
+    display: none !important;
+  }
+}
+

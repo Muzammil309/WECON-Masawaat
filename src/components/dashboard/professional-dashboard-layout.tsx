@@ -69,18 +69,18 @@ export function ProfessionalDashboardLayout({
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-h-screen lg:ml-72 relative z-10">
-          {/* Topbar */}
+          {/* Topbar with enhanced visual separator */}
           <ProfessionalTopbar
             onMenuClick={() => setSidebarOpen(true)}
             user={user}
             onSignOut={signOut}
           />
 
-          {/* Content */}
-          <main className="flex-1 p-6 space-y-8 relative z-10">
-            {/* Header */}
+          {/* Content with proper spacing from topbar */}
+          <main className="flex-1 p-6 space-y-8 relative z-10 mt-2">
+            {/* Header with visual hierarchy */}
             {(title || description) && (
-              <header className="space-y-2">
+              <header className="space-y-3 pb-6 border-b border-white/10">
                 {title && (
                   <h1 className="text-3xl font-bold tracking-tight text-white">
                     {title}
@@ -133,8 +133,8 @@ function ProfessionalSidebar({
 }: ProfessionalSidebarProps) {
   return (
     <>
-      {/* Desktop Sidebar - Full height, no offset */}
-      <aside className="hidden lg:flex lg:flex-col w-72 fixed left-0 top-0 h-full bg-white/5 backdrop-blur-xl border-r border-white/10 shadow-2xl z-30">
+      {/* Desktop Sidebar - Full height with enhanced visual separator */}
+      <aside className="hidden lg:flex lg:flex-col w-72 fixed left-0 top-0 h-full bg-gradient-to-b from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-xl border-r-2 border-white/20 shadow-2xl z-30">
         <SidebarContent
           role={role}
           tabs={tabs}
@@ -143,12 +143,12 @@ function ProfessionalSidebar({
         />
       </aside>
 
-      {/* Mobile Sidebar - Full height on mobile */}
+      {/* Mobile Sidebar - Full height on mobile with enhanced visual separator */}
       <aside className={cn(
-        "fixed left-0 top-0 h-full w-72 bg-white/5 backdrop-blur-xl border-r border-white/10 shadow-2xl z-50 transform transition-transform duration-300 lg:hidden",
+        "fixed left-0 top-0 h-full w-72 bg-gradient-to-b from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-xl border-r-2 border-white/20 shadow-2xl z-50 transform transition-transform duration-300 lg:hidden",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-6 border-b-2 border-white/20">
           <div className="flex items-center gap-3">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-lg"
@@ -193,10 +193,10 @@ interface SidebarContentProps {
 function SidebarContent({ role, tabs, activeTab, onTabChange }: SidebarContentProps) {
   return (
     <div className="flex flex-col h-full">
-      {/* Logo Section - Desktop Only */}
-      <div className="hidden lg:flex h-16 px-6 items-center border-b border-white/10">
+      {/* Logo Section - Desktop Only with enhanced separator */}
+      <div className="hidden lg:flex h-16 px-6 items-center border-b-2 border-white/20 shadow-md">
         <div className="flex items-center gap-3">
-          <div 
+          <div
             className="w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-lg"
             style={{ background: professionalDarkTheme.gradients.primary }}
           >
@@ -279,7 +279,7 @@ function ProfessionalTopbar({ onMenuClick, user, onSignOut }: ProfessionalTopbar
   const displayName = user?.user_metadata?.full_name || user?.email || "User"
 
   return (
-    <div className="h-16 border-b border-white/10 bg-white/5 backdrop-blur-xl px-6 flex items-center gap-4 shadow-lg">
+    <div className="sticky top-0 z-50 h-16 border-b-2 border-white/20 bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-xl px-6 flex items-center gap-4 shadow-xl">
       {/* Mobile Menu Button */}
       <button
         onClick={onMenuClick}
