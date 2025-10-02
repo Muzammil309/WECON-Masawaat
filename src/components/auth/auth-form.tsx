@@ -18,6 +18,8 @@ export function AuthForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
+  const [redirectPath, setRedirectPath] = useState<string | null>(null)
+  const [authSuccess, setAuthSuccess] = useState(false)
   const supabase = createClient()
   const supabaseConfigured = useMemo(() => isSupabaseConfigured(), [])
 
@@ -133,10 +135,35 @@ export function AuthForm() {
       console.log('Step 5: Final redirect path determined:', redirectPath)
       console.log('Step 6: Initiating redirect...')
 
-      // Use window.location.href for a hard redirect
-      // This is more reliable than router.push() for post-authentication redirects
-      console.log('🚀 Executing hard redirect to:', redirectPath)
-      window.location.href = redirectPath
+      // Store redirect path and mark auth as successful
+      setRedirectPath(redirectPath)
+      setAuthSuccess(true)
+
+      // Try multiple redirect methods for maximum compatibility
+      console.log('🚀 Attempting redirect to:', redirectPath)
+
+      // Method 1: Try router.push first
+      try {
+        console.log('Method 1: Using router.push()')
+        router.push(redirectPath)
+
+        // Method 2: Fallback to router.replace after a short delay
+        setTimeout(() => {
+          console.log('Method 2: Using router.replace()')
+          router.replace(redirectPath)
+
+          // Method 3: Final fallback to window.location
+          setTimeout(() => {
+            console.log('Method 3: Using window.location.href')
+            window.location.href = redirectPath
+          }, 300)
+        }, 300)
+      } catch (redirectError) {
+        console.error('Router redirect failed:', redirectError)
+        // Direct fallback to window.location
+        console.log('Fallback: Using window.location.href directly')
+        window.location.href = redirectPath
+      }
 
     } catch (error) {
       console.error('❌ Unexpected signin error:', error)
@@ -252,6 +279,24 @@ export function AuthForm() {
                     'Sign In'
                   )}
                 </Button>
+
+                {/* Manual redirect button if automatic redirect fails */}
+                {authSuccess && redirectPath && (
+                  <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p className="text-sm text-yellow-800 mb-2">
+                      ⚠️ Automatic redirect failed. Click the button below to continue:
+                    </p>
+                    <Button
+                      onClick={() => {
+                        console.log('Manual redirect button clicked, navigating to:', redirectPath)
+                        window.location.href = redirectPath
+                      }}
+                      className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
+                    >
+                      Continue to Dashboard →
+                    </Button>
+                  </div>
+                )}
               </form>
             </TabsContent>
 
