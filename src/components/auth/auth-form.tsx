@@ -135,12 +135,22 @@ export function AuthForm() {
       console.log('Step 5: Final redirect path determined:', redirectPath)
       console.log('Step 6: Initiating redirect...')
 
+      // CRITICAL FIX: Reset loading state BEFORE redirect
+      // This ensures button doesn't stay stuck if redirect is delayed
+      setIsLoading(false)
+
       // Store redirect path and mark auth as successful
       setRedirectPath(redirectPath)
       setAuthSuccess(true)
 
       // Try multiple redirect methods for maximum compatibility
       console.log('🚀 Attempting redirect to:', redirectPath)
+
+      // Set a timeout to show manual button if redirect fails
+      const redirectTimeout = setTimeout(() => {
+        console.warn('⚠️ Redirect timeout - showing manual button')
+        setAuthSuccess(true)
+      }, 2000)
 
       // Method 1: Try router.push first
       try {
@@ -156,6 +166,7 @@ export function AuthForm() {
           setTimeout(() => {
             console.log('Method 3: Using window.location.href')
             window.location.href = redirectPath
+            clearTimeout(redirectTimeout)
           }, 300)
         }, 300)
       } catch (redirectError) {
@@ -163,6 +174,7 @@ export function AuthForm() {
         // Direct fallback to window.location
         console.log('Fallback: Using window.location.href directly')
         window.location.href = redirectPath
+        clearTimeout(redirectTimeout)
       }
 
     } catch (error) {

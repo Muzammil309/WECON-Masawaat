@@ -50,7 +50,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
-          <Toaster />
+          <Toaster position="top-right" richColors expand={true} />
         </AuthProvider>
         <WebVitals />
 
