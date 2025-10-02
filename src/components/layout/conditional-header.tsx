@@ -25,16 +25,21 @@ export function ConditionalHeader() {
   }, [])
 
   // List of routes that should NOT show the AiventHeader
-  // These routes have their own navigation systems
-  const dashboardRoutes = [
+  // These routes have their own navigation systems or should be full-screen
+  const excludedRoutes = [
     '/dashboard',
     '/admin',
     '/speaker',
-    '/attendee'
+    '/attendee',
+    '/auth/login',
+    '/auth/signup',
+    '/auth/debug',
+    '/auth/callback',
+    '/auth/forgot-password'
   ]
 
-  // Check if current path starts with any dashboard route
-  const isDashboardPage = dashboardRoutes.some(route => {
+  // Check if current path starts with any excluded route
+  const isExcludedPage = excludedRoutes.some(route => {
     // Normalize pathname to handle trailing slashes
     const normalizedPath = pathname?.toLowerCase().replace(/\/$/, '') || ''
     const normalizedRoute = route.toLowerCase().replace(/\/$/, '')
@@ -46,14 +51,14 @@ export function ConditionalHeader() {
     return null
   }
 
-  // Don't render header on dashboard pages
-  if (isDashboardPage) {
-    console.log('[ConditionalHeader] Dashboard page detected, hiding header:', pathname)
+  // Don't render header on excluded pages (dashboard, auth, etc.)
+  if (isExcludedPage) {
+    console.log('[ConditionalHeader] Excluded page detected, hiding header:', pathname)
     return null
   }
 
   // Render header on all other pages (homepage, landing pages, etc.)
-  console.log('[ConditionalHeader] Non-dashboard page, showing header:', pathname)
+  console.log('[ConditionalHeader] Public page, showing header:', pathname)
   return <AiventHeader />
 }
 

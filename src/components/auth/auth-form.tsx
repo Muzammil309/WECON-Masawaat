@@ -63,7 +63,8 @@ export function AuthForm() {
     setIsLoading(true)
 
     try {
-      console.log('Attempting signin with Supabase...')
+      console.log('=== LOGIN FLOW STARTED ===')
+      console.log('Step 1: Attempting signin with Supabase...')
       console.log('Email:', email)
 
       const { error, data } = await supabase.auth.signInWithPassword({
@@ -71,83 +72,74 @@ export function AuthForm() {
         password,
       })
 
-      console.log('Signin response:', { error, data })
+      console.log('Step 2: Signin response received')
+      console.log('Error:', error)
+      console.log('Data:', data ? 'User data received' : 'No data')
 
       if (error) {
-        console.error('Signin error:', error)
+        console.error('❌ Signin error:', error)
         toast.error(`Login failed: ${error.message}`)
         setIsLoading(false)
         return
       }
 
-      // Authentication successful
+      if (!data.user) {
+        console.error('❌ No user data returned')
+        toast.error('Login failed: No user data')
+        setIsLoading(false)
+        return
+      }
+
+      console.log('✅ Authentication successful')
+      console.log('User ID:', data.user.id)
       toast.success('Welcome back!')
 
       // Determine role-based redirect
       let redirectPath = '/dashboard' // Default for attendees and speakers
 
-      try {
-        const { data: userRes, error: userError } = await supabase.auth.getUser()
+      console.log('Step 3: Fetching user profile for role-based redirect...')
 
-        if (userError) {
-          console.error('Error fetching user:', userError)
-        }
+      const { data: profile, error: profileError } = await supabase
+        .from('em_profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .maybeSingle()
 
-        const userId = userRes?.user?.id
+      console.log('Step 4: Profile query result')
+      console.log('Profile:', profile)
+      console.log('Profile Error:', profileError)
 
-        if (userId) {
-          console.log('User ID:', userId)
-          console.log('Fetching user profile for role-based redirect...')
+      if (profileError) {
+        console.error('⚠️ Profile fetch error:', profileError)
+        console.log('Using default redirect path:', redirectPath)
+      } else if (profile && profile.role) {
+        const userRole = profile.role
+        console.log('✅ User role found:', userRole)
 
-          const { data: profile, error: profileError } = await supabase
-            .from('em_profiles')
-            .select('role')
-            .eq('id', userId)
-            .maybeSingle()
-
-          console.log('Profile query result:', { profile, profileError })
-
-          if (profileError) {
-            console.error('Profile fetch error:', profileError)
-            toast.error('Could not fetch user profile. Redirecting to default dashboard.')
-          } else if (profile) {
-            const userRole = (profile as any)?.role
-            console.log('User role:', userRole)
-
-            // Role-based routing
-            if (userRole === 'admin') {
-              redirectPath = '/admin'
-              console.log('Admin role detected, redirecting to /admin')
-            } else if (userRole === 'attendee' || userRole === 'speaker') {
-              redirectPath = '/dashboard'
-              console.log('Attendee/Speaker role detected, redirecting to /dashboard')
-            }
-          } else {
-            console.warn('No profile found for user. Using default redirect.')
-            toast.error('No profile found. Please contact support.')
-          }
+        // Role-based routing
+        if (userRole === 'admin') {
+          redirectPath = '/admin'
+          console.log('✅ Admin role detected, will redirect to /admin')
+        } else if (userRole === 'attendee' || userRole === 'speaker') {
+          redirectPath = '/dashboard'
+          console.log('✅ Attendee/Speaker role detected, will redirect to /dashboard')
         } else {
-          console.error('No user ID found after authentication')
+          console.warn('⚠️ Unknown role:', userRole, '- using default redirect')
         }
-      } catch (e) {
-        console.error('Role check failed:', e)
-        toast.error('Error checking user role. Using default redirect.')
+      } else {
+        console.warn('⚠️ No profile found for user - using default redirect')
       }
 
-      console.log('Final redirect path:', redirectPath)
+      console.log('Step 5: Final redirect path determined:', redirectPath)
+      console.log('Step 6: Initiating redirect...')
 
-      // Small delay to ensure auth state is fully updated
-      setTimeout(() => {
-        console.log('Executing redirect to:', redirectPath)
-        router.push(redirectPath)
-        // Force a hard refresh after navigation to ensure middleware picks up the session
-        setTimeout(() => {
-          window.location.href = redirectPath
-        }, 100)
-      }, 500)
+      // Use window.location.href for a hard redirect
+      // This is more reliable than router.push() for post-authentication redirects
+      console.log('🚀 Executing hard redirect to:', redirectPath)
+      window.location.href = redirectPath
 
     } catch (error) {
-      console.error('Unexpected signin error:', error)
+      console.error('❌ Unexpected signin error:', error)
       toast.error(`An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`)
       setIsLoading(false)
     }
