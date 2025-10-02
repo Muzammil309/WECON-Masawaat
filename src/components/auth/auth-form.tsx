@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,10 +9,11 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
-import { Github, Mail } from 'lucide-react'
-import { SupabaseDiagnostics } from '@/components/debug/supabase-diagnostics'
+import { Github, Mail, Loader2 } from 'lucide-react'
+import Link from 'next/link'
 
 export function AuthForm() {
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -71,29 +73,50 @@ export function AuthForm() {
 
       if (error) {
         console.error('Signin error:', error)
-        toast.error(`Signin failed: ${error.message}`)
+        toast.error(`Login failed: ${error.message}`)
       } else {
+        toast.success('Welcome back!')
+
         // Determine role-based redirect
-        let next = '/dashboard'
+        let redirectPath = '/dashboard' // Default for attendees and speakers
+
         try {
           const { data: userRes } = await supabase.auth.getUser()
           const userId = userRes?.user?.id
+
           if (userId) {
-            const { data: profile } = await supabase
+            console.log('Fetching user profile for role-based redirect...')
+            const { data: profile, error: profileError } = await supabase
               .from('em_profiles')
               .select('role')
               .eq('id', userId)
               .maybeSingle()
-            if ((profile as any)?.role === 'admin') {
-              next = '/admin'
+
+            console.log('Profile data:', profile)
+
+            if (profileError) {
+              console.error('Profile fetch error:', profileError)
+            } else if (profile) {
+              const userRole = (profile as any)?.role
+              console.log('User role:', userRole)
+
+              // Role-based routing
+              if (userRole === 'admin') {
+                redirectPath = '/admin'
+              } else if (userRole === 'attendee' || userRole === 'speaker') {
+                redirectPath = '/dashboard'
+              }
             }
           }
         } catch (e) {
           console.warn('Role check failed, using default redirect:', e)
-          // fall back to attendee dashboard
+          // Fall back to attendee dashboard
         }
-        toast.success('Welcome back!')
-        window.location.href = next
+
+        console.log('Redirecting to:', redirectPath)
+
+        // Use router.push for client-side navigation
+        router.push(redirectPath)
       }
     } catch (error) {
       console.error('Unexpected signin error:', error)
@@ -125,112 +148,173 @@ export function AuthForm() {
   }
 
   return (
-    <div className="d-flex justify-content-center">
-      <Card className="w-full max-w-md bg-white text-foreground">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Welcome to EventFlow</CardTitle>
-          <CardDescription className="text-center">
+    <div className="w-full">
+      <Card className="w-full bg-white/95 backdrop-blur-sm shadow-2xl border-0">
+        <CardHeader className="space-y-2 pb-6">
+          <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            Welcome to EventFlow
+          </CardTitle>
+          <CardDescription className="text-center text-base text-gray-600">
             Sign in to your account or create a new one
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-6 pb-6">
           {!supabaseConfigured && (
-            <div className="mb-4 rounded-md border border-yellow-500/40 bg-yellow-500/10 p-3 text-yellow-200">
-              Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.
+            <div className="mb-4 rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-4 text-yellow-800">
+              <p className="text-sm font-medium">⚠️ Supabase is not configured</p>
+              <p className="text-xs mt-1">Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY</p>
             </div>
           )}
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
+              <TabsTrigger
+                value="signin"
+                className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              >
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger
+                value="signup"
+                className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              >
+                Sign Up
+              </TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="signin" className="space-y-4">
-              <form onSubmit={handleSignIn} className="space-y-4">
+
+            <TabsContent value="signin" className="space-y-4 mt-6">
+              <form onSubmit={handleSignIn} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="signin-email" className="text-sm font-medium text-gray-700">
+                    Email
+                  </Label>
                   <Input
-                    id="email"
+                    id="signin-email"
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="admin@wecon.events"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-11 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="signin-password" className="text-sm font-medium text-gray-700">
+                      Password
+                    </Label>
+                    <Link
+                      href="/auth/forgot-password"
+                      className="text-xs text-purple-600 hover:text-purple-700 hover:underline"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
                   <Input
-                    id="password"
+                    id="signin-password"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className="h-11 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Signing in...' : 'Sign In'}
+                <Button
+                  type="submit"
+                  className="w-full h-11 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    'Sign In'
+                  )}
                 </Button>
               </form>
             </TabsContent>
-            
-            <TabsContent value="signup" className="space-y-4">
-              <form onSubmit={handleSignUp} className="space-y-4">
+
+            <TabsContent value="signup" className="space-y-4 mt-6">
+              <form onSubmit={handleSignUp} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
+                  <Label htmlFor="signup-fullname" className="text-sm font-medium text-gray-700">
+                    Full Name
+                  </Label>
                   <Input
-                    id="fullName"
+                    id="signup-fullname"
                     type="text"
-                    placeholder="Enter your full name"
+                    placeholder="John Doe"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
+                    className="h-11 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="signup-email" className="text-sm font-medium text-gray-700">
+                    Email
+                  </Label>
                   <Input
-                    id="email"
+                    id="signup-email"
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-11 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="signup-password" className="text-sm font-medium text-gray-700">
+                    Password
+                  </Label>
                   <Input
-                    id="password"
+                    id="signup-password"
                     type="password"
-                    placeholder="Create a password"
+                    placeholder="Create a strong password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    minLength={6}
+                    className="h-11 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Creating account...' : 'Create Account'}
+                <Button
+                  type="submit"
+                  className="w-full h-11 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating account...
+                    </>
+                  ) : (
+                    'Create Account'
+                  )}
                 </Button>
               </form>
             </TabsContent>
           </Tabs>
 
-          <div className="relative my-4">
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-white px-3 text-gray-500 font-medium">Or continue with</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <Button
               variant="outline"
               onClick={() => handleSocialLogin('github')}
               disabled={isLoading}
+              className="h-11 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-colors"
             >
               <Github className="mr-2 h-4 w-4" />
               GitHub
@@ -239,6 +323,7 @@ export function AuthForm() {
               variant="outline"
               onClick={() => handleSocialLogin('google')}
               disabled={isLoading}
+              className="h-11 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-colors"
             >
               <Mail className="mr-2 h-4 w-4" />
               Google
@@ -246,7 +331,6 @@ export function AuthForm() {
           </div>
         </CardContent>
       </Card>
-      <SupabaseDiagnostics />
     </div>
   )
 }
