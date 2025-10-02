@@ -18,7 +18,8 @@ import {
   Eye,
   Edit,
   Ticket,
-  MessageSquare
+  MessageSquare,
+  Activity
 } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -239,12 +240,20 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {event.status === 'published' && (
-                      <Button variant="default" size="sm" className="w-full" asChild>
-                        <Link href={`/events/${event.id}/live`} legacyBehavior>
-                          <MessageSquare className="mr-1 h-4 w-4" />
-                          Go Live
-                        </Link>
-                      </Button>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="default" size="sm" asChild>
+                          <Link href={`/events/${event.id}/live`} legacyBehavior>
+                            <MessageSquare className="mr-1 h-4 w-4" />
+                            Go Live
+                          </Link>
+                        </Button>
+                        <Button variant="default" size="sm" className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700" asChild>
+                          <Link href={`/admin/events/${event.id}/live`} legacyBehavior>
+                            <Activity className="mr-1 h-4 w-4" />
+                            Live Dashboard
+                          </Link>
+                        </Button>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
