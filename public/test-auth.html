@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Authentication Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #output {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        .success {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .info {
+            color: #3b82f6;
+        }
+        .warning {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Supabase Authentication Test</h1>
+        <p class="subtitle">Test your Supabase connection and authentication flow</p>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" value="admin@wecon.events" placeholder="Enter your email">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+        
+        <button id="testBtn" onclick="runTest()">🚀 Run Authentication Test</button>
+        
+        <div id="output"></div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+        window.runTest = async function() {
+            const output = document.getElementById('output')
+            const testBtn = document.getElementById('testBtn')
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            
+            output.style.display = 'block'
+            output.innerHTML = ''
+            testBtn.disabled = true
+            
+            function log(message, type = 'info') {
+                const span = document.createElement('span')
+                span.className = type
+                span.textContent = message + '\n'
+                output.appendChild(span)
+                output.scrollTop = output.scrollHeight
+            }
+            
+            try {
+                log('=== SUPABASE CONNECTION TEST ===', 'info')
+                log('', 'info')
+                
+                // Step 1: Check environment
+                log('Step 1: Checking Environment Variables...', 'info')
+                const supabaseUrl = 'https://umywdcihtqfullbostxo.supabase.co'
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVteXdkY2lodHFmdWxsYm9zdHhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5OTE4NTMsImV4cCI6MjA3NDU2Nzg1M30.HeAd7ihf1I8xczt5jFdW-AJVk91x_RD-AbzlPigolqk'
+                
+                log(`   URL: ${supabaseUrl}`, 'success')
+                log(`   Key: ${supabaseKey.substring(0, 20)}... (${supabaseKey.length} chars)`, 'success')
+                log('', 'info')
+                
+                // Step 2: Create client
+                log('Step 2: Creating Supabase Client...', 'info')
+                const supabase = createClient(supabaseUrl, supabaseKey)
+                log('   ✅ Client created successfully', 'success')
+                log('', 'info')
+                
+                // Step 3: Test authentication
+                log('Step 3: Testing Authentication...', 'info')
+                log(`   Email: ${email}`, 'info')
+                log('   Attempting sign in...', 'info')
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                })
+                
+                if (error) {
+                    log(`   ❌ Authentication failed: ${error.message}`, 'error')
+                    log(`   Error code: ${error.status}`, 'error')
+                    testBtn.disabled = false
+                    return
+                }
+                
+                log('   ✅ Authentication successful!', 'success')
+                log(`   User ID: ${data.user.id}`, 'success')
+                log(`   Email: ${data.user.email}`, 'success')
+                log('', 'info')
+                
+                // Step 4: Test profile query
+                log('Step 4: Fetching User Profile...', 'info')
+                const { data: profile, error: profileError } = await supabase
+                    .from('em_profiles')
+                    .select('role, full_name')
+                    .eq('id', data.user.id)
+                    .maybeSingle()
+                
+                if (profileError) {
+                    log(`   ❌ Profile query failed: ${profileError.message}`, 'error')
+                    log(`   Error code: ${profileError.code}`, 'error')
+                    testBtn.disabled = false
+                    return
+                }
+                
+                if (!profile) {
+                    log('   ⚠️  No profile found for this user', 'warning')
+                    log('   This user may not have a profile in em_profiles table', 'warning')
+                } else {
+                    log('   ✅ Profile fetched successfully!', 'success')
+                    log(`   Role: ${profile.role || 'NOT SET'}`, 'success')
+                    log(`   Name: ${profile.full_name || 'NOT SET'}`, 'success')
+                }
+                log('', 'info')
+                
+                // Step 5: Determine redirect
+                log('Step 5: Determining Redirect Path...', 'info')
+                const redirectPath = profile?.role === 'admin' ? '/admin' : '/dashboard'
+                log(`   Redirect path: ${redirectPath}`, 'success')
+                log('', 'info')
+                
+                // Step 6: Test complete
+                log('=== TEST COMPLETE ===', 'success')
+                log('', 'info')
+                log('✅ Supabase connection is working correctly!', 'success')
+                log('✅ Authentication is working correctly!', 'success')
+                if (profile) {
+                    log('✅ Profile query is working correctly!', 'success')
+                }
+                log('', 'info')
+                log('You can now close this page and try logging in through the main app.', 'info')
+                
+                // Sign out
+                await supabase.auth.signOut()
+                log('', 'info')
+                log('(Automatically signed out for security)', 'info')
+                
+            } catch (err) {
+                log(`❌ Unexpected error: ${err.message}`, 'error')
+                console.error('Full error:', err)
+            }
+            
+            testBtn.disabled = false
+        }
+    </script>
+</body>
+</html>
+
