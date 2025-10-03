@@ -9,14 +9,14 @@ import { EnhancedAttendeeDashboard } from '@/components/dashboard/attendee/enhan
 import { ProfessionalSpeakerDashboard } from '@/components/dashboard/speaker/professional-speaker-dashboard'
 
 export default function DashboardPage() {
-  const { user, loading } = useAuth()
+  const { user, loading, role } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (user?.user_metadata?.role === 'admin') {
+    if (role === 'admin') {
       router.replace('/admin')
     }
-  }, [user, router])
+  }, [role, router])
 
   if (loading) {
     return (
@@ -45,8 +45,6 @@ export default function DashboardPage() {
       </div>
     )
   }
-
-  const role = (user.user_metadata?.role as 'attendee' | 'speaker' | 'admin') || 'attendee'
 
   // Use enhanced dashboard for both attendees and speakers
   if (role === 'speaker') {

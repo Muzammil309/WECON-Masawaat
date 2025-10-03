@@ -56,11 +56,11 @@ export async function GET(request: NextRequest) {
     const { data: counts } = await supabase
       .from('badge_print_queue')
       .select('status')
-    
-    const total_pending = counts?.filter(c => c.status === 'pending').length || 0
-    const total_printing = counts?.filter(c => c.status === 'printing').length || 0
-    const total_completed = counts?.filter(c => c.status === 'completed').length || 0
-    const total_failed = counts?.filter(c => c.status === 'failed').length || 0
+
+    const total_pending = counts?.filter((c: { status: string }) => c.status === 'pending').length || 0
+    const total_printing = counts?.filter((c: { status: string }) => c.status === 'printing').length || 0
+    const total_completed = counts?.filter((c: { status: string }) => c.status === 'completed').length || 0
+    const total_failed = counts?.filter((c: { status: string }) => c.status === 'failed').length || 0
     
     const response: BadgeQueueStatusResponse = {
       total_pending,

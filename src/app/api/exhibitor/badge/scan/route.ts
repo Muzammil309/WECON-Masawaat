@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
         ticket_tier: ticketTier?.name || null
       },
       already_captured: !!previousCapture,
-      previous_capture: previousCapture
+      previous_capture: previousCapture ?? undefined
     })
 
   } catch (error) {
