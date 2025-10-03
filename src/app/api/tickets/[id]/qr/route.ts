@@ -109,8 +109,9 @@ export async function GET(
       })
     } else if (format === 'buffer' || format === 'png') {
       const buffer = await generateQRCodeBuffer(qrString, { width })
-      
-      return new NextResponse(buffer, {
+
+      // Convert Buffer to Uint8Array for NextResponse compatibility
+      return new NextResponse(new Uint8Array(buffer), {
         headers: {
           'Content-Type': 'image/png',
           'Cache-Control': 'public, max-age=31536000, immutable'

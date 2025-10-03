@@ -61,21 +61,22 @@ export async function addOfflineCheckIn(checkIn: OfflineCheckInRecord): Promise<
  */
 export async function getUnsyncedCheckIns(stationId?: string): Promise<OfflineCheckInRecord[]> {
   const db = await initDB()
-  
+
   return new Promise((resolve, reject) => {
     const transaction = db.transaction([CHECK_IN_STORE], 'readonly')
     const store = transaction.objectStore(CHECK_IN_STORE)
     const index = store.index('synced')
-    const request = index.getAll(false)
-    
+    // Use IDBKeyRange to query for false values in the synced index
+    const request = index.getAll(IDBKeyRange.only(0))
+
     request.onsuccess = () => {
       let results = request.result as OfflineCheckInRecord[]
-      
+
       // Filter by station if provided
       if (stationId) {
         results = results.filter(r => r.station_id === stationId)
       }
-      
+
       resolve(results)
     }
     request.onerror = () => reject(request.error)
