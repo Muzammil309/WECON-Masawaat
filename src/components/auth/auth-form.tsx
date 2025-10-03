@@ -64,6 +64,17 @@ export function AuthForm() {
 
     try {
       console.log('=== LOGIN FLOW STARTED ===')
+      console.log('Environment:', process.env.NODE_ENV)
+      console.log('Current URL:', window.location.href)
+
+      // Check if Supabase client is properly initialized
+      if (!supabase) {
+        console.error('❌ Supabase client is not initialized')
+        toast.error('Authentication service is not configured. Please contact support.')
+        setIsLoading(false)
+        return
+      }
+
       console.log('Step 1: Attempting signin with Supabase...')
       console.log('Email:', email)
 
@@ -74,7 +85,9 @@ export function AuthForm() {
 
       console.log('Step 2: Signin response received')
       console.log('Error:', error)
+      console.log('Error details:', error ? JSON.stringify(error, null, 2) : 'None')
       console.log('Data:', data ? 'User data received' : 'No data')
+      console.log('User:', data?.user ? `ID: ${data.user.id}` : 'No user')
 
       if (error) {
         console.error('❌ Signin error:', error)
@@ -99,15 +112,26 @@ export function AuthForm() {
 
       console.log('Step 3: Fetching user profile for role-based redirect...')
 
-      const { data: profile, error: profileError } = await supabase
-        .from('em_profiles')
-        .select('role')
-        .eq('id', data.user.id)
-        .maybeSingle()
+      let profile = null
+      let profileError = null
+
+      try {
+        const result = await supabase
+          .from('em_profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .maybeSingle()
+
+        profile = result.data
+        profileError = result.error
+      } catch (fetchError) {
+        console.error('❌ Profile fetch exception:', fetchError)
+        profileError = fetchError
+      }
 
       console.log('Step 4: Profile query result')
       console.log('Profile:', profile)
-      console.log('Profile Error:', profileError)
+      console.log('Profile Error:', profileError ? JSON.stringify(profileError, null, 2) : 'None')
 
       if (profileError) {
         console.error('⚠️ Profile fetch error:', profileError)
@@ -132,6 +156,8 @@ export function AuthForm() {
 
       console.log('Step 5: Final redirect path determined:', redirectPath)
       console.log('Step 6: Initiating redirect...')
+      console.log('Current location:', window.location.href)
+      console.log('Target location:', redirectPath)
 
       // Use window.location.href for immediate, reliable redirect
       // This is the most reliable method and works in all scenarios
@@ -140,6 +166,7 @@ export function AuthForm() {
       // Set a safety timeout in case redirect fails
       const safetyTimeout = setTimeout(() => {
         console.warn('⚠️ Redirect timeout - showing manual option')
+        console.warn('This usually means the redirect is blocked or taking too long')
         setIsLoading(false)
         toast.error('Automatic redirect failed. Click the button below to continue.')
 
@@ -149,7 +176,13 @@ export function AuthForm() {
         continueBtn.className = 'mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors'
         continueBtn.onclick = () => {
           console.log('Manual redirect button clicked')
-          window.location.href = redirectPath
+          console.log('Attempting manual redirect to:', redirectPath)
+          try {
+            window.location.href = redirectPath
+          } catch (err) {
+            console.error('Manual redirect also failed:', err)
+            toast.error('Unable to redirect. Please navigate manually to: ' + redirectPath)
+          }
         }
 
         const form = document.querySelector('form')
@@ -162,10 +195,17 @@ export function AuthForm() {
       setTimeout(() => {
         try {
           console.log('Executing redirect to:', redirectPath)
+          console.log('Redirect method: window.location.href')
           clearTimeout(safetyTimeout) // Clear safety timeout if redirect succeeds
+
+          // Try redirect
           window.location.href = redirectPath
+
+          // If we get here, redirect was initiated
+          console.log('Redirect initiated successfully')
         } catch (redirectError) {
-          console.error('❌ Redirect failed:', redirectError)
+          console.error('❌ Redirect failed with exception:', redirectError)
+          console.error('Error details:', JSON.stringify(redirectError, null, 2))
           clearTimeout(safetyTimeout)
           setIsLoading(false)
           toast.error('Redirect failed. Please try again or contact support.')

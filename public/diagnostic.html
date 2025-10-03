@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Diagnostic Tool</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        .container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #60a5fa;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+        .status-card {
+            background: #334155;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #64748b;
+        }
+        .status-card.success {
+            border-left-color: #10b981;
+        }
+        .status-card.error {
+            border-left-color: #ef4444;
+        }
+        .status-card.warning {
+            border-left-color: #f59e0b;
+        }
+        .status-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-icon {
+            font-size: 24px;
+        }
+        .status-detail {
+            color: #cbd5e1;
+            margin: 5px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .code-block {
+            background: #0f172a;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .fix-instructions {
+            background: #1e293b;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .fix-instructions h3 {
+            color: #60a5fa;
+            margin-top: 0;
+        }
+        .fix-instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .fix-instructions li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Production Diagnostic Tool</h1>
+        <p class="subtitle">Check if Supabase environment variables are configured correctly</p>
+        
+        <div id="results"></div>
+        
+        <button onclick="runDiagnostic()">Run Diagnostic</button>
+    </div>
+
+    <script>
+        function runDiagnostic() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            // Check if we're in production
+            const isProduction = window.location.hostname !== 'localhost';
+            const currentUrl = window.location.href;
+
+            // Try to access environment variables (they should be in window for Next.js)
+            const supabaseUrl = process?.env?.NEXT_PUBLIC_SUPABASE_URL || 
+                               window?.ENV?.NEXT_PUBLIC_SUPABASE_URL ||
+                               'NOT_FOUND';
+            
+            const supabaseKey = process?.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
+                               window?.ENV?.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+                               'NOT_FOUND';
+
+            const hasUrl = supabaseUrl !== 'NOT_FOUND' && supabaseUrl !== undefined;
+            const hasKey = supabaseKey !== 'NOT_FOUND' && supabaseKey !== undefined;
+
+            // Environment Check
+            let envHtml = `
+                <div class="status-card ${isProduction ? 'warning' : 'success'}">
+                    <div class="status-title">
+                        <span class="status-icon">${isProduction ? '🌐' : '💻'}</span>
+                        Environment: ${isProduction ? 'Production' : 'Development'}
+                    </div>
+                    <div class="status-detail">Current URL: ${currentUrl}</div>
+                    <div class="status-detail">Hostname: ${window.location.hostname}</div>
+                </div>
+            `;
+
+            // Supabase URL Check
+            let urlHtml = `
+                <div class="status-card ${hasUrl ? 'success' : 'error'}">
+                    <div class="status-title">
+                        <span class="status-icon">${hasUrl ? '✅' : '❌'}</span>
+                        Supabase URL
+                    </div>
+                    <div class="status-detail">Status: ${hasUrl ? 'Configured' : 'NOT CONFIGURED'}</div>
+                    ${hasUrl ? `<div class="status-detail">Value: ${supabaseUrl.substring(0, 30)}...</div>` : ''}
+                    ${!hasUrl ? '<div class="status-detail" style="color: #ef4444;">⚠️ NEXT_PUBLIC_SUPABASE_URL is missing!</div>' : ''}
+                </div>
+            `;
+
+            // Supabase Key Check
+            let keyHtml = `
+                <div class="status-card ${hasKey ? 'success' : 'error'}">
+                    <div class="status-title">
+                        <span class="status-icon">${hasKey ? '✅' : '❌'}</span>
+                        Supabase Anon Key
+                    </div>
+                    <div class="status-detail">Status: ${hasKey ? 'Configured' : 'NOT CONFIGURED'}</div>
+                    ${hasKey ? `<div class="status-detail">Length: ${supabaseKey.length} characters</div>` : ''}
+                    ${!hasKey ? '<div class="status-detail" style="color: #ef4444;">⚠️ NEXT_PUBLIC_SUPABASE_ANON_KEY is missing!</div>' : ''}
+                </div>
+            `;
+
+            // Overall Status
+            const allGood = hasUrl && hasKey;
+            let statusHtml = `
+                <div class="status-card ${allGood ? 'success' : 'error'}">
+                    <div class="status-title">
+                        <span class="status-icon">${allGood ? '🎉' : '🚨'}</span>
+                        Overall Status
+                    </div>
+                    <div class="status-detail">
+                        ${allGood ? 
+                            '✅ All environment variables are configured correctly!' : 
+                            '❌ Environment variables are missing or misconfigured'}
+                    </div>
+                    <div class="status-detail">
+                        ${allGood ? 
+                            'Login and authentication should work.' : 
+                            'Login will NOT work until environment variables are added.'}
+                    </div>
+                </div>
+            `;
+
+            // Fix Instructions (if needed)
+            let fixHtml = '';
+            if (!allGood && isProduction) {
+                fixHtml = `
+                    <div class="fix-instructions">
+                        <h3>🔧 How to Fix This</h3>
+                        <ol>
+                            <li>Go to <strong>Vercel Dashboard</strong> → Your Project → <strong>Settings</strong> → <strong>Environment Variables</strong></li>
+                            <li>Add these environment variables:
+                                <div class="code-block">
+NEXT_PUBLIC_SUPABASE_URL=https://umywdcihtqfullbostxo.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVteXdkY2lodHFmdWxsYm9zdHhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5OTE4NTMsImV4cCI6MjA3NDU2Nzg1M30.HeAd7ihf1I8xczt5jFdW-AJVk91x_RD-AbzlPigolqk
+                                </div>
+                            </li>
+                            <li>Make sure to check <strong>Production</strong>, <strong>Preview</strong>, and <strong>Development</strong> for both variables</li>
+                            <li>Click <strong>Save</strong></li>
+                            <li>Go to <strong>Deployments</strong> tab and click <strong>Redeploy</strong></li>
+                            <li>Wait 2-3 minutes for deployment to complete</li>
+                            <li>Clear your browser cache and run this diagnostic again</li>
+                        </ol>
+                        <p style="margin-top: 20px;">
+                            📖 For detailed instructions, see: <code>VERCEL_ENV_SETUP_GUIDE.md</code>
+                        </p>
+                    </div>
+                `;
+            }
+
+            resultsDiv.innerHTML = envHtml + urlHtml + keyHtml + statusHtml + fixHtml;
+        }
+
+        // Auto-run on page load
+        window.addEventListener('load', runDiagnostic);
+    </script>
+</body>
+</html>
+
