@@ -137,9 +137,39 @@ export function AuthForm() {
       // This is the most reliable method and works in all scenarios
       console.log('🚀 Redirecting to:', redirectPath)
 
-      // Small delay to ensure toast message is visible
+      // Set a safety timeout in case redirect fails
+      const safetyTimeout = setTimeout(() => {
+        console.warn('⚠️ Redirect timeout - showing manual option')
+        setIsLoading(false)
+        toast.error('Automatic redirect failed. Click the button below to continue.')
+
+        // Show manual redirect button as fallback
+        const continueBtn = document.createElement('button')
+        continueBtn.textContent = 'Continue to Dashboard →'
+        continueBtn.className = 'mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors'
+        continueBtn.onclick = () => {
+          console.log('Manual redirect button clicked')
+          window.location.href = redirectPath
+        }
+
+        const form = document.querySelector('form')
+        if (form && !form.querySelector('button[class*="bg-blue-600"]')) {
+          form.appendChild(continueBtn)
+        }
+      }, 3000) // 3 second safety timeout
+
+      // Small delay to ensure toast message is visible, then redirect
       setTimeout(() => {
-        window.location.href = redirectPath
+        try {
+          console.log('Executing redirect to:', redirectPath)
+          clearTimeout(safetyTimeout) // Clear safety timeout if redirect succeeds
+          window.location.href = redirectPath
+        } catch (redirectError) {
+          console.error('❌ Redirect failed:', redirectError)
+          clearTimeout(safetyTimeout)
+          setIsLoading(false)
+          toast.error('Redirect failed. Please try again or contact support.')
+        }
       }, 500)
 
     } catch (error) {
