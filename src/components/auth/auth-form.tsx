@@ -106,6 +106,26 @@ export function AuthForm() {
       console.log('✅ Authentication successful')
       console.log('User ID:', data.user.id)
       toast.success('Welcome back!')
+      // Sync server-side auth cookies (required for SSR-protected routes in production)
+      try {
+        const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
+        console.log('Session fetch after signin:', sessionErr || sessionData?.session ? 'OK' : 'No session')
+        const access_token = sessionData?.session?.access_token
+        const refresh_token = sessionData?.session?.refresh_token
+        if (access_token && refresh_token) {
+          const resp = await fetch('/auth/callback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token, refresh_token })
+          })
+          console.log('Server cookie sync status:', resp.ok)
+        } else {
+          console.warn('No tokens found to sync server cookies')
+        }
+      } catch (syncErr) {
+        console.error('Cookie sync failed:', syncErr)
+      }
+
 
       // Determine role-based redirect
       let redirectPath = '/dashboard' // Default for attendees and speakers

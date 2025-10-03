@@ -46,3 +46,22 @@ export async function GET(request: Request) {
   // return the user to an error page with instructions
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
+
+
+export async function POST(request: Request) {
+  try {
+    const { access_token, refresh_token } = await request.json()
+    if (!access_token || !refresh_token) {
+      return NextResponse.json({ ok: false, error: 'Missing tokens' }, { status: 400 })
+    }
+
+    const supabase = await createClient()
+    const { data, error } = await supabase.auth.setSession({ access_token, refresh_token })
+    if (error) {
+      return NextResponse.json({ ok: false, error: error.message }, { status: 400 })
+    }
+    return NextResponse.json({ ok: true, user: !!data?.user, expires_at: data?.session?.expires_at ?? null })
+  } catch (e: any) {
+    return NextResponse.json({ ok: false, error: e?.message || 'Unknown error' }, { status: 500 })
+  }
+}
