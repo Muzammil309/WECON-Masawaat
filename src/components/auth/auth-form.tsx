@@ -78,10 +78,48 @@ export function AuthForm() {
       console.log('Step 1: Attempting signin with Supabase...')
       console.log('Email:', email)
 
-      const { error, data } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      let signInResult
+      try {
+        // Create timeout promise (5 seconds)
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('SignIn timeout after 5 seconds')), 5000)
+        )
+
+        // Create signin promise
+        const signInPromise = supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+
+        // Race between signin and timeout
+        console.log('Step 1.3: Racing signin vs timeout...')
+        signInResult = await Promise.race([signInPromise, timeoutPromise]) as any
+        console.log('Step 1.5: SignIn call completed')
+      } catch (signInError) {
+        console.error('❌ SignIn call threw exception:', signInError)
+
+        // Check if it's a timeout error
+        if (signInError instanceof Error && signInError.message.includes('timeout')) {
+          console.error('⚠️ SignIn timed out - checking if auth succeeded anyway...')
+
+          // Check if user is actually authenticated despite timeout
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session?.user) {
+            console.log('✅ User is authenticated despite timeout! Continuing...')
+            signInResult = { data: { user: session.user, session }, error: null }
+          } else {
+            toast.error('Login timed out. Please try again.')
+            setIsLoading(false)
+            return
+          }
+        } else {
+          toast.error(`Login failed: ${signInError instanceof Error ? signInError.message : 'Unknown error'}`)
+          setIsLoading(false)
+          return
+        }
+      }
+
+      const { error, data } = signInResult
 
       console.log('Step 2: Signin response received')
       console.log('Error:', error)
@@ -222,8 +260,14 @@ export function AuthForm() {
 
     } catch (error) {
       console.error('❌ Unexpected signin error:', error)
+      console.error('Error type:', typeof error)
+      console.error('Error constructor:', error?.constructor?.name)
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack')
+      console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2))
       toast.error(`An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`)
       setIsLoading(false)
+    } finally {
+      console.log('=== LOGIN FLOW ENDED ===')
     }
   }
 
