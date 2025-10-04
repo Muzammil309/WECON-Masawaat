@@ -106,46 +106,63 @@ export function AuthForm() {
       console.log('✅ Authentication successful')
       console.log('User ID:', data.user.id)
 
-      // Sync server-side auth cookies - MUST complete before redirect
-      // This ensures the session is available when the dashboard loads
-      try {
-        console.log('Step 2.5: Syncing server-side cookies...')
-        const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
-        console.log('Session fetch after signin:', sessionErr || sessionData?.session ? 'OK' : 'No session')
+      // Sync server-side auth cookies with timeout
+      // Use Promise.race to ensure we don't hang forever
+      const syncServerCookies = async () => {
+        try {
+          console.log('Step 2.5: Syncing server-side cookies...')
+          const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
+          console.log('Session fetch after signin:', sessionErr || sessionData?.session ? 'OK' : 'No session')
 
-        const access_token = sessionData?.session?.access_token
-        const refresh_token = sessionData?.session?.refresh_token
+          const access_token = sessionData?.session?.access_token
+          const refresh_token = sessionData?.session?.refresh_token
 
-        if (access_token && refresh_token) {
-          console.log('Syncing server cookies via /auth/callback...')
-          const resp = await fetch('/auth/callback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ access_token, refresh_token })
-          })
+          if (access_token && refresh_token) {
+            console.log('Syncing server cookies via /auth/callback...')
 
-          console.log('Server cookie sync response:', {
-            status: resp.status,
-            ok: resp.ok,
-            statusText: resp.statusText
-          })
+            // Create timeout promise
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Cookie sync timeout after 3 seconds')), 3000)
+            )
 
-          if (!resp.ok) {
-            console.error('⚠️ Cookie sync failed with status:', resp.status)
-            const errorText = await resp.text()
-            console.error('Error response:', errorText)
-            // Continue anyway - client-side auth should still work
+            // Create fetch promise
+            const fetchPromise = fetch('/auth/callback', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ access_token, refresh_token })
+            })
+
+            // Race between fetch and timeout
+            const resp = await Promise.race([fetchPromise, timeoutPromise]) as Response
+
+            console.log('Server cookie sync response:', {
+              status: resp.status,
+              ok: resp.ok,
+              statusText: resp.statusText
+            })
+
+            if (!resp.ok) {
+              console.error('⚠️ Cookie sync failed with status:', resp.status)
+              const errorText = await resp.text()
+              console.error('Error response:', errorText)
+            } else {
+              const result = await resp.json()
+              console.log('✅ Cookie sync successful:', result)
+            }
           } else {
-            const result = await resp.json()
-            console.log('✅ Cookie sync successful:', result)
+            console.warn('⚠️ No tokens found to sync server cookies')
           }
-        } else {
-          console.warn('⚠️ No tokens found to sync server cookies')
+        } catch (syncErr) {
+          console.error('⚠️ Cookie sync failed:', syncErr)
+          // This is OK - client-side auth will still work
         }
-      } catch (syncErr) {
-        console.error('⚠️ Cookie sync failed:', syncErr)
-        // Continue anyway - client-side auth should still work
       }
+
+      // Start cookie sync but don't wait for it
+      // The client-side session is already established
+      syncServerCookies().catch(err => {
+        console.error('Background cookie sync error:', err)
+      })
 
       // Determine role-based redirect
       let redirectPath = '/dashboard' // Default for attendees and speakers
@@ -194,15 +211,14 @@ export function AuthForm() {
       // Show success message
       toast.success('Welcome back!')
 
+      // Small delay to ensure auth state is propagated
+      // Then redirect and reset loading state
+      await new Promise(resolve => setTimeout(resolve, 300))
+
       // Use Next.js router for client-side navigation
       console.log('🚀 Redirecting to:', redirectPath)
+      setIsLoading(false)
       router.push(redirectPath)
-
-      // Reset loading state after initiating redirect
-      // Small delay to allow the redirect to start
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 100)
 
     } catch (error) {
       console.error('❌ Unexpected signin error:', error)
