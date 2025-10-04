@@ -14,12 +14,23 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
+    console.log('📊 Dashboard: Auth state:', {
+      hasUser: !!user,
+      userId: user?.id,
+      loading,
+      role
+    })
+  }, [user, loading, role])
+
+  useEffect(() => {
     if (role === 'admin') {
+      console.log('📊 Dashboard: Admin detected, redirecting to /admin')
       router.replace('/admin')
     }
   }, [role, router])
 
   if (loading) {
+    console.log('📊 Dashboard: Still loading...')
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
         <div className="text-center space-y-4">
@@ -31,6 +42,7 @@ export default function DashboardPage() {
   }
 
   if (!user) {
+    console.log('📊 Dashboard: No user, showing access denied')
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center">
         <div className="text-center space-y-6 p-8 bg-white backdrop-blur-xl rounded-2xl border border-slate-200 shadow-2xl max-w-md mx-auto">
@@ -49,9 +61,11 @@ export default function DashboardPage() {
 
   // Use modern dashboard for attendees and speakers
   if (role === 'speaker') {
+    console.log('📊 Dashboard: Rendering speaker dashboard')
     return <ProfessionalSpeakerDashboard />
   }
 
+  console.log('📊 Dashboard: Rendering attendee dashboard')
   return (
     <DashboardShell
       role="attendee"

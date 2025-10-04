@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useAuth } from '@/components/providers/auth-provider'
 import { MyTickets } from '@/components/tickets/my-tickets'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,7 +11,7 @@ import { Ticket, Calendar, CheckCircle2 } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 
-export default function TicketsPage() {
+function TicketsPageContent() {
   const { user } = useAuth()
   const searchParams = useSearchParams()
   const [mounted, setMounted] = useState(false)
@@ -25,7 +25,7 @@ export default function TicketsPage() {
 
     if (success === 'true' && sessionId) {
       toast.success('Payment successful! Your tickets have been generated.')
-      
+
       // Clean up URL
       window.history.replaceState({}, '', '/dashboard/tickets')
     }
@@ -150,6 +150,22 @@ export default function TicketsPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function TicketsPage() {
+  return (
+    <Suspense fallback={
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-8 w-48 mb-2" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+        <Skeleton className="h-96 w-full" />
+      </div>
+    }>
+      <TicketsPageContent />
+    </Suspense>
   )
 }
 

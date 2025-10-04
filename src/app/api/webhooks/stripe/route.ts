@@ -3,17 +3,24 @@ import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
 import { headers } from 'next/headers'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-11-20.acacia',
-})
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not set')
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2025-08-27.basil',
+  })
+}
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
-
-// Use service role client for webhook (bypasses RLS)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+const getSupabaseAdmin = () => {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('Supabase environment variables are not set')
+  }
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  )
+}
 
 /**
  * POST /api/webhooks/stripe
@@ -21,6 +28,16 @@ const supabaseAdmin = createClient(
  */
 export async function POST(request: NextRequest) {
   try {
+    const stripe = getStripe()
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+
+    if (!webhookSecret) {
+      return NextResponse.json(
+        { error: 'Webhook secret not configured' },
+        { status: 500 }
+      )
+    }
+
     const body = await request.text()
     const headersList = await headers()
     const signature = headersList.get('stripe-signature')
@@ -83,6 +100,7 @@ export async function POST(request: NextRequest) {
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   console.log('Processing checkout.session.completed:', session.id)
 
+  const supabaseAdmin = getSupabaseAdmin()
   const orderId = session.client_reference_id
   if (!orderId) {
     console.error('No order ID in checkout session')
@@ -180,6 +198,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
   console.log('Processing payment_intent.succeeded:', paymentIntent.id)
 
+  const supabaseAdmin = getSupabaseAdmin()
   // Update order payment status
   await supabaseAdmin
     .from('em_orders')
@@ -196,6 +215,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
 async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
   console.log('Processing payment_intent.payment_failed:', paymentIntent.id)
 
+  const supabaseAdmin = getSupabaseAdmin()
   // Update order payment status
   await supabaseAdmin
     .from('em_orders')
@@ -212,6 +232,7 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
 async function handleChargeRefunded(charge: Stripe.Charge) {
   console.log('Processing charge.refunded:', charge.id)
 
+  const supabaseAdmin = getSupabaseAdmin()
   const paymentIntentId = charge.payment_intent as string
 
   // Update order status

@@ -106,45 +106,46 @@ export function AuthForm() {
       console.log('✅ Authentication successful')
       console.log('User ID:', data.user.id)
 
-      // Sync server-side auth cookies in background (non-blocking)
-      // This is needed for SSR-protected routes but shouldn't block the redirect
-      const syncServerCookies = async () => {
-        try {
-          const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
-          console.log('Session fetch after signin:', sessionErr || sessionData?.session ? 'OK' : 'No session')
-          const access_token = sessionData?.session?.access_token
-          const refresh_token = sessionData?.session?.refresh_token
-          if (access_token && refresh_token) {
-            console.log('Syncing server cookies via /auth/callback...')
-            const resp = await fetch('/auth/callback', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ access_token, refresh_token })
-            })
-            console.log('Server cookie sync response:', {
-              status: resp.status,
-              ok: resp.ok,
-              statusText: resp.statusText
-            })
+      // Sync server-side auth cookies - MUST complete before redirect
+      // This ensures the session is available when the dashboard loads
+      try {
+        console.log('Step 2.5: Syncing server-side cookies...')
+        const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
+        console.log('Session fetch after signin:', sessionErr || sessionData?.session ? 'OK' : 'No session')
 
-            if (!resp.ok) {
-              console.error('Cookie sync failed with status:', resp.status)
-              const errorText = await resp.text()
-              console.error('Error response:', errorText)
-            } else {
-              const result = await resp.json()
-              console.log('Cookie sync result:', result)
-            }
+        const access_token = sessionData?.session?.access_token
+        const refresh_token = sessionData?.session?.refresh_token
+
+        if (access_token && refresh_token) {
+          console.log('Syncing server cookies via /auth/callback...')
+          const resp = await fetch('/auth/callback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token, refresh_token })
+          })
+
+          console.log('Server cookie sync response:', {
+            status: resp.status,
+            ok: resp.ok,
+            statusText: resp.statusText
+          })
+
+          if (!resp.ok) {
+            console.error('⚠️ Cookie sync failed with status:', resp.status)
+            const errorText = await resp.text()
+            console.error('Error response:', errorText)
+            // Continue anyway - client-side auth should still work
           } else {
-            console.warn('No tokens found to sync server cookies')
+            const result = await resp.json()
+            console.log('✅ Cookie sync successful:', result)
           }
-        } catch (syncErr) {
-          console.error('Cookie sync failed (non-critical):', syncErr)
+        } else {
+          console.warn('⚠️ No tokens found to sync server cookies')
         }
+      } catch (syncErr) {
+        console.error('⚠️ Cookie sync failed:', syncErr)
+        // Continue anyway - client-side auth should still work
       }
-
-      // Start cookie sync in background (don't await)
-      syncServerCookies()
 
       // Determine role-based redirect
       let redirectPath = '/dashboard' // Default for attendees and speakers
@@ -196,6 +197,12 @@ export function AuthForm() {
       // Use Next.js router for client-side navigation
       console.log('🚀 Redirecting to:', redirectPath)
       router.push(redirectPath)
+
+      // Reset loading state after initiating redirect
+      // Small delay to allow the redirect to start
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 100)
 
     } catch (error) {
       console.error('❌ Unexpected signin error:', error)

@@ -35,13 +35,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let mounted = true
     const supabase = createClient()
 
+    console.log('🔐 AuthProvider: Initializing...')
+
     // Get initial session
     const getInitialSession = async () => {
       try {
+        console.log('🔐 AuthProvider: Fetching initial session...')
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
+        console.log('🔐 AuthProvider: Session fetch result:', {
+          hasSession: !!session,
+          hasUser: !!session?.user,
+          error: sessionError ? sessionError.message : 'none'
+        })
+
         if (sessionError) {
-          console.error('Session error:', sessionError)
+          console.error('❌ AuthProvider: Session error:', sessionError)
           if (mounted) {
             setUser(null)
             setRole(null)
@@ -54,35 +63,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (mounted) {
           setUser(authUser)
+          console.log('🔐 AuthProvider: User set:', authUser ? `ID: ${authUser.id}` : 'null')
         }
 
         // fetch role from em_profiles
         if (authUser && mounted) {
           try {
+            console.log('🔐 AuthProvider: Fetching role for user:', authUser.id)
             const { data, error } = await supabase
               .from('em_profiles')
               .select('role')
               .eq('id', authUser.id)
               .maybeSingle()
 
+            console.log('🔐 AuthProvider: Role fetch result:', {
+              role: data?.role,
+              error: error ? error.message : 'none'
+            })
+
             if (mounted) {
               if (!error && data) {
-                setRole((data.role as any) ?? 'attendee')
+                const userRole = (data.role as any) ?? 'attendee'
+                setRole(userRole)
+                console.log('✅ AuthProvider: Role set to:', userRole)
               } else {
                 setRole('attendee')
+                console.log('⚠️ AuthProvider: No role found, defaulting to attendee')
               }
             }
           } catch (e) {
-            console.error('Role fetch error:', e)
+            console.error('❌ AuthProvider: Role fetch error:', e)
             if (mounted) {
               setRole('attendee')
+              console.log('⚠️ AuthProvider: Error fetching role, defaulting to attendee')
             }
           }
         } else if (mounted) {
           setRole(null)
+          console.log('🔐 AuthProvider: No user, role set to null')
         }
       } catch (error) {
-        console.error('Failed to get initial session:', error)
+        console.error('❌ AuthProvider: Failed to get initial session:', error)
         if (mounted) {
           setUser(null)
           setRole(null)
@@ -90,6 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } finally {
         if (mounted) {
           setLoading(false)
+          console.log('✅ AuthProvider: Loading complete, loading set to false')
         }
       }
     }
@@ -98,14 +120,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event: any, session: any) => {
+      async (event: any, session: any) => {
         if (!mounted) return
+
+        console.log('🔐 AuthProvider: Auth state changed:', event)
 
         const authUser = session?.user ?? null
         setUser(authUser)
         setLoading(false)
+        console.log('🔐 AuthProvider: Auth change - loading set to false')
 
         if (authUser) {
+          console.log('🔐 AuthProvider: User authenticated:', authUser.id)
+
           // Ensure profile row exists
           try {
             const { error: upsertError } = await supabase
@@ -117,13 +144,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 avatar_url: authUser.user_metadata?.avatar_url || null,
               })
               .select()
-            if (upsertError) console.error('Error creating/updating profile:', upsertError)
+            if (upsertError) {
+              console.error('❌ AuthProvider: Error creating/updating profile:', upsertError)
+            } else {
+              console.log('✅ AuthProvider: Profile upserted successfully')
+            }
           } catch (error) {
-            console.error('Failed to create/update profile:', error)
+            console.error('❌ AuthProvider: Failed to create/update profile:', error)
           }
 
           // Load role
           try {
+            console.log('🔐 AuthProvider: Fetching role after auth change...')
             const { data, error } = await supabase
               .from('em_profiles')
               .select('role')
@@ -131,19 +163,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .maybeSingle()
             if (mounted) {
               if (!error && data) {
-                setRole((data.role as any) ?? 'attendee')
+                const userRole = (data.role as any) ?? 'attendee'
+                setRole(userRole)
+                console.log('✅ AuthProvider: Role set to:', userRole)
               } else {
                 setRole('attendee')
+                console.log('⚠️ AuthProvider: No role found, defaulting to attendee')
               }
             }
           } catch (e) {
-            console.error('Role fetch error:', e)
+            console.error('❌ AuthProvider: Role fetch error:', e)
             if (mounted) {
               setRole('attendee')
             }
           }
         } else if (mounted) {
           setRole(null)
+          console.log('🔐 AuthProvider: User signed out, role set to null')
         }
       }
     )

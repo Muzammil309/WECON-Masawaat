@@ -3,9 +3,14 @@ import { createClient } from '@/lib/supabase/server'
 import Stripe from 'stripe'
 import type { CreateCheckoutRequest, CreateCheckoutResponse, StripeCheckoutMetadata } from '@/types/ticketing'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-11-20.acacia',
-})
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not set')
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2025-08-27.basil',
+  })
+}
 
 /**
  * POST /api/checkout/create
@@ -13,6 +18,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
  */
 export async function POST(request: NextRequest) {
   try {
+    const stripe = getStripe()
     const supabase = await createClient()
     
     // Check authentication
@@ -165,13 +171,13 @@ export async function POST(request: NextRequest) {
       .single()
 
     // Create Stripe checkout session
-    const checkoutMetadata: StripeCheckoutMetadata = {
+    const checkoutMetadata: Record<string, string> = {
       user_id: user.id,
       event_id,
       ticket_type_id,
       quantity: quantity.toString(),
-      discount_code_id: discountCodeId || undefined,
-      seat_ids: seat_ids?.join(','),
+      discount_code_id: discountCodeId || '',
+      seat_ids: seat_ids?.join(',') || '',
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -198,7 +204,7 @@ export async function POST(request: NextRequest) {
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/events/${event_id}?canceled=true`,
       client_reference_id: order.id,
       customer_email: user.email,
-      metadata: checkoutMetadata as any,
+      metadata: checkoutMetadata,
     })
 
     // Update order with Stripe session ID

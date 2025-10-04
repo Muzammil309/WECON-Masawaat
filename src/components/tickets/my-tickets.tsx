@@ -46,7 +46,7 @@ export function MyTickets({ userId }: MyTicketsProps) {
 
       if (ordersError) throw ordersError
 
-      const orderIds = orders?.map(o => o.id) || []
+      const orderIds = orders?.map((o: any) => o.id) || []
 
       if (orderIds.length === 0) {
         setTickets([])
