@@ -62,191 +62,64 @@ export function AuthForm() {
     e.preventDefault()
     setIsLoading(true)
 
+    // Force console output to appear with prefix
+    const LOG = '[🔐 AUTH]'
+
     try {
-      console.log('=== LOGIN FLOW STARTED ===')
-      console.log('Environment:', process.env.NODE_ENV)
-      console.log('Current URL:', window.location.href)
-      console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
-      console.log('Supabase Key (first 20 chars):', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20))
+      console.log(`${LOG} ========================================`)
+      console.log(`${LOG} LOGIN FLOW STARTED`)
+      console.log(`${LOG} ========================================`)
+      console.log(`${LOG} Environment:`, process.env.NODE_ENV)
+      console.log(`${LOG} Current URL:`, window.location.href)
+      console.log(`${LOG} Supabase URL:`, process.env.NEXT_PUBLIC_SUPABASE_URL)
+      console.log(`${LOG} Supabase Key (first 20):`, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20))
+      console.log(`${LOG} Email:`, email)
 
       // Check if Supabase client is properly initialized
       if (!supabase) {
-        console.error('❌ Supabase client is not initialized')
+        console.error(`${LOG} ❌ Supabase client is not initialized`)
         toast.error('Authentication service is not configured. Please contact support.')
         setIsLoading(false)
         return
       }
 
-      console.log('Step 1: Attempting signin with Supabase...')
-      console.log('Email:', email)
+      // SIMPLIFIED APPROACH: Just call signInWithPassword without complex timeout logic
+      // Let Supabase handle its own timeouts
+      console.log(`${LOG} Step 1: Calling signInWithPassword...`)
 
-      let signInResult
-      try {
-        // Create timeout promise (5 seconds)
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('SignIn timeout after 5 seconds')), 5000)
-        )
+      const { error, data } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-        // Create signin promise
-        const signInPromise = supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-
-        // Race between signin and timeout
-        console.log('Step 1.3: Racing signin vs timeout...')
-        signInResult = await Promise.race([signInPromise, timeoutPromise]) as any
-        console.log('Step 1.5: SignIn call completed')
-      } catch (signInError) {
-        console.error('❌ SignIn call threw exception:', signInError)
-
-        // Check if it's a timeout error
-        if (signInError instanceof Error && signInError.message.includes('timeout')) {
-          console.error('⚠️ SignIn timed out - checking if auth succeeded anyway...')
-
-          try {
-            // Add timeout to getSession as well (3 seconds)
-            const sessionTimeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Session check timeout after 3 seconds')), 3000)
-            )
-
-            const sessionPromise = supabase.auth.getSession()
-
-            console.log('Step 1.7: Checking session with timeout...')
-            const sessionResult = await Promise.race([sessionPromise, sessionTimeoutPromise]) as any
-            console.log('Step 1.8: Session check completed')
-            console.log('Session result:', sessionResult?.data?.session ? 'Session found' : 'No session')
-
-            const session = sessionResult?.data?.session
-
-            if (session?.user) {
-              console.log('✅ User is authenticated despite timeout! Continuing...')
-              console.log('User ID from session:', session.user.id)
-              signInResult = { data: { user: session.user, session }, error: null }
-            } else {
-              console.error('❌ No session found after timeout')
-              toast.error('Login timed out. Please try again.')
-              setIsLoading(false)
-              return
-            }
-          } catch (sessionError) {
-            console.error('❌ Session check failed:', sessionError)
-            console.error('Session error type:', typeof sessionError)
-            console.error('Session error message:', sessionError instanceof Error ? sessionError.message : 'Unknown')
-            console.error('Session error stack:', sessionError instanceof Error ? sessionError.stack : 'No stack')
-
-            // Check if it's a timeout or network error
-            if (sessionError instanceof Error) {
-              if (sessionError.message.includes('timeout')) {
-                console.error('⚠️ Session check timed out - possible network issue')
-                toast.error('Connection timeout. Please check your internet and try again.')
-              } else if (sessionError.message.includes('fetch') || sessionError.message.includes('network')) {
-                console.error('⚠️ Network error during session check')
-                toast.error('Network error. Please check your connection and try again.')
-              } else {
-                toast.error('Unable to verify authentication. Please try again.')
-              }
-            } else {
-              toast.error('Unable to verify authentication. Please try again.')
-            }
-
-            setIsLoading(false)
-            return
-          }
-        } else {
-          toast.error(`Login failed: ${signInError instanceof Error ? signInError.message : 'Unknown error'}`)
-          setIsLoading(false)
-          return
-        }
-      }
-
-      const { error, data } = signInResult
-
-      console.log('Step 2: Signin response received')
-      console.log('Error:', error)
-      console.log('Error details:', error ? JSON.stringify(error, null, 2) : 'None')
-      console.log('Data:', data ? 'User data received' : 'No data')
-      console.log('User:', data?.user ? `ID: ${data.user.id}` : 'No user')
+      console.log(`${LOG} Step 2: SignIn response received`)
+      console.log(`${LOG} Has error:`, !!error)
+      console.log(`${LOG} Has user:`, !!data?.user)
 
       if (error) {
-        console.error('❌ Signin error:', error)
+        console.error(`${LOG} ❌ SignIn error:`, error)
+        console.error(`${LOG} Error message:`, error.message)
+        console.error(`${LOG} Error code:`, error.status)
         toast.error(`Login failed: ${error.message}`)
         setIsLoading(false)
         return
       }
 
-      if (!data.user) {
-        console.error('❌ No user data returned')
+      if (!data?.user) {
+        console.error(`${LOG} ❌ No user data returned`)
         toast.error('Login failed: No user data')
         setIsLoading(false)
         return
       }
 
-      console.log('✅ Authentication successful')
-      console.log('User ID:', data.user.id)
-
-      // Sync server-side auth cookies with timeout
-      // Use Promise.race to ensure we don't hang forever
-      const syncServerCookies = async () => {
-        try {
-          console.log('Step 2.5: Syncing server-side cookies...')
-          const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
-          console.log('Session fetch after signin:', sessionErr || sessionData?.session ? 'OK' : 'No session')
-
-          const access_token = sessionData?.session?.access_token
-          const refresh_token = sessionData?.session?.refresh_token
-
-          if (access_token && refresh_token) {
-            console.log('Syncing server cookies via /auth/callback...')
-
-            // Create timeout promise
-            const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Cookie sync timeout after 3 seconds')), 3000)
-            )
-
-            // Create fetch promise
-            const fetchPromise = fetch('/auth/callback', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ access_token, refresh_token })
-            })
-
-            // Race between fetch and timeout
-            const resp = await Promise.race([fetchPromise, timeoutPromise]) as Response
-
-            console.log('Server cookie sync response:', {
-              status: resp.status,
-              ok: resp.ok,
-              statusText: resp.statusText
-            })
-
-            if (!resp.ok) {
-              console.error('⚠️ Cookie sync failed with status:', resp.status)
-              const errorText = await resp.text()
-              console.error('Error response:', errorText)
-            } else {
-              const result = await resp.json()
-              console.log('✅ Cookie sync successful:', result)
-            }
-          } else {
-            console.warn('⚠️ No tokens found to sync server cookies')
-          }
-        } catch (syncErr) {
-          console.error('⚠️ Cookie sync failed:', syncErr)
-          // This is OK - client-side auth will still work
-        }
-      }
-
-      // Start cookie sync but don't wait for it
-      // The client-side session is already established
-      syncServerCookies().catch(err => {
-        console.error('Background cookie sync error:', err)
-      })
+      console.log(`${LOG} ✅ Authentication successful!`)
+      console.log(`${LOG} User ID:`, data.user.id)
+      console.log(`${LOG} User email:`, data.user.email)
 
       // Determine role-based redirect
       let redirectPath = '/dashboard' // Default for attendees and speakers
 
-      console.log('Step 3: Fetching user profile for role-based redirect...')
+      console.log(`${LOG} Step 3: Fetching user profile for role...`)
 
       try {
         const { data: profile, error: profileError } = await supabase
@@ -255,60 +128,57 @@ export function AuthForm() {
           .eq('id', data.user.id)
           .maybeSingle()
 
-        console.log('Step 4: Profile query result')
-        console.log('Profile:', profile)
-        console.log('Profile Error:', profileError ? JSON.stringify(profileError, null, 2) : 'None')
+        console.log(`${LOG} Step 4: Profile query result`)
+        console.log(`${LOG} Profile:`, profile)
+        console.log(`${LOG} Profile Error:`, profileError || 'None')
 
         if (profileError) {
-          console.error('⚠️ Profile fetch error:', profileError)
-          console.log('Using default redirect path:', redirectPath)
-        } else if (profile && profile.role) {
+          console.error(`${LOG} ⚠️ Profile fetch error:`, profileError)
+          console.log(`${LOG} Using default redirect:`, redirectPath)
+        } else if (profile?.role) {
           const userRole = profile.role
-          console.log('✅ User role found:', userRole)
+          console.log(`${LOG} ✅ User role found:`, userRole)
 
           // Role-based routing
           if (userRole === 'admin') {
             redirectPath = '/admin'
-            console.log('✅ Admin role detected, will redirect to /admin')
+            console.log(`${LOG} ✅ Admin role → /admin`)
           } else if (userRole === 'attendee' || userRole === 'speaker') {
             redirectPath = '/dashboard'
-            console.log('✅ Attendee/Speaker role detected, will redirect to /dashboard')
+            console.log(`${LOG} ✅ ${userRole} role → /dashboard`)
           } else {
-            console.warn('⚠️ Unknown role:', userRole, '- using default redirect')
+            console.warn(`${LOG} ⚠️ Unknown role:`, userRole)
           }
         } else {
-          console.warn('⚠️ No profile found for user - using default redirect')
+          console.warn(`${LOG} ⚠️ No profile found - using default`)
         }
       } catch (fetchError) {
-        console.error('❌ Profile fetch exception:', fetchError)
-        console.log('Using default redirect path:', redirectPath)
+        console.error(`${LOG} ❌ Profile fetch exception:`, fetchError)
+        console.log(`${LOG} Using default redirect:`, redirectPath)
       }
 
-      console.log('Step 5: Final redirect path determined:', redirectPath)
-      console.log('Step 6: Initiating redirect...')
+      console.log(`${LOG} Step 5: Final redirect path:`, redirectPath)
+      console.log(`${LOG} Step 6: Initiating redirect...`)
 
       // Show success message
       toast.success('Welcome back!')
 
-      // Small delay to ensure auth state is propagated
-      // Then redirect and reset loading state
-      await new Promise(resolve => setTimeout(resolve, 300))
-
       // Use Next.js router for client-side navigation
-      console.log('🚀 Redirecting to:', redirectPath)
+      console.log(`${LOG} 🚀 Redirecting to:`, redirectPath)
       setIsLoading(false)
       router.push(redirectPath)
 
     } catch (error) {
-      console.error('❌ Unexpected signin error:', error)
-      console.error('Error type:', typeof error)
-      console.error('Error constructor:', error?.constructor?.name)
-      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack')
-      console.error('Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2))
+      console.error(`${LOG} ❌ UNEXPECTED ERROR:`, error)
+      console.error(`${LOG} Error type:`, typeof error)
+      console.error(`${LOG} Error name:`, error?.constructor?.name)
+      console.error(`${LOG} Error stack:`, error instanceof Error ? error.stack : 'No stack')
       toast.error(`An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`)
       setIsLoading(false)
     } finally {
-      console.log('=== LOGIN FLOW ENDED ===')
+      console.log(`${LOG} ========================================`)
+      console.log(`${LOG} LOGIN FLOW ENDED`)
+      console.log(`${LOG} ========================================`)
     }
   }
 
