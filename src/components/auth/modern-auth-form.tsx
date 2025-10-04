@@ -37,8 +37,11 @@ export function ModernAuthForm() {
     setSuccess(null)
     setLoginLoading(true)
 
-    console.log('🔐 [AUTH] Login started')
+    console.log('🔐 [AUTH] ========================================')
+    console.log('🔐 [AUTH] LOGIN FLOW STARTED')
+    console.log('🔐 [AUTH] ========================================')
     console.log('🔐 [AUTH] Email:', loginEmail)
+    console.log('🔐 [AUTH] Timestamp:', new Date().toISOString())
 
     try {
       // Simple, direct authentication
@@ -67,28 +70,51 @@ export function ModernAuthForm() {
       console.log('🔐 [AUTH] User ID:', data.user.id)
 
       // Fetch user role
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('em_profiles')
         .select('role')
         .eq('id', data.user.id)
         .single()
 
+      if (profileError) {
+        console.error('🔐 [AUTH] Profile fetch error:', profileError)
+        // Continue with default role if profile fetch fails
+      }
+
       const role = profile?.role || 'attendee'
       console.log('🔐 [AUTH] User role:', role)
+
+      // Determine redirect path
+      const redirectPath = role === 'admin' ? '/admin' : '/dashboard'
+      console.log('🔐 [AUTH] Redirect path:', redirectPath)
 
       // Show success message
       setSuccess('Login successful! Redirecting...')
       toast.success('Welcome back!')
 
-      // Redirect based on role
-      const redirectPath = role === 'admin' ? '/admin' : '/dashboard'
-      console.log('🔐 [AUTH] Redirecting to:', redirectPath)
+      // Wait a moment for the success message to be visible
+      await new Promise(resolve => setTimeout(resolve, 800))
 
+      // Perform redirect using both methods for reliability
+      console.log('🔐 [AUTH] Executing redirect to:', redirectPath)
+
+      // Try Next.js router first
+      router.push(redirectPath)
+
+      // Fallback to window.location after a short delay if router.push doesn't work
       setTimeout(() => {
-        router.push(redirectPath)
-      }, 500)
+        console.log('🔐 [AUTH] Fallback redirect using window.location')
+        window.location.href = redirectPath
+      }, 1000)
+
+      console.log('🔐 [AUTH] ========================================')
+      console.log('🔐 [AUTH] LOGIN FLOW COMPLETED SUCCESSFULLY')
+      console.log('🔐 [AUTH] ========================================')
 
     } catch (err) {
+      console.error('🔐 [AUTH] ========================================')
+      console.error('🔐 [AUTH] LOGIN FLOW FAILED')
+      console.error('🔐 [AUTH] ========================================')
       console.error('🔐 [AUTH] Unexpected error:', err)
       const message = err instanceof Error ? err.message : 'An unexpected error occurred'
       setError(message)
