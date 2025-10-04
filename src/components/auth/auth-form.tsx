@@ -66,6 +66,8 @@ export function AuthForm() {
       console.log('=== LOGIN FLOW STARTED ===')
       console.log('Environment:', process.env.NODE_ENV)
       console.log('Current URL:', window.location.href)
+      console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
+      console.log('Supabase Key (first 20 chars):', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20))
 
       // Check if Supabase client is properly initialized
       if (!supabase) {
@@ -102,13 +104,52 @@ export function AuthForm() {
         if (signInError instanceof Error && signInError.message.includes('timeout')) {
           console.error('⚠️ SignIn timed out - checking if auth succeeded anyway...')
 
-          // Check if user is actually authenticated despite timeout
-          const { data: { session } } = await supabase.auth.getSession()
-          if (session?.user) {
-            console.log('✅ User is authenticated despite timeout! Continuing...')
-            signInResult = { data: { user: session.user, session }, error: null }
-          } else {
-            toast.error('Login timed out. Please try again.')
+          try {
+            // Add timeout to getSession as well (3 seconds)
+            const sessionTimeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Session check timeout after 3 seconds')), 3000)
+            )
+
+            const sessionPromise = supabase.auth.getSession()
+
+            console.log('Step 1.7: Checking session with timeout...')
+            const sessionResult = await Promise.race([sessionPromise, sessionTimeoutPromise]) as any
+            console.log('Step 1.8: Session check completed')
+            console.log('Session result:', sessionResult?.data?.session ? 'Session found' : 'No session')
+
+            const session = sessionResult?.data?.session
+
+            if (session?.user) {
+              console.log('✅ User is authenticated despite timeout! Continuing...')
+              console.log('User ID from session:', session.user.id)
+              signInResult = { data: { user: session.user, session }, error: null }
+            } else {
+              console.error('❌ No session found after timeout')
+              toast.error('Login timed out. Please try again.')
+              setIsLoading(false)
+              return
+            }
+          } catch (sessionError) {
+            console.error('❌ Session check failed:', sessionError)
+            console.error('Session error type:', typeof sessionError)
+            console.error('Session error message:', sessionError instanceof Error ? sessionError.message : 'Unknown')
+            console.error('Session error stack:', sessionError instanceof Error ? sessionError.stack : 'No stack')
+
+            // Check if it's a timeout or network error
+            if (sessionError instanceof Error) {
+              if (sessionError.message.includes('timeout')) {
+                console.error('⚠️ Session check timed out - possible network issue')
+                toast.error('Connection timeout. Please check your internet and try again.')
+              } else if (sessionError.message.includes('fetch') || sessionError.message.includes('network')) {
+                console.error('⚠️ Network error during session check')
+                toast.error('Network error. Please check your connection and try again.')
+              } else {
+                toast.error('Unable to verify authentication. Please try again.')
+              }
+            } else {
+              toast.error('Unable to verify authentication. Please try again.')
+            }
+
             setIsLoading(false)
             return
           }
