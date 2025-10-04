@@ -105,132 +105,97 @@ export function AuthForm() {
 
       console.log('✅ Authentication successful')
       console.log('User ID:', data.user.id)
-      toast.success('Welcome back!')
-      // Sync server-side auth cookies (required for SSR-protected routes in production)
-      try {
-        const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
-        console.log('Session fetch after signin:', sessionErr || sessionData?.session ? 'OK' : 'No session')
-        const access_token = sessionData?.session?.access_token
-        const refresh_token = sessionData?.session?.refresh_token
-        if (access_token && refresh_token) {
-          const resp = await fetch('/auth/callback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ access_token, refresh_token })
-          })
-          console.log('Server cookie sync status:', resp.ok)
-        } else {
-          console.warn('No tokens found to sync server cookies')
+
+      // Sync server-side auth cookies in background (non-blocking)
+      // This is needed for SSR-protected routes but shouldn't block the redirect
+      const syncServerCookies = async () => {
+        try {
+          const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
+          console.log('Session fetch after signin:', sessionErr || sessionData?.session ? 'OK' : 'No session')
+          const access_token = sessionData?.session?.access_token
+          const refresh_token = sessionData?.session?.refresh_token
+          if (access_token && refresh_token) {
+            console.log('Syncing server cookies via /auth/callback...')
+            const resp = await fetch('/auth/callback', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ access_token, refresh_token })
+            })
+            console.log('Server cookie sync response:', {
+              status: resp.status,
+              ok: resp.ok,
+              statusText: resp.statusText
+            })
+
+            if (!resp.ok) {
+              console.error('Cookie sync failed with status:', resp.status)
+              const errorText = await resp.text()
+              console.error('Error response:', errorText)
+            } else {
+              const result = await resp.json()
+              console.log('Cookie sync result:', result)
+            }
+          } else {
+            console.warn('No tokens found to sync server cookies')
+          }
+        } catch (syncErr) {
+          console.error('Cookie sync failed (non-critical):', syncErr)
         }
-      } catch (syncErr) {
-        console.error('Cookie sync failed:', syncErr)
       }
 
+      // Start cookie sync in background (don't await)
+      syncServerCookies()
 
       // Determine role-based redirect
       let redirectPath = '/dashboard' // Default for attendees and speakers
 
       console.log('Step 3: Fetching user profile for role-based redirect...')
 
-      let profile = null
-      let profileError = null
-
       try {
-        const result = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('em_profiles')
           .select('role')
           .eq('id', data.user.id)
           .maybeSingle()
 
-        profile = result.data
-        profileError = result.error
+        console.log('Step 4: Profile query result')
+        console.log('Profile:', profile)
+        console.log('Profile Error:', profileError ? JSON.stringify(profileError, null, 2) : 'None')
+
+        if (profileError) {
+          console.error('⚠️ Profile fetch error:', profileError)
+          console.log('Using default redirect path:', redirectPath)
+        } else if (profile && profile.role) {
+          const userRole = profile.role
+          console.log('✅ User role found:', userRole)
+
+          // Role-based routing
+          if (userRole === 'admin') {
+            redirectPath = '/admin'
+            console.log('✅ Admin role detected, will redirect to /admin')
+          } else if (userRole === 'attendee' || userRole === 'speaker') {
+            redirectPath = '/dashboard'
+            console.log('✅ Attendee/Speaker role detected, will redirect to /dashboard')
+          } else {
+            console.warn('⚠️ Unknown role:', userRole, '- using default redirect')
+          }
+        } else {
+          console.warn('⚠️ No profile found for user - using default redirect')
+        }
       } catch (fetchError) {
         console.error('❌ Profile fetch exception:', fetchError)
-        profileError = fetchError
-      }
-
-      console.log('Step 4: Profile query result')
-      console.log('Profile:', profile)
-      console.log('Profile Error:', profileError ? JSON.stringify(profileError, null, 2) : 'None')
-
-      if (profileError) {
-        console.error('⚠️ Profile fetch error:', profileError)
         console.log('Using default redirect path:', redirectPath)
-      } else if (profile && profile.role) {
-        const userRole = profile.role
-        console.log('✅ User role found:', userRole)
-
-        // Role-based routing
-        if (userRole === 'admin') {
-          redirectPath = '/admin'
-          console.log('✅ Admin role detected, will redirect to /admin')
-        } else if (userRole === 'attendee' || userRole === 'speaker') {
-          redirectPath = '/dashboard'
-          console.log('✅ Attendee/Speaker role detected, will redirect to /dashboard')
-        } else {
-          console.warn('⚠️ Unknown role:', userRole, '- using default redirect')
-        }
-      } else {
-        console.warn('⚠️ No profile found for user - using default redirect')
       }
 
       console.log('Step 5: Final redirect path determined:', redirectPath)
       console.log('Step 6: Initiating redirect...')
-      console.log('Current location:', window.location.href)
-      console.log('Target location:', redirectPath)
 
-      // Use window.location.href for immediate, reliable redirect
-      // This is the most reliable method and works in all scenarios
+      // Show success message
+      toast.success('Welcome back!')
+
+      // Use Next.js router for client-side navigation
       console.log('🚀 Redirecting to:', redirectPath)
-
-      // Set a safety timeout in case redirect fails
-      const safetyTimeout = setTimeout(() => {
-        console.warn('⚠️ Redirect timeout - showing manual option')
-        console.warn('This usually means the redirect is blocked or taking too long')
-        setIsLoading(false)
-        toast.error('Automatic redirect failed. Click the button below to continue.')
-
-        // Show manual redirect button as fallback
-        const continueBtn = document.createElement('button')
-        continueBtn.textContent = 'Continue to Dashboard →'
-        continueBtn.className = 'mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors'
-        continueBtn.onclick = () => {
-          console.log('Manual redirect button clicked')
-          console.log('Attempting manual redirect to:', redirectPath)
-          try {
-            window.location.href = redirectPath
-          } catch (err) {
-            console.error('Manual redirect also failed:', err)
-            toast.error('Unable to redirect. Please navigate manually to: ' + redirectPath)
-          }
-        }
-
-        const form = document.querySelector('form')
-        if (form && !form.querySelector('button[class*="bg-blue-600"]')) {
-          form.appendChild(continueBtn)
-        }
-      }, 3000) // 3 second safety timeout
-
-      // Small delay to ensure toast message is visible, then redirect
-      setTimeout(() => {
-        try {
-          console.log('Executing redirect to:', redirectPath)
-          console.log('Redirect method: window.location.href')
-          clearTimeout(safetyTimeout) // Clear safety timeout if redirect succeeds
-
-          // Try redirect
-          window.location.href = redirectPath
-
-          // If we get here, redirect was initiated
-          console.log('Redirect initiated successfully')
-        } catch (redirectError) {
-          console.error('❌ Redirect failed with exception:', redirectError)
-          console.error('Error details:', JSON.stringify(redirectError, null, 2))
-          clearTimeout(safetyTimeout)
-          setIsLoading(false)
-          toast.error('Redirect failed. Please try again or contact support.')
-        }
-      }, 500)
+      router.push(redirectPath)
 
     } catch (error) {
       console.error('❌ Unexpected signin error:', error)
