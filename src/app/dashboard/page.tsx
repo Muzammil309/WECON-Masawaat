@@ -67,9 +67,5 @@ export default function DashboardPage() {
   }
 
   console.log('📊 Dashboard: Rendering attendee dashboard')
-  return (
-    <DashboardShell role="attendee">
-      <ModernAttendeeDashboard />
-    </DashboardShell>
-  )
+  return <ModernAttendeeDashboard />
 }
