@@ -69,12 +69,12 @@ export function ModernAuthForm() {
       console.log('🔐 [AUTH] Login successful!')
       console.log('🔐 [AUTH] User ID:', data.user.id)
 
-      // Fetch user role
+      // Fetch user role - use maybeSingle() to handle missing profiles gracefully
       const { data: profile, error: profileError } = await supabase
         .from('em_profiles')
         .select('role')
         .eq('id', data.user.id)
-        .single()
+        .maybeSingle()
 
       if (profileError) {
         console.error('🔐 [AUTH] Profile fetch error:', profileError)
@@ -92,20 +92,15 @@ export function ModernAuthForm() {
       setSuccess('Login successful! Redirecting...')
       toast.success('Welcome back!')
 
-      // Wait a moment for the success message to be visible
-      await new Promise(resolve => setTimeout(resolve, 800))
+      // Reset loading state before redirect
+      setLoginLoading(false)
 
-      // Perform redirect using both methods for reliability
+      // Small delay to show success message
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      // Perform redirect
       console.log('🔐 [AUTH] Executing redirect to:', redirectPath)
-
-      // Try Next.js router first
       router.push(redirectPath)
-
-      // Fallback to window.location after a short delay if router.push doesn't work
-      setTimeout(() => {
-        console.log('🔐 [AUTH] Fallback redirect using window.location')
-        window.location.href = redirectPath
-      }, 1000)
 
       console.log('🔐 [AUTH] ========================================')
       console.log('🔐 [AUTH] LOGIN FLOW COMPLETED SUCCESSFULLY')

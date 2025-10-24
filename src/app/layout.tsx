@@ -6,6 +6,7 @@ import "../styles/navigation-fixes.css";
 import { ConditionalHeader } from "@/components/layout/conditional-header";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { HeroUIProvider } from "@/components/providers/heroui-provider";
 
 import { WebVitals } from "@/components/performance/web-vitals";
 import Script from 'next/script';
@@ -43,15 +44,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased aivent-theme dark-scheme`}
       >
-        <AuthProvider>
-          <div className="min-h-screen">
-            <ConditionalHeader />
-            <main className="flex-1">
-              {children}
+        <HeroUIProvider>
+          <AuthProvider>
+            <div className="min-h-screen">
+              <ConditionalHeader />
+              <main className="flex-1">
+                {children}
             </main>
           </div>
           <Toaster position="top-right" richColors expand={true} />
         </AuthProvider>
+        </HeroUIProvider>
         <WebVitals />
 
         {/* Aivent Original JavaScript Files */}

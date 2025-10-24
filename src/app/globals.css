@@ -1,7 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "../styles/aivent-integration.css";
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin '../theme/hero.ts';
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 
 /* Fix footer spacing and ensure no blank space below */
 html, body {
@@ -32,6 +35,57 @@ footer.section-dark {
 /* .fs-60 class maintains 60px as defined in original template CSS */
 
 @custom-variant dark (&:is(.dark *));
+
+/* Custom utilities for glassmorphism */
+@utility glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+@utility glass-card-dark {
+  background: rgba(26, 26, 46, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient text utility */
+@utility gradient-text {
+  background: linear-gradient(135deg, #FF8C00 0%, #FFA726 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animated gradient background */
+@utility animated-gradient {
+  background: linear-gradient(-45deg, #FF8C00, #FFA726, #FF8C00, #E67E00);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Magnetic button effect */
+@utility magnetic-button {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@utility magnetic-button:hover {
+  transform: scale(1.05);
+}
 
 @theme inline {
   --color-background: var(--background);
