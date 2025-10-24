@@ -42,7 +42,7 @@ export default function RootLayout({
         <link href="/aivent/css/scheme-01.css" rel="stylesheet" type="text/css" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased aivent-theme dark-scheme`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <HeroUIProvider>
           <AuthProvider>
