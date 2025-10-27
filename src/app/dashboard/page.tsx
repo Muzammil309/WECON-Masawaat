@@ -6,7 +6,7 @@ import { useAuth } from '@/components/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
-import { ModernAttendeeDashboard } from '@/components/dashboard/attendee/modern-attendee-dashboard'
+import { ProfessionalModernDashboard } from '@/components/dashboard/attendee/professional-modern-dashboard'
 import { ProfessionalSpeakerDashboard } from '@/components/dashboard/speaker/professional-speaker-dashboard'
 import { DashboardShell } from '@/components/dashboard/dashboard-shell'
 
@@ -66,6 +66,6 @@ export default function DashboardPage() {
     return <ProfessionalSpeakerDashboard />
   }
 
-  console.log('📊 Dashboard: Rendering attendee dashboard')
-  return <ModernAttendeeDashboard />
+  console.log('📊 Dashboard: Rendering professional modern dashboard')
+  return <ProfessionalModernDashboard />
 }
