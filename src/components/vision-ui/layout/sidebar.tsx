@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, BarChart3, CreditCard, User, LogIn, UserPlus, HelpCircle } from 'lucide-react'
+import { Home, BarChart3, CreditCard, User, LogIn, UserPlus, HelpCircle, Wrench } from 'lucide-react'
 
 interface MenuItem {
   label: string
@@ -25,6 +25,11 @@ const menuItems: MenuItem[] = [
     label: 'Billing',
     href: '/dashboard/vision/billing',
     icon: <CreditCard className="h-[15px] w-[15px]" />,
+  },
+  {
+    label: 'RTL',
+    href: '/dashboard/vision/rtl',
+    icon: <Wrench className="h-[15px] w-[15px]" />,
   },
   {
     label: 'Profile',

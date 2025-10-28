@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/components/providers/auth-provider'
 import { VisionSidebar } from '@/components/vision-ui/layout/sidebar'
 import { VisionTopbar } from '@/components/vision-ui/layout/topbar'
+import { VisionFooter } from '@/components/vision-ui/layout/footer'
 import { VisionStatCard } from '@/components/vision-ui/cards/stat-card'
 import { VisionProjectsTable } from '@/components/vision-ui/tables/projects-table'
 import { VisionOrdersTimeline } from '@/components/vision-ui/timeline/orders-timeline'
@@ -244,12 +245,21 @@ export default function VisionDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0F1535', fontFamily: '"Plus Jakarta Display", sans-serif' }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: '#0F1535', fontFamily: '"Plus Jakarta Display", sans-serif' }}>
+      {/* Decorative Background Image */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-30"
+        style={{
+          backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(67, 24, 255, 0.3) 0%, rgba(15, 21, 53, 0) 70%)',
+          filter: 'blur(136px)',
+        }}
+      />
+
       {/* Sidebar */}
       <VisionSidebar />
 
       {/* Main Content */}
-      <div className="ml-[284px] p-[20px]">
+      <div className="ml-[284px] p-[20px] relative z-10">
         {/* Top Navigation */}
         <VisionTopbar title="Dashboard" breadcrumb="Pages" />
 
@@ -297,6 +307,9 @@ export default function VisionDashboardPage() {
             <VisionOrdersTimeline items={activities} loading={loading} />
           </div>
         </div>
+
+        {/* Footer */}
+        <VisionFooter />
       </div>
     </div>
   )
