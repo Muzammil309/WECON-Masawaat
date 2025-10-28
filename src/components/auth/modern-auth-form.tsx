@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,8 @@ import { toast } from 'sonner'
 
 export function ModernAuthForm() {
   const router = useRouter()
-  const supabase = createClient()
+  // Create client once using useMemo to prevent excessive re-creation
+  const supabase = useMemo(() => createClient(), [])
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('')
@@ -141,6 +142,27 @@ export function ModernAuthForm() {
 
       if (error) {
         console.error('🔐 [AUTH] Signup error:', error.message)
+
+        // Check if user already exists
+        if (error.message.includes('User already registered') || error.message.includes('already registered')) {
+          // Check if user is now authenticated (account was created but email not confirmed)
+          const { data: sessionData } = await supabase.auth.getSession()
+
+          if (sessionData?.session?.user) {
+            console.log('🔐 [AUTH] User already exists and is authenticated, redirecting to dashboard')
+            toast.success('Welcome back! Redirecting to dashboard...')
+            router.push('/dashboard/vision')
+            return
+          } else {
+            // User exists but not authenticated - show login message
+            setError('An account with this email already exists. Please login instead.')
+            toast.error('Account already exists. Please login.')
+            setSignupLoading(false)
+            return
+          }
+        }
+
+        // Other errors
         setError(error.message)
         toast.error(error.message)
         setSignupLoading(false)
@@ -148,8 +170,19 @@ export function ModernAuthForm() {
       }
 
       console.log('🔐 [AUTH] Signup successful!')
+      console.log('🔐 [AUTH] User created:', data.user?.id)
+
+      // Check if user is immediately authenticated (email confirmation disabled)
+      if (data.session) {
+        console.log('🔐 [AUTH] User authenticated immediately, redirecting to dashboard')
+        toast.success('Account created! Redirecting to dashboard...')
+        router.push('/dashboard/vision')
+        return
+      }
+
+      // Email confirmation required
       setSuccess('Account created! Please check your email to verify your account.')
-      toast.success('Account created successfully!')
+      toast.success('Account created! Check your email to verify.')
 
       // Clear form
       setSignupName('')

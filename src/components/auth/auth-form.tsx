@@ -18,7 +18,8 @@ export function AuthForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
-  const supabase = createClient()
+  // Create client once using useMemo to prevent excessive re-creation
+  const supabase = useMemo(() => createClient(), [])
   const supabaseConfigured = useMemo(() => isSupabaseConfigured(), [])
 
   const handleSignUp = async (e: React.FormEvent) => {
