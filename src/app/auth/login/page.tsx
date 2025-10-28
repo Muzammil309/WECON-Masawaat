@@ -1,5 +1,5 @@
-import { ModernAuthForm } from '@/components/auth/modern-auth-form'
+import { VisionSignIn } from '@/components/vision-ui/auth/vision-sign-in'
 
 export default function LoginPage() {
-  return <ModernAuthForm />
+  return <VisionSignIn />
 }

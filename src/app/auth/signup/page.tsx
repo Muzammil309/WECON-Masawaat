@@ -1,11 +1,5 @@
-import { AuthForm } from '@/components/auth/auth-form'
+import { VisionSignUp } from '@/components/vision-ui/auth/vision-sign-up'
 
 export default function SignUpPage() {
-  return (
-    <section className="section-dark p-0" aria-label="section">
-      <div className="auth-shell">
-        <AuthForm />
-      </div>
-    </section>
-  )
+  return <VisionSignUp />
 }
