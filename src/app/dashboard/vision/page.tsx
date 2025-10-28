@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/components/providers/auth-provider'
 import { VisionSidebar } from '@/components/vision-ui/layout/sidebar'
 import { VisionTopbar } from '@/components/vision-ui/layout/topbar'
 import { VisionStatCard } from '@/components/vision-ui/cards/stat-card'
@@ -35,6 +37,8 @@ interface Activity {
 }
 
 export default function VisionDashboardPage() {
+  const { user, loading: authLoading } = useAuth()
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState<DashboardStats>({
     totalRevenue: 0,
@@ -45,10 +49,24 @@ export default function VisionDashboardPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
 
+  // Redirect to login if not authenticated
   useEffect(() => {
+    if (!authLoading && !user) {
+      console.log('🔒 Vision Dashboard: User not authenticated, redirecting to login')
+      router.push('/auth/login')
+    }
+  }, [user, authLoading, router])
+
+  useEffect(() => {
+    // Only fetch data if user is authenticated
+    if (!user) {
+      console.log('⏳ Vision Dashboard: Waiting for authentication...')
+      return
+    }
+
     async function fetchDashboardData() {
       try {
-        console.log('🔄 Vision Dashboard: Fetching data...')
+        console.log('🔄 Vision Dashboard: Fetching data for user:', user?.id)
         const supabase = createClient()
 
         // Fetch total revenue from orders
@@ -187,7 +205,7 @@ export default function VisionDashboardPage() {
     }
 
     fetchDashboardData()
-  }, [])
+  }, [user])
 
   // Calculate event completion percentage
   const projectsData = events.map((event) => {
@@ -212,6 +230,18 @@ export default function VisionDashboardPage() {
       completion,
     }
   })
+
+  // Show loading state while checking authentication
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0F1535', fontFamily: '"Plus Jakarta Display", sans-serif' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-sm">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen" style={{ background: '#0F1535', fontFamily: '"Plus Jakarta Display", sans-serif' }}>
