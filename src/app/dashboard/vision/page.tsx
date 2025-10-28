@@ -41,6 +41,15 @@ export default function VisionDashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+
+  // Debug logging
+  useEffect(() => {
+    console.log('🔍 Vision Dashboard: Auth state:', {
+      authLoading,
+      hasUser: !!user,
+      userId: user?.id
+    })
+  }, [authLoading, user])
   const [stats, setStats] = useState<DashboardStats>({
     totalRevenue: 0,
     activeAttendeesToday: 0,
