@@ -62,10 +62,12 @@ export default function VisionDashboardPage() {
     // Only fetch data if user is authenticated
     if (!user) {
       console.log('⏳ Vision Dashboard: Waiting for authentication...')
+      setLoading(false) // Set loading to false even when waiting for auth
       return
     }
 
     async function fetchDashboardData() {
+      setLoading(true) // Set loading to true when starting to fetch
       try {
         console.log('🔄 Vision Dashboard: Fetching data for user:', user?.id)
         const supabase = createClient()
@@ -233,12 +235,25 @@ export default function VisionDashboardPage() {
   })
 
   // Show loading state while checking authentication
-  if (authLoading || !user) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#0F1535', fontFamily: '"Plus Jakarta Display", sans-serif' }}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-sm">Loading dashboard...</p>
+          <p className="text-white text-sm">Checking authentication...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // If not authenticated, the useEffect will redirect to login
+  // This prevents flash of content before redirect
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0F1535', fontFamily: '"Plus Jakarta Display", sans-serif' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-sm">Redirecting to login...</p>
         </div>
       </div>
     )
