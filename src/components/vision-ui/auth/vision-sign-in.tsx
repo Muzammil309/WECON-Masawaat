@@ -57,79 +57,133 @@ export function VisionSignIn() {
   }
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
-      style={{ 
-        background: '#0F1535',
+    <div
+      className="min-h-screen flex relative overflow-hidden"
+      style={{
         fontFamily: '"Plus Jakarta Display", sans-serif'
       }}
     >
-      {/* Decorative Background */}
-      <div 
-        className="absolute inset-0 opacity-30"
+      {/* Left Side - Image Section */}
+      <div
+        className="hidden lg:flex lg:w-1/2 relative items-center justify-center"
         style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(67, 24, 255, 0.15) 0%, transparent 50%)',
-          filter: 'blur(60px)'
-        }}
-      />
-
-      {/* Sign In Card */}
-      <div 
-        className="relative w-full max-w-md"
-        style={{
-          background: 'rgba(26, 31, 55, 0.7)',
-          backdropFilter: 'blur(60px)',
-          borderRadius: '20px',
-          padding: '40px',
-          border: '1px solid rgba(255, 255, 255, 0.1)'
+          background: '#4FD1C5',
+          minHeight: '100vh'
         }}
       >
-        {/* Logo/Title */}
-        <div className="text-center mb-8">
-          <h1 
-            className="text-2xl font-bold mb-2"
-            style={{ color: '#FFFFFF' }}
-          >
-            Welcome Back
-          </h1>
-          <p 
-            className="text-sm"
-            style={{ color: '#A0AEC0' }}
-          >
-            Enter your email and password to sign in
-          </p>
+        {/* Background Image with Gradient Overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'radial-gradient(circle at center, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 100%)'
+            }}
+          />
         </div>
 
-        {/* Error Alert */}
-        {error && (
-          <div 
-            className="mb-6 p-4 rounded-lg flex items-start gap-3"
+        {/* Text Content */}
+        <div className="relative z-10 text-center px-12">
+          <p
+            className="text-white mb-4"
             style={{
-              background: 'rgba(227, 26, 26, 0.1)',
-              border: '1px solid rgba(227, 26, 26, 0.3)'
+              fontSize: '20px',
+              letterSpacing: '3.6px',
+              fontWeight: 400
             }}
           >
-            <AlertCircle className="w-5 h-5 flex-shrink-0" style={{ color: '#E31A1A' }} />
-            <p className="text-sm" style={{ color: '#E31A1A' }}>{error}</p>
-          </div>
-        )}
+            INSPIRED BY THE FUTURE:
+          </p>
+          <h1
+            className="font-bold"
+            style={{
+              fontSize: '36px',
+              letterSpacing: '6.48px',
+              background: 'linear-gradient(135deg, #FFFFFF 0%, #5CE1CA 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
+            THE VISION UI DASHBOARD
+          </h1>
+        </div>
+      </div>
 
-        {/* Sign In Form */}
-        <form onSubmit={handleSignIn} className="space-y-6">
-          {/* Email Field */}
-          <div>
-            <label 
-              htmlFor="email" 
-              className="block text-sm font-medium mb-2"
+      {/* Right Side - Form Section */}
+      <div
+        className="w-full lg:w-1/2 flex items-center justify-center p-8 relative"
+        style={{
+          background: '#0F1535',
+          minHeight: '100vh'
+        }}
+      >
+        {/* Form Container */}
+        <div className="w-full max-w-md">
+          {/* Logo */}
+          <div className="text-center mb-12">
+            <p
+              className="font-medium"
+              style={{
+                fontSize: '14px',
+                letterSpacing: '2.52px',
+                background: 'linear-gradient(135deg, #FFFFFF 0%, #5CE1CA 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}
+            >
+              VISION UI FREE
+            </p>
+          </div>
+
+          {/* Title */}
+          <div className="mb-8">
+            <h1
+              className="text-3xl font-bold mb-2"
               style={{ color: '#FFFFFF' }}
             >
-              Email
-            </label>
-            <div className="relative">
-              <Mail 
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
-                style={{ color: '#A0AEC0' }}
-              />
+              Welcome Back
+            </h1>
+            <p
+              className="text-sm"
+              style={{ color: '#A0AEC0' }}
+            >
+              Enter your email and password to sign in
+            </p>
+          </div>
+
+          {/* Error Alert */}
+          {error && (
+            <div
+              className="mb-6 p-4 rounded-lg flex items-start gap-3"
+              style={{
+                background: 'rgba(227, 26, 26, 0.1)',
+                border: '1px solid rgba(227, 26, 26, 0.3)'
+              }}
+            >
+              <AlertCircle className="w-5 h-5 flex-shrink-0" style={{ color: '#E31A1A' }} />
+              <p className="text-sm" style={{ color: '#E31A1A' }}>{error}</p>
+            </div>
+          )}
+
+          {/* Sign In Form */}
+          <form onSubmit={handleSignIn} className="space-y-5">
+            {/* Email Field */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium mb-2"
+                style={{ color: '#FFFFFF' }}
+              >
+                Email
+              </label>
               <input
                 id="email"
                 type="email"
@@ -137,40 +191,34 @@ export function VisionSignIn() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
-                placeholder="mail@simmmple.com"
-                className="w-full pl-12 pr-4 py-3 rounded-lg text-sm outline-none transition-all"
+                placeholder="Your email address"
+                className="w-full px-4 py-3 rounded-2xl text-sm outline-none transition-all"
                 style={{
                   background: 'rgba(26, 31, 55, 0.5)',
-                  border: '1px solid rgba(160, 174, 192, 0.3)',
+                  border: '2px solid rgba(160, 174, 192, 0.2)',
                   color: '#FFFFFF',
                   fontFamily: '"Plus Jakarta Display", sans-serif'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#4318FF'
-                  e.target.style.boxShadow = '0 0 0 3px rgba(67, 24, 255, 0.1)'
+                  e.target.style.borderColor = '#5CE1CA'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(92, 225, 202, 0.1)'
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(160, 174, 192, 0.3)'
+                  e.target.style.borderColor = 'rgba(160, 174, 192, 0.2)'
                   e.target.style.boxShadow = 'none'
                 }}
               />
             </div>
-          </div>
 
-          {/* Password Field */}
-          <div>
-            <label 
-              htmlFor="password" 
-              className="block text-sm font-medium mb-2"
-              style={{ color: '#FFFFFF' }}
-            >
-              Password
-            </label>
-            <div className="relative">
-              <Lock 
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
-                style={{ color: '#A0AEC0' }}
-              />
+            {/* Password Field */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium mb-2"
+                style={{ color: '#FFFFFF' }}
+              >
+                Password
+              </label>
               <input
                 id="password"
                 type="password"
@@ -178,105 +226,122 @@ export function VisionSignIn() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                placeholder="Min. 8 characters"
-                className="w-full pl-12 pr-4 py-3 rounded-lg text-sm outline-none transition-all"
+                placeholder="Your password"
+                className="w-full px-4 py-3 rounded-2xl text-sm outline-none transition-all"
                 style={{
                   background: 'rgba(26, 31, 55, 0.5)',
-                  border: '1px solid rgba(160, 174, 192, 0.3)',
+                  border: '2px solid rgba(160, 174, 192, 0.2)',
                   color: '#FFFFFF',
                   fontFamily: '"Plus Jakarta Display", sans-serif'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#4318FF'
-                  e.target.style.boxShadow = '0 0 0 3px rgba(67, 24, 255, 0.1)'
+                  e.target.style.borderColor = '#5CE1CA'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(92, 225, 202, 0.1)'
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(160, 174, 192, 0.3)'
+                  e.target.style.borderColor = 'rgba(160, 174, 192, 0.2)'
                   e.target.style.boxShadow = 'none'
                 }}
               />
             </div>
+
+            {/* Remember Me */}
+            <div className="flex items-center">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded"
+                  style={{
+                    accentColor: '#5CE1CA'
+                  }}
+                />
+                <span className="text-sm" style={{ color: '#A0AEC0' }}>
+                  Remember me
+                </span>
+              </label>
+            </div>
+
+            {/* Sign In Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-2xl font-bold text-xs transition-all flex items-center justify-center gap-2"
+              style={{
+                background: loading ? 'linear-gradient(135deg, #5CE1CA 0%, #4FD1C5 100%)' : 'linear-gradient(135deg, #5CE1CA 0%, #4FD1C5 100%)',
+                color: '#FFFFFF',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                letterSpacing: '1px'
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 10px 20px rgba(92, 225, 202, 0.3)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }
+              }}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  SIGNING IN...
+                </>
+              ) : (
+                'SIGN IN'
+              )}
+            </button>
+          </form>
+
+          {/* Sign Up Link */}
+          <div className="mt-8 text-center">
+            <p className="text-sm" style={{ color: '#A0AEC0' }}>
+              Don't have an account?{' '}
+              <Link
+                href="/auth/signup"
+                className="font-bold hover:underline"
+                style={{ color: '#5CE1CA' }}
+              >
+                Sign up
+              </Link>
+            </p>
           </div>
 
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="w-4 h-4 rounded"
-                style={{
-                  accentColor: '#4318FF'
-                }}
-              />
-              <span className="text-sm" style={{ color: '#A0AEC0' }}>
-                Remember me
-              </span>
-            </label>
-            <Link 
-              href="/auth/forgot-password"
-              className="text-sm hover:underline"
-              style={{ color: '#4318FF' }}
-            >
-              Forgot password?
-            </Link>
+          {/* Footer */}
+          <div className="mt-12">
+            <div className="flex items-center justify-center gap-6 mb-4">
+              <Link
+                href="#"
+                className="text-sm hover:underline"
+                style={{ color: '#A0AEC0' }}
+              >
+                Marketplace
+              </Link>
+              <Link
+                href="#"
+                className="text-sm hover:underline"
+                style={{ color: '#A0AEC0' }}
+              >
+                Blog
+              </Link>
+              <Link
+                href="#"
+                className="text-sm hover:underline"
+                style={{ color: '#A0AEC0' }}
+              >
+                License
+              </Link>
+            </div>
+            <p className="text-xs text-center" style={{ color: '#A0AEC0' }}>
+              <span>@ 2021, Made with ❤️ by </span>
+              <span className="font-medium">Simmmple & Creative Tim</span>
+              <span> for a better web</span>
+            </p>
           </div>
-
-          {/* Sign In Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2"
-            style={{
-              background: loading ? '#7551FF' : '#4318FF',
-              color: '#FFFFFF',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1
-            }}
-            onMouseEnter={(e) => {
-              if (!loading) {
-                e.currentTarget.style.background = '#7551FF'
-                e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 10px 20px rgba(67, 24, 255, 0.3)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!loading) {
-                e.currentTarget.style.background = '#4318FF'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = 'none'
-              }
-            }}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Signing in...
-              </>
-            ) : (
-              'SIGN IN'
-            )}
-          </button>
-        </form>
-
-        {/* Sign Up Link */}
-        <div className="mt-8 text-center">
-          <p className="text-sm" style={{ color: '#A0AEC0' }}>
-            Don't have an account?{' '}
-            <Link 
-              href="/auth/signup"
-              className="font-medium hover:underline"
-              style={{ color: '#4318FF' }}
-            >
-              Sign up
-            </Link>
-          </p>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-8 pt-6 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
-          <p className="text-xs text-center" style={{ color: '#718096' }}>
-            © 2021, Made with ❤️ by Simmmple & Creative Tim for a better web
-          </p>
         </div>
       </div>
     </div>
