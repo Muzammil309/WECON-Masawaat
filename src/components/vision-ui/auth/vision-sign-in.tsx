@@ -111,7 +111,7 @@ export function VisionSignIn() {
               backgroundClip: 'text'
             }}
           >
-            THE VISION UI DASHBOARD
+            WECON MASAWAAT
           </h1>
         </div>
       </div>
@@ -192,7 +192,7 @@ export function VisionSignIn() {
                 required
                 disabled={loading}
                 placeholder="Your email address"
-                className="w-full px-4 py-3 rounded-2xl text-sm outline-none transition-all"
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
                 style={{
                   background: 'rgba(26, 31, 55, 0.5)',
                   border: '2px solid rgba(160, 174, 192, 0.2)',
@@ -227,7 +227,7 @@ export function VisionSignIn() {
                 required
                 disabled={loading}
                 placeholder="Your password"
-                className="w-full px-4 py-3 rounded-2xl text-sm outline-none transition-all"
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
                 style={{
                   background: 'rgba(26, 31, 55, 0.5)',
                   border: '2px solid rgba(160, 174, 192, 0.2)',
@@ -265,9 +265,9 @@ export function VisionSignIn() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-2xl font-bold text-xs transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2"
               style={{
-                background: loading ? 'linear-gradient(135deg, #5CE1CA 0%, #4FD1C5 100%)' : 'linear-gradient(135deg, #5CE1CA 0%, #4FD1C5 100%)',
+                background: loading ? 'linear-gradient(135deg, #7928CA 0%, #4318FF 100%)' : 'linear-gradient(135deg, #7928CA 0%, #4318FF 100%)',
                 color: '#FFFFFF',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 opacity: loading ? 0.7 : 1,
