@@ -192,19 +192,21 @@ export function VisionSignIn() {
                 required
                 disabled={loading}
                 placeholder="Your email address"
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
+                className="w-full px-5 py-3 rounded-[20px] text-sm outline-none transition-all"
                 style={{
                   background: 'rgba(26, 31, 55, 0.5)',
-                  border: '2px solid rgba(160, 174, 192, 0.2)',
+                  border: '2px solid #151515',
                   color: '#FFFFFF',
-                  fontFamily: '"Plus Jakarta Display", sans-serif'
+                  fontFamily: '"Plus Jakarta Display", sans-serif',
+                  backdropFilter: 'blur(21px)',
+                  WebkitBackdropFilter: 'blur(21px)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#5CE1CA'
-                  e.target.style.boxShadow = '0 0 0 3px rgba(92, 225, 202, 0.1)'
+                  e.target.style.borderColor = '#7928CA'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(121, 40, 202, 0.1)'
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(160, 174, 192, 0.2)'
+                  e.target.style.borderColor = '#151515'
                   e.target.style.boxShadow = 'none'
                 }}
               />
@@ -227,19 +229,21 @@ export function VisionSignIn() {
                 required
                 disabled={loading}
                 placeholder="Your password"
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
+                className="w-full px-5 py-3 rounded-[20px] text-sm outline-none transition-all"
                 style={{
                   background: 'rgba(26, 31, 55, 0.5)',
-                  border: '2px solid rgba(160, 174, 192, 0.2)',
+                  border: '2px solid #151515',
                   color: '#FFFFFF',
-                  fontFamily: '"Plus Jakarta Display", sans-serif'
+                  fontFamily: '"Plus Jakarta Display", sans-serif',
+                  backdropFilter: 'blur(21px)',
+                  WebkitBackdropFilter: 'blur(21px)'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#5CE1CA'
-                  e.target.style.boxShadow = '0 0 0 3px rgba(92, 225, 202, 0.1)'
+                  e.target.style.borderColor = '#7928CA'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(121, 40, 202, 0.1)'
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(160, 174, 192, 0.2)'
+                  e.target.style.borderColor = '#151515'
                   e.target.style.boxShadow = 'none'
                 }}
               />
