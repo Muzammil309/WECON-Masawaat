@@ -75,7 +75,7 @@ export function VisionSignIn() {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072)',
+            backgroundImage: 'url(/images/auth-background.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
