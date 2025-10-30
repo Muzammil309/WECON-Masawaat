@@ -48,6 +48,15 @@ export function VisionSignUp() {
           if (sessionData?.session?.user) {
             console.log('🔐 [VISION AUTH] User already exists and is authenticated, redirecting')
             toast.success('Welcome back! Redirecting to dashboard...')
+
+            // Reset loading state before redirect
+            setLoading(false)
+
+            // Small delay to show success message
+            await new Promise(resolve => setTimeout(resolve, 500))
+
+            // Perform redirect
+            console.log('🔐 [VISION AUTH] Redirecting to dashboard...')
             router.push('/dashboard/vision')
             return
           } else {
@@ -70,6 +79,15 @@ export function VisionSignUp() {
       if (data.session) {
         console.log('🔐 [VISION AUTH] User authenticated immediately, redirecting')
         toast.success('Account created! Redirecting to dashboard...')
+
+        // Reset loading state before redirect
+        setLoading(false)
+
+        // Small delay to show success message
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+        // Perform redirect
+        console.log('🔐 [VISION AUTH] Redirecting to dashboard...')
         router.push('/dashboard/vision')
         return
       }
