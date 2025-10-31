@@ -2,70 +2,94 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, BarChart3, CreditCard, User, LogIn, UserPlus, HelpCircle, Wrench } from 'lucide-react'
+import { Home, Calendar, Users, Ticket, BarChart3, Settings, User, HelpCircle, LogOut } from 'lucide-react'
+import { useAuth } from '@/components/providers/auth-provider'
 
 interface MenuItem {
   label: string
   href: string
   icon: React.ReactNode
+  roles?: ('admin' | 'attendee' | 'speaker')[] // If undefined, show to all roles
 }
 
-const menuItems: MenuItem[] = [
+const adminMenuItems: MenuItem[] = [
   {
-    label: 'Dashboard',
+    label: 'Overview',
     href: '/dashboard/vision',
     icon: <Home className="h-[15px] w-[15px]" />,
   },
   {
-    label: 'Tables',
-    href: '/dashboard/vision/tables',
+    label: 'Events',
+    href: '/dashboard/vision/events',
+    icon: <Calendar className="h-[15px] w-[15px]" />,
+  },
+  {
+    label: 'Attendees',
+    href: '/dashboard/vision/attendees',
+    icon: <Users className="h-[15px] w-[15px]" />,
+  },
+  {
+    label: 'Analytics',
+    href: '/dashboard/vision/analytics',
     icon: <BarChart3 className="h-[15px] w-[15px]" />,
   },
   {
-    label: 'Billing',
-    href: '/dashboard/vision/billing',
-    icon: <CreditCard className="h-[15px] w-[15px]" />,
+    label: 'Settings',
+    href: '/dashboard/vision/settings',
+    icon: <Settings className="h-[15px] w-[15px]" />,
+  },
+]
+
+const attendeeMenuItems: MenuItem[] = [
+  {
+    label: 'Overview',
+    href: '/dashboard/vision',
+    icon: <Home className="h-[15px] w-[15px]" />,
   },
   {
-    label: 'RTL',
-    href: '/dashboard/vision/rtl',
-    icon: <Wrench className="h-[15px] w-[15px]" />,
+    label: 'My Events',
+    href: '/dashboard/vision/my-events',
+    icon: <Calendar className="h-[15px] w-[15px]" />,
+  },
+  {
+    label: 'My Tickets',
+    href: '/dashboard/vision/my-tickets',
+    icon: <Ticket className="h-[15px] w-[15px]" />,
   },
   {
     label: 'Profile',
     href: '/dashboard/vision/profile',
     icon: <User className="h-[15px] w-[15px]" />,
   },
-  {
-    label: 'Sign In',
-    href: '/auth/signin',
-    icon: <LogIn className="h-[15px] w-[15px]" />,
-  },
-  {
-    label: 'Sign Up',
-    href: '/auth/signup',
-    icon: <UserPlus className="h-[15px] w-[15px]" />,
-  },
 ]
 
 export function VisionSidebar() {
   const pathname = usePathname()
+  const { role, signOut } = useAuth()
+
+  // Select menu items based on role
+  const menuItems = role === 'admin' ? adminMenuItems : attendeeMenuItems
+
+  const handleSignOut = async () => {
+    await signOut()
+    window.location.href = '/auth/login'
+  }
 
   return (
-    <div className="fixed left-[10px] top-[10px] h-[calc(100vh-20px)] w-[264px] vision-glass-card">
+    <div className="fixed left-[10px] top-[10px] h-[calc(100vh-20px)] w-[264px] vision-glass-card flex flex-col">
       {/* Logo */}
       <div className="flex items-center justify-center pt-[36px] pb-[25px]">
         <p
           className="text-[14px] font-medium tracking-[2.52px] text-center"
           style={{
             fontFamily: '"Plus Jakarta Display", sans-serif',
-            background: 'linear-gradient(135deg, #4318FF 0%, #7551FF 100%)',
+            background: 'linear-gradient(135deg, #7928CA 0%, #4318FF 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
           }}
         >
-          VISION UI FREE
+          WECON MASAWAAT
         </p>
       </div>
 
@@ -73,10 +97,10 @@ export function VisionSidebar() {
       <div className="mx-[15px] h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       {/* Menu Items */}
-      <nav className="mt-[23px] px-[16px] space-y-[12px]">
+      <nav className="mt-[23px] px-[16px] space-y-[12px] flex-1 overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.href
-          
+
           return (
             <Link
               key={item.href}
@@ -95,7 +119,7 @@ export function VisionSidebar() {
                   flex items-center justify-center w-[30px] h-[30px] rounded-[12px]
                   ${
                     isActive
-                      ? 'bg-gradient-to-br from-[#4318FF] to-[#7551FF]'
+                      ? 'bg-gradient-to-br from-[#7928CA] to-[#4318FF]'
                       : 'vision-sidebar-item'
                   }
                 `}
@@ -113,6 +137,22 @@ export function VisionSidebar() {
             </Link>
           )
         })}
+
+        {/* Sign Out Button */}
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-[15.5px] px-[16px] py-[12px] rounded-[15px] transition-all hover:bg-white/5 w-full text-left"
+        >
+          <div className="flex items-center justify-center w-[30px] h-[30px] rounded-[12px] vision-sidebar-item">
+            <LogOut className="h-[15px] w-[15px] text-white" />
+          </div>
+          <span
+            className="text-[14px] font-medium text-white"
+            style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+          >
+            Sign Out
+          </span>
+        </button>
       </nav>
 
       {/* Need Help Card */}
