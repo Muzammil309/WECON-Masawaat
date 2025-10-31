@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Calendar, Users, Ticket, BarChart3, Settings, User, HelpCircle, LogOut } from 'lucide-react'
+import { Home, CalendarDays, Users2, TicketCheck, BarChart3, Settings, User, LogOut, HelpCircle } from 'lucide-react'
 import { useAuth } from '@/components/providers/auth-provider'
 
 interface MenuItem {
@@ -16,27 +16,27 @@ const adminMenuItems: MenuItem[] = [
   {
     label: 'Overview',
     href: '/dashboard/vision',
-    icon: <Home className="h-[15px] w-[15px]" />,
+    icon: <Home className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
   {
     label: 'Events',
     href: '/dashboard/vision/events',
-    icon: <Calendar className="h-[15px] w-[15px]" />,
+    icon: <CalendarDays className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
   {
     label: 'Attendees',
     href: '/dashboard/vision/attendees',
-    icon: <Users className="h-[15px] w-[15px]" />,
+    icon: <Users2 className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
   {
     label: 'Analytics',
     href: '/dashboard/vision/analytics',
-    icon: <BarChart3 className="h-[15px] w-[15px]" />,
+    icon: <BarChart3 className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
   {
     label: 'Settings',
     href: '/dashboard/vision/settings',
-    icon: <Settings className="h-[15px] w-[15px]" />,
+    icon: <Settings className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
 ]
 
@@ -44,22 +44,22 @@ const attendeeMenuItems: MenuItem[] = [
   {
     label: 'Overview',
     href: '/dashboard/vision',
-    icon: <Home className="h-[15px] w-[15px]" />,
+    icon: <Home className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
   {
     label: 'My Events',
     href: '/dashboard/vision/my-events',
-    icon: <Calendar className="h-[15px] w-[15px]" />,
+    icon: <CalendarDays className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
   {
     label: 'My Tickets',
     href: '/dashboard/vision/my-tickets',
-    icon: <Ticket className="h-[15px] w-[15px]" />,
+    icon: <TicketCheck className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
   {
     label: 'Profile',
     href: '/dashboard/vision/profile',
-    icon: <User className="h-[15px] w-[15px]" />,
+    icon: <User className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
 ]
 

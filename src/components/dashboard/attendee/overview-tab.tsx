@@ -1,6 +1,6 @@
 'use client'
 
-import { Calendar, Ticket, MapPin, Clock, QrCode } from 'lucide-react'
+import { CalendarDays, TicketCheck, MapPin, Clock, QrCode, Download, Sparkles } from 'lucide-react'
 import { StatCard } from '../shared/stat-card'
 import { EmptyState } from '../shared/empty-state'
 import { mockAttendeeStats, mockTickets, getActiveTickets, getUpcomingEvents } from '@/lib/mock-data/dashboard'
@@ -15,25 +15,25 @@ export function AttendeeOverviewTab({ loading }: AttendeeOverviewTabProps) {
   const upcomingEvents = getUpcomingEvents().slice(0, 3)
 
   return (
-    <div className="space-y-[24px]">
+    <div className="space-y-[28px]">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-[20px]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-[24px]">
         <StatCard
           label="Registered Events"
           value={stats.totalEvents}
-          icon={Calendar}
+          icon={CalendarDays}
           loading={loading}
         />
         <StatCard
           label="Active Tickets"
           value={activeTickets.length}
-          icon={Ticket}
+          icon={TicketCheck}
           loading={loading}
         />
         <StatCard
           label="Upcoming Events"
           value={stats.activeEvents}
-          icon={Clock}
+          icon={Sparkles}
           loading={loading}
         />
       </div>
@@ -95,13 +95,13 @@ export function AttendeeOverviewTab({ loading }: AttendeeOverviewTabProps) {
                 {/* Ticket Details */}
                 <div className="space-y-[8px] mb-[16px]">
                   <div className="flex items-center gap-[8px] text-[12px] text-[#A0AEC0]">
-                    <Ticket className="h-[14px] w-[14px]" />
+                    <TicketCheck className="h-[14px] w-[14px]" />
                     <span style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}>
                       {ticket.ticket_type} Ticket
                     </span>
                   </div>
                   <div className="flex items-center gap-[8px] text-[12px] text-[#A0AEC0]">
-                    <Calendar className="h-[14px] w-[14px]" />
+                    <Clock className="h-[14px] w-[14px]" />
                     <span style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}>
                       Purchased: {new Date(ticket.purchase_date).toLocaleDateString()}
                     </span>
@@ -135,7 +135,7 @@ export function AttendeeOverviewTab({ loading }: AttendeeOverviewTabProps) {
           </div>
         ) : (
           <EmptyState
-            icon={Ticket}
+            icon={TicketCheck}
             title="No Active Tickets"
             description="You don't have any active tickets. Browse events to get started!"
             actionLabel="Browse Events"
@@ -179,7 +179,7 @@ export function AttendeeOverviewTab({ loading }: AttendeeOverviewTabProps) {
                     background: 'linear-gradient(135deg, rgba(121, 40, 202, 0.2) 0%, rgba(67, 24, 255, 0.2) 100%)',
                   }}
                 >
-                  <Calendar className="h-[30px] w-[30px] text-[#7928CA]" />
+                  <CalendarDays className="h-[30px] w-[30px] text-[#7928CA]" />
                 </div>
 
                 {/* Event Details */}
@@ -191,7 +191,7 @@ export function AttendeeOverviewTab({ loading }: AttendeeOverviewTabProps) {
                 </h4>
                 <div className="space-y-[6px] mb-[16px]">
                   <div className="flex items-center gap-[8px] text-[12px] text-[#A0AEC0]">
-                    <Calendar className="h-[14px] w-[14px]" />
+                    <Clock className="h-[14px] w-[14px]" />
                     <span style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}>
                       {new Date(event.start_date).toLocaleDateString('en-US', {
                         month: 'short',
@@ -223,7 +223,7 @@ export function AttendeeOverviewTab({ loading }: AttendeeOverviewTabProps) {
           </div>
         ) : (
           <EmptyState
-            icon={Calendar}
+            icon={CalendarDays}
             title="No Upcoming Events"
             description="There are no upcoming events at the moment. Check back later!"
           />

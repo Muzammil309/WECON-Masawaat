@@ -28,12 +28,12 @@ export function StatCard({ label, value, trend, trendPositive, icon: Icon, loadi
   }
 
   return (
-    <div className="vision-glass-card p-[20px] hover:bg-white/5 transition-all duration-300">
+    <div className="group vision-glass-card p-[24px] hover:bg-white/8 transition-all duration-300 hover:scale-[1.02] cursor-pointer border border-transparent hover:border-[#7928CA]/30">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           {/* Label */}
           <p
-            className="text-[12px] font-medium text-[#A0AEC0] mb-[8px]"
+            className="text-[14px] font-semibold text-[#A0AEC0] mb-[10px]"
             style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
           >
             {label}
@@ -41,17 +41,17 @@ export function StatCard({ label, value, trend, trendPositive, icon: Icon, loadi
 
           {/* Value */}
           <h3
-            className="text-[24px] font-bold text-white mb-[4px]"
-            style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+            className="text-[32px] font-bold text-white mb-[6px] group-hover:text-[#7928CA] transition-colors"
+            style={{ fontFamily: '"Plus Jakarta Display", sans-serif', lineHeight: '1.2' }}
           >
             {value}
           </h3>
 
           {/* Trend */}
           {trend && (
-            <div className="flex items-center gap-[6px]">
+            <div className="flex items-center gap-[8px]">
               <span
-                className={`text-[12px] font-medium ${
+                className={`text-[13px] font-bold ${
                   trendPositive ? 'text-[#01B574]' : 'text-[#E31A1A]'
                 }`}
                 style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
@@ -59,7 +59,7 @@ export function StatCard({ label, value, trend, trendPositive, icon: Icon, loadi
                 {trendPositive ? '↑' : '↓'} {trend}
               </span>
               <span
-                className="text-[12px] font-normal text-[#A0AEC0]"
+                className="text-[13px] font-medium text-[#A0AEC0]"
                 style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
               >
                 since last month
@@ -70,12 +70,13 @@ export function StatCard({ label, value, trend, trendPositive, icon: Icon, loadi
 
         {/* Icon */}
         <div
-          className="flex items-center justify-center w-[45px] h-[45px] rounded-[12px]"
+          className="flex items-center justify-center w-[56px] h-[56px] rounded-[16px] group-hover:scale-110 transition-transform duration-300"
           style={{
             background: 'linear-gradient(135deg, #7928CA 0%, #4318FF 100%)',
+            boxShadow: '0 8px 24px rgba(121, 40, 202, 0.3)',
           }}
         >
-          <Icon className="h-[24px] w-[24px] text-white" />
+          <Icon className="h-[28px] w-[28px] text-white" strokeWidth={2.5} />
         </div>
       </div>
     </div>
