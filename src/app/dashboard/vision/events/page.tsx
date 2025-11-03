@@ -33,26 +33,40 @@ export default function EventsListingPage() {
   const { user, role, loading: authLoading } = useAuth()
   const router = useRouter()
   const [events, setEvents] = useState<Event[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
+
+  // Debug logging
+  useEffect(() => {
+    console.log('🔍 Events Page State:', {
+      authLoading,
+      hasUser: !!user,
+      role,
+      eventsLoading: loading,
+      eventsCount: events.length
+    })
+  }, [authLoading, user, role, loading, events.length])
 
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
+      console.log('❌ No user found, redirecting to login')
       router.push('/auth/login')
     }
   }, [user, authLoading, router])
 
   // Fetch events
   useEffect(() => {
-    if (user) {
+    if (!authLoading && user) {
+      console.log('✅ User authenticated, fetching events...')
       fetchEvents()
     }
-  }, [user, statusFilter])
+  }, [user, authLoading, statusFilter])
 
   const fetchEvents = async () => {
     try {
+      console.log('📡 Fetching events with filter:', statusFilter)
       setLoading(true)
       const params = new URLSearchParams()
       if (statusFilter !== 'all') {
@@ -61,19 +75,30 @@ export default function EventsListingPage() {
       params.append('sortBy', 'start_date')
       params.append('sortOrder', 'desc')
 
-      const response = await fetch(`/api/events?${params.toString()}`)
+      const url = `/api/events?${params.toString()}`
+      console.log('📡 API URL:', url)
+
+      const response = await fetch(url)
+      console.log('📡 Response status:', response.status)
+
       const data = await response.json()
+      console.log('📡 Response data:', data)
 
       if (data.success) {
         setEvents(data.data || [])
+        console.log('✅ Events loaded:', data.data?.length || 0)
       } else {
-        toast.error('Failed to fetch events')
+        console.error('❌ API returned error:', data.error)
+        toast.error(data.error || 'Failed to fetch events')
+        setEvents([])
       }
     } catch (error) {
-      console.error('Error fetching events:', error)
+      console.error('❌ Error fetching events:', error)
       toast.error('Failed to fetch events')
+      setEvents([])
     } finally {
       setLoading(false)
+      console.log('✅ Loading complete')
     }
   }
 

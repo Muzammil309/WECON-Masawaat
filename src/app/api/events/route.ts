@@ -23,8 +23,13 @@ const createEventSchema = z.object({
 // GET /api/events - List all events
 export async function GET(request: NextRequest) {
   try {
+    console.log('📡 GET /api/events - Request received')
     const supabase = await createClient()
-    
+
+    // Check authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    console.log('🔐 Auth check:', { hasUser: !!user, authError: authError?.message })
+
     // Get query parameters
     const searchParams = request.nextUrl.searchParams
     const status = searchParams.get('status')
@@ -33,6 +38,8 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get('offset') || '0')
     const sortBy = searchParams.get('sortBy') || 'start_date'
     const sortOrder = searchParams.get('sortOrder') || 'desc'
+
+    console.log('📊 Query params:', { status, search, limit, offset, sortBy, sortOrder })
 
     // Build query
     let query = supabase
@@ -62,12 +69,15 @@ export async function GET(request: NextRequest) {
     // Apply pagination
     query = query.range(offset, offset + limit - 1)
 
+    console.log('🔍 Executing query...')
     const { data: events, error, count } = await query
 
     if (error) {
-      console.error('Error fetching events:', error)
+      console.error('❌ Database error:', error)
       throw error
     }
+
+    console.log('✅ Query successful:', { count, eventsReturned: events?.length || 0 })
 
     return NextResponse.json({
       success: true,
@@ -80,7 +90,7 @@ export async function GET(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('GET /api/events error:', error)
+    console.error('❌ GET /api/events error:', error)
     return NextResponse.json(
       {
         success: false,
