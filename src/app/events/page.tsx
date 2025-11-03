@@ -12,12 +12,15 @@ import { Plus, Search } from 'lucide-react'
 interface Event {
   id: string
   title: string
-  description: string | null
+  description?: string
   start_date: string
   end_date: string
-  location: string | null
-  max_attendees: number | null
+  location?: string
+  venue_name?: string
+  cover_image_url?: string
+  max_attendees?: number
   status: 'draft' | 'published' | 'cancelled' | 'completed'
+  is_virtual: boolean
   created_at: string
 }
 
