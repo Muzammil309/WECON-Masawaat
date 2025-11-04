@@ -48,21 +48,29 @@ export function ProfileHeader({ profile, badges }: ProfileHeaderProps) {
 
   return (
     <>
-      <Card className="relative overflow-hidden">
+      <Card
+        className="relative overflow-hidden vision-glass-card"
+        style={{
+          background: 'rgba(26, 31, 55, 0.5)',
+          backdropFilter: 'blur(21px)',
+          border: '2px solid #151515',
+          borderRadius: '20px'
+        }}
+      >
         {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10" />
-        
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-blue-600/10 to-purple-600/10" />
+
         <div className="relative p-8">
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
             {/* Avatar Section */}
             <div className="relative group">
-              <Avatar className="h-32 w-32 border-4 border-white shadow-xl">
+              <Avatar className="h-32 w-32 border-4 border-purple-600 shadow-xl">
                 <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name || 'User'} />
-                <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-purple-600 to-blue-600 text-white">
                   {getInitials(profile.full_name)}
                 </AvatarFallback>
               </Avatar>
-              
+
               {/* Upload Button Overlay */}
               <Button
                 size="sm"
@@ -78,7 +86,7 @@ export function ProfileHeader({ profile, badges }: ProfileHeaderProps) {
             <div className="flex-1 space-y-3">
               <div>
                 <div className="flex items-center gap-3 flex-wrap">
-                  <h1 className="text-3xl font-bold text-gray-900">
+                  <h1 className="text-3xl font-bold text-white">
                     {profile.full_name || 'Anonymous User'}
                   </h1>
                   {profile.profile_completed ? (
@@ -96,8 +104,8 @@ export function ProfileHeader({ profile, badges }: ProfileHeaderProps) {
                     {profile.role}
                   </Badge>
                 </div>
-                
-                <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-600">
+
+                <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-300">
                   {profile.job_title && profile.company && (
                     <div className="flex items-center gap-1">
                       <Briefcase className="h-4 w-4" />
@@ -114,7 +122,7 @@ export function ProfileHeader({ profile, badges }: ProfileHeaderProps) {
               </div>
 
               {profile.bio && (
-                <p className="text-gray-700 max-w-2xl line-clamp-2">
+                <p className="text-gray-300 max-w-2xl line-clamp-2">
                   {profile.bio}
                 </p>
               )}
@@ -144,28 +152,40 @@ export function ProfileHeader({ profile, badges }: ProfileHeaderProps) {
             {/* Stats Section */}
             <div className="flex flex-col gap-4 min-w-[200px]">
               {/* Points */}
-              <div className="bg-white rounded-lg p-4 shadow-sm border">
+              <div
+                className="rounded-lg p-4 shadow-sm"
+                style={{
+                  background: 'rgba(26, 31, 55, 0.7)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}
+              >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Total Points</span>
-                  <TrendingUp className="h-4 w-4 text-green-500" />
+                  <span className="text-sm font-medium text-gray-300">Total Points</span>
+                  <TrendingUp className="h-4 w-4 text-green-400" />
                 </div>
-                <div className="text-3xl font-bold text-gray-900">
+                <div className="text-3xl font-bold text-white">
                   {profile.total_points.toLocaleString()}
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-gray-400 mt-1">
                   {badges.length} badges earned
                 </div>
               </div>
 
               {/* Profile Completion */}
-              <div className="bg-white rounded-lg p-4 shadow-sm border">
+              <div
+                className="rounded-lg p-4 shadow-sm"
+                style={{
+                  background: 'rgba(26, 31, 55, 0.7)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}
+              >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Profile Completion</span>
-                  <span className="text-sm font-bold text-gray-900">{completionPercentage}%</span>
+                  <span className="text-sm font-medium text-gray-300">Profile Completion</span>
+                  <span className="text-sm font-bold text-white">{completionPercentage}%</span>
                 </div>
                 <Progress value={completionPercentage} className="h-2" />
                 {completionPercentage < 100 && (
-                  <div className="text-xs text-gray-500 mt-2">
+                  <div className="text-xs text-gray-400 mt-2">
                     Complete your profile to unlock more features
                   </div>
                 )}

@@ -74,15 +74,23 @@ export function QRCodeSection({ userId }: QRCodeSectionProps) {
   }
 
   return (
-    <Card>
+    <Card
+      className="vision-glass-card"
+      style={{
+        background: 'rgba(26, 31, 55, 0.5)',
+        backdropFilter: 'blur(21px)',
+        border: '2px solid #151515',
+        borderRadius: '20px'
+      }}
+    >
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2" style={{ color: '#fff', fontSize: '24px' }}>
               <QrCode className="h-5 w-5" />
               Your Profile QR Code
             </CardTitle>
-            <CardDescription>
+            <CardDescription style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
               Use this QR code to check in to any event you're registered for
             </CardDescription>
           </div>

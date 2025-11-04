@@ -33,10 +33,18 @@ export function BadgesSection({ userBadges, totalPoints }: BadgesSectionProps) {
   return (
     <div className="space-y-6">
       {/* Summary Card */}
-      <Card>
+      <Card
+        className="vision-glass-card"
+        style={{
+          background: 'rgba(26, 31, 55, 0.5)',
+          backdropFilter: 'blur(21px)',
+          border: '2px solid #151515',
+          borderRadius: '20px'
+        }}
+      >
         <CardHeader>
-          <CardTitle>Your Achievements</CardTitle>
-          <CardDescription>
+          <CardTitle style={{ color: '#fff', fontSize: '24px' }}>Your Achievements</CardTitle>
+          <CardDescription style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
             You've earned {userBadges.length} badge{userBadges.length !== 1 ? 's' : ''} and {totalPoints.toLocaleString()} points
           </CardDescription>
         </CardHeader>
@@ -52,10 +60,19 @@ export function BadgesSection({ userBadges, totalPoints }: BadgesSectionProps) {
             const rarityConfig = getRarityConfig(badge.rarity)
 
             return (
-              <Card key={userBadge.id} className="relative overflow-hidden">
+              <Card
+                key={userBadge.id}
+                className="relative overflow-hidden vision-glass-card"
+                style={{
+                  background: 'rgba(26, 31, 55, 0.5)',
+                  backdropFilter: 'blur(21px)',
+                  border: '2px solid #151515',
+                  borderRadius: '20px'
+                }}
+              >
                 {/* Rarity Gradient Background */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${rarityConfig.gradient} opacity-5`} />
-                
+
                 <CardContent className="relative p-6">
                   <div className="flex items-start gap-4">
                     {/* Badge Icon */}
@@ -66,15 +83,15 @@ export function BadgesSection({ userBadges, totalPoints }: BadgesSectionProps) {
                     {/* Badge Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <h3 className="font-semibold text-gray-900 truncate">
+                        <h3 className="font-semibold text-white truncate">
                           {badge.name}
                         </h3>
                         <Badge variant="outline" className="flex-shrink-0 text-xs">
                           {badge.points} pts
                         </Badge>
                       </div>
-                      
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+
+                      <p className="text-sm text-gray-300 mb-3 line-clamp-2">
                         {badge.description}
                       </p>
 
@@ -82,7 +99,7 @@ export function BadgesSection({ userBadges, totalPoints }: BadgesSectionProps) {
                         <Badge variant="secondary" className={`bg-${rarityConfig.color}-100 text-${rarityConfig.color}-700`}>
                           {rarityConfig.label}
                         </Badge>
-                        <span className="text-gray-500">
+                        <span className="text-gray-400">
                           {format(new Date(userBadge.earned_at), 'MMM d, yyyy')}
                         </span>
                       </div>
@@ -94,13 +111,21 @@ export function BadgesSection({ userBadges, totalPoints }: BadgesSectionProps) {
           })}
         </div>
       ) : (
-        <Card>
+        <Card
+          className="vision-glass-card"
+          style={{
+            background: 'rgba(26, 31, 55, 0.5)',
+            backdropFilter: 'blur(21px)',
+            border: '2px solid #151515',
+            borderRadius: '20px'
+          }}
+        >
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <Award className="h-16 w-16 text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <Award className="h-16 w-16 text-gray-400 mb-4" />
+            <h3 className="text-lg font-semibold text-white mb-2">
               No Badges Yet
             </h3>
-            <p className="text-gray-600 max-w-md">
+            <p className="text-gray-300 max-w-md">
               Start attending sessions, networking with other attendees, and participating in activities to earn badges!
             </p>
           </CardContent>

@@ -48,24 +48,32 @@ export function PointsHistory({ points }: PointsHistoryProps) {
   return (
     <div className="space-y-6">
       {/* Summary Card */}
-      <Card>
+      <Card
+        className="vision-glass-card"
+        style={{
+          background: 'rgba(26, 31, 55, 0.5)',
+          backdropFilter: 'blur(21px)',
+          border: '2px solid #151515',
+          borderRadius: '20px'
+        }}
+      >
         <CardHeader>
-          <CardTitle>Activity History</CardTitle>
-          <CardDescription>
+          <CardTitle style={{ color: '#fff', fontSize: '24px' }}>Activity History</CardTitle>
+          <CardDescription style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
             Your recent activities and points earned
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
             <div className="flex-1">
-              <div className="text-3xl font-bold text-gray-900">
+              <div className="text-3xl font-bold text-white">
                 {totalPoints.toLocaleString()}
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-300">
                 Total Points from {points.length} activities
               </div>
             </div>
-            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white">
+            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white">
               <TrendingUp className="h-8 w-8" />
             </div>
           </div>
@@ -74,7 +82,15 @@ export function PointsHistory({ points }: PointsHistoryProps) {
 
       {/* Activity Timeline */}
       {points.length > 0 ? (
-        <Card>
+        <Card
+          className="vision-glass-card"
+          style={{
+            background: 'rgba(26, 31, 55, 0.5)',
+            backdropFilter: 'blur(21px)',
+            border: '2px solid #151515',
+            borderRadius: '20px'
+          }}
+        >
           <CardContent className="p-6">
             <div className="space-y-4">
               {points.map((entry, index) => {
@@ -84,7 +100,7 @@ export function PointsHistory({ points }: PointsHistoryProps) {
                 return (
                   <div
                     key={entry.id}
-                    className="flex items-start gap-4 pb-4 border-b last:border-0 last:pb-0"
+                    className="flex items-start gap-4 pb-4 border-b border-gray-700 last:border-0 last:pb-0"
                   >
                     {/* Icon */}
                     <div className={`flex-shrink-0 h-10 w-10 rounded-full bg-${config.color}-100 flex items-center justify-center`}>
@@ -95,10 +111,10 @@ export function PointsHistory({ points }: PointsHistoryProps) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-white">
                             {config.label}
                           </p>
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-sm text-gray-400 mt-1">
                             {format(new Date(entry.created_at), 'MMM d, yyyy • h:mm a')}
                           </p>
                         </div>
@@ -109,7 +125,7 @@ export function PointsHistory({ points }: PointsHistoryProps) {
 
                       {/* Metadata */}
                       {entry.metadata && Object.keys(entry.metadata).length > 0 && (
-                        <div className="mt-2 text-xs text-gray-500">
+                        <div className="mt-2 text-xs text-gray-400">
                           {entry.metadata.session_title && (
                             <span>Session: {entry.metadata.session_title}</span>
                           )}
@@ -129,13 +145,21 @@ export function PointsHistory({ points }: PointsHistoryProps) {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card
+          className="vision-glass-card"
+          style={{
+            background: 'rgba(26, 31, 55, 0.5)',
+            backdropFilter: 'blur(21px)',
+            border: '2px solid #151515',
+            borderRadius: '20px'
+          }}
+        >
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <TrendingUp className="h-16 w-16 text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <TrendingUp className="h-16 w-16 text-gray-400 mb-4" />
+            <h3 className="text-lg font-semibold text-white mb-2">
               No Activity Yet
             </h3>
-            <p className="text-gray-600 max-w-md">
+            <p className="text-gray-300 max-w-md">
               Start participating in events to earn points and track your activity here!
             </p>
           </CardContent>

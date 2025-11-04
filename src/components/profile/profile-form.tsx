@@ -93,10 +93,18 @@ export function ProfileForm({ profile, onUpdate }: ProfileFormProps) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card>
+      <Card
+        className="vision-glass-card"
+        style={{
+          background: 'rgba(26, 31, 55, 0.5)',
+          backdropFilter: 'blur(21px)',
+          border: '2px solid #151515',
+          borderRadius: '20px'
+        }}
+      >
         <CardHeader>
-          <CardTitle>Edit Profile</CardTitle>
-          <CardDescription>
+          <CardTitle style={{ color: '#fff', fontSize: '24px' }}>Edit Profile</CardTitle>
+          <CardDescription style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
             Update your personal information and networking interests
           </CardDescription>
         </CardHeader>

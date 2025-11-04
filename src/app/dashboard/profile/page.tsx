@@ -108,40 +108,71 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container max-w-6xl mx-auto p-6 space-y-8">
+    <div className="container max-w-6xl mx-auto p-6 space-y-8" style={{ background: '#0F1535' }}>
       {/* Profile Header with Avatar and Stats */}
       <ProfileHeader profile={profile} badges={badges} />
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="edit" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto">
-          <TabsTrigger value="edit">Edit Profile</TabsTrigger>
-          <TabsTrigger value="qr-code">QR Code</TabsTrigger>
-          <TabsTrigger value="badges">
+        <TabsList
+          className="grid w-full grid-cols-4 lg:w-auto"
+          style={{
+            background: 'rgba(26, 31, 55, 0.5)',
+            backdropFilter: 'blur(21px)',
+            border: '2px solid #151515',
+            borderRadius: '20px',
+            padding: '8px'
+          }}
+        >
+          <TabsTrigger
+            value="edit"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white"
+            style={{ borderRadius: '12px' }}
+          >
+            Edit Profile
+          </TabsTrigger>
+          <TabsTrigger
+            value="qr-code"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white"
+            style={{ borderRadius: '12px' }}
+          >
+            QR Code
+          </TabsTrigger>
+          <TabsTrigger
+            value="badges"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white"
+            style={{ borderRadius: '12px' }}
+          >
             Badges ({badges.length})
           </TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
+          <TabsTrigger
+            value="activity"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white"
+            style={{ borderRadius: '12px' }}
+          >
+            Activity
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="edit" className="space-y-6">
+        <TabsContent value="edit" className="space-y-6 mt-6">
           <ProfileForm
             profile={profile}
             onUpdate={handleProfileUpdate}
           />
         </TabsContent>
 
-        <TabsContent value="qr-code" className="space-y-6">
+        <TabsContent value="qr-code" className="space-y-6 mt-6">
           <QRCodeSection userId={user?.id || ''} />
         </TabsContent>
 
-        <TabsContent value="badges" className="space-y-6">
+        <TabsContent value="badges" className="space-y-6 mt-6">
           <BadgesSection
             userBadges={badges}
             totalPoints={profile.total_points}
           />
         </TabsContent>
 
-        <TabsContent value="activity" className="space-y-6">
+        <TabsContent value="activity" className="space-y-6 mt-6">
           <PointsHistory points={points} />
         </TabsContent>
       </Tabs>
