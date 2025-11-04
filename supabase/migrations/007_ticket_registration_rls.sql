@@ -3,16 +3,22 @@
 -- Allow authenticated users to create their own tickets
 -- =====================================================
 
--- Drop existing overly permissive policies if they exist
-DROP POLICY IF EXISTS "Users can view their own tickets" ON em_tickets;
+-- Drop existing policies if they exist (use unique names to avoid conflicts)
+DROP POLICY IF EXISTS "em_tickets_users_view_own" ON em_tickets;
+DROP POLICY IF EXISTS "em_tickets_admins_view_all" ON em_tickets;
+DROP POLICY IF EXISTS "em_tickets_organizers_view_event" ON em_tickets;
+DROP POLICY IF EXISTS "em_tickets_users_create_own" ON em_tickets;
+DROP POLICY IF EXISTS "em_tickets_admins_update_any" ON em_tickets;
+DROP POLICY IF EXISTS "em_tickets_users_update_own" ON em_tickets;
+DROP POLICY IF EXISTS "em_tickets_organizers_update_event" ON em_tickets;
 
 -- 1. Users can view their own tickets
-CREATE POLICY "Users can view own tickets"
+CREATE POLICY "em_tickets_users_view_own"
 ON em_tickets FOR SELECT
 USING (auth.uid() = user_id);
 
 -- 2. Admins can view all tickets
-CREATE POLICY "Admins can view all tickets"
+CREATE POLICY "em_tickets_admins_view_all"
 ON em_tickets FOR SELECT
 USING (
     EXISTS (
@@ -22,7 +28,7 @@ USING (
 );
 
 -- 3. Event organizers can view tickets for their events
-CREATE POLICY "Organizers can view event tickets"
+CREATE POLICY "em_tickets_organizers_view_event"
 ON em_tickets FOR SELECT
 USING (
     EXISTS (
@@ -34,12 +40,12 @@ USING (
 );
 
 -- 4. Authenticated users can create tickets for themselves
-CREATE POLICY "Users can create own tickets"
+CREATE POLICY "em_tickets_users_create_own"
 ON em_tickets FOR INSERT
 WITH CHECK (auth.uid() = user_id);
 
 -- 5. Admins can update any ticket
-CREATE POLICY "Admins can update any ticket"
+CREATE POLICY "em_tickets_admins_update_any"
 ON em_tickets FOR UPDATE
 USING (
     EXISTS (
@@ -49,12 +55,12 @@ USING (
 );
 
 -- 6. Users can update their own tickets (limited fields)
-CREATE POLICY "Users can update own tickets"
+CREATE POLICY "em_tickets_users_update_own"
 ON em_tickets FOR UPDATE
 USING (auth.uid() = user_id);
 
 -- 7. Event organizers can update tickets for their events (for check-in)
-CREATE POLICY "Organizers can update event tickets"
+CREATE POLICY "em_tickets_organizers_update_event"
 ON em_tickets FOR UPDATE
 USING (
     EXISTS (
@@ -69,11 +75,19 @@ USING (
 -- Add RLS Policies for Ticket Tiers
 -- =====================================================
 
--- Drop existing overly permissive policies if they exist
-DROP POLICY IF EXISTS "Public ticket tiers are viewable by everyone" ON em_ticket_tiers;
+-- Drop existing policies if they exist (use unique names to avoid conflicts)
+DROP POLICY IF EXISTS "em_ticket_tiers_public_view_active" ON em_ticket_tiers;
+DROP POLICY IF EXISTS "em_ticket_tiers_admins_view_all" ON em_ticket_tiers;
+DROP POLICY IF EXISTS "em_ticket_tiers_organizers_view_own" ON em_ticket_tiers;
+DROP POLICY IF EXISTS "em_ticket_tiers_admins_create" ON em_ticket_tiers;
+DROP POLICY IF EXISTS "em_ticket_tiers_organizers_create" ON em_ticket_tiers;
+DROP POLICY IF EXISTS "em_ticket_tiers_admins_update" ON em_ticket_tiers;
+DROP POLICY IF EXISTS "em_ticket_tiers_organizers_update" ON em_ticket_tiers;
+DROP POLICY IF EXISTS "em_ticket_tiers_admins_delete" ON em_ticket_tiers;
+DROP POLICY IF EXISTS "em_ticket_tiers_organizers_delete" ON em_ticket_tiers;
 
 -- 1. Anyone can view active ticket tiers for published events
-CREATE POLICY "Anyone can view active ticket tiers"
+CREATE POLICY "em_ticket_tiers_public_view_active"
 ON em_ticket_tiers FOR SELECT
 USING (
     is_active = true AND
@@ -85,7 +99,7 @@ USING (
 );
 
 -- 2. Admins can view all ticket tiers
-CREATE POLICY "Admins can view all ticket tiers"
+CREATE POLICY "em_ticket_tiers_admins_view_all"
 ON em_ticket_tiers FOR SELECT
 USING (
     EXISTS (
@@ -95,7 +109,7 @@ USING (
 );
 
 -- 3. Event organizers can view ticket tiers for their events
-CREATE POLICY "Organizers can view own event ticket tiers"
+CREATE POLICY "em_ticket_tiers_organizers_view_own"
 ON em_ticket_tiers FOR SELECT
 USING (
     EXISTS (
@@ -106,7 +120,7 @@ USING (
 );
 
 -- 4. Admins can create ticket tiers
-CREATE POLICY "Admins can create ticket tiers"
+CREATE POLICY "em_ticket_tiers_admins_create"
 ON em_ticket_tiers FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -116,7 +130,7 @@ WITH CHECK (
 );
 
 -- 5. Event organizers can create ticket tiers for their events
-CREATE POLICY "Organizers can create ticket tiers"
+CREATE POLICY "em_ticket_tiers_organizers_create"
 ON em_ticket_tiers FOR INSERT
 WITH CHECK (
     EXISTS (
@@ -127,7 +141,7 @@ WITH CHECK (
 );
 
 -- 6. Admins can update any ticket tier
-CREATE POLICY "Admins can update any ticket tier"
+CREATE POLICY "em_ticket_tiers_admins_update"
 ON em_ticket_tiers FOR UPDATE
 USING (
     EXISTS (
@@ -137,7 +151,7 @@ USING (
 );
 
 -- 7. Event organizers can update ticket tiers for their events
-CREATE POLICY "Organizers can update own ticket tiers"
+CREATE POLICY "em_ticket_tiers_organizers_update"
 ON em_ticket_tiers FOR UPDATE
 USING (
     EXISTS (
@@ -148,7 +162,7 @@ USING (
 );
 
 -- 8. Admins can delete any ticket tier
-CREATE POLICY "Admins can delete any ticket tier"
+CREATE POLICY "em_ticket_tiers_admins_delete"
 ON em_ticket_tiers FOR DELETE
 USING (
     EXISTS (
@@ -158,7 +172,7 @@ USING (
 );
 
 -- 9. Event organizers can delete ticket tiers for their events
-CREATE POLICY "Organizers can delete own ticket tiers"
+CREATE POLICY "em_ticket_tiers_organizers_delete"
 ON em_ticket_tiers FOR DELETE
 USING (
     EXISTS (
