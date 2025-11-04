@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useQRScanner } from '@/lib/hooks/useQRScanner'
 import { useOfflineSync } from '@/lib/hooks/useOfflineSync'
 import { OfflineSyncIndicator } from './OfflineSyncIndicator'
+import { ProfilePreviewDialog } from './ProfilePreviewDialog'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import type { ScanQRCodeResponse } from '@/lib/types/check-in'
@@ -28,6 +29,8 @@ export function MobileScanner({ stationId, eventId, onCheckInSuccess }: MobileSc
   const [scanResult, setScanResult] = useState<ScanQRCodeResponse | null>(null)
   const [showResultDialog, setShowResultDialog] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [profileData, setProfileData] = useState<any>(null)
+  const [showProfileDialog, setShowProfileDialog] = useState(false)
 
   // Offline sync hook
   const {
@@ -67,7 +70,44 @@ export function MobileScanner({ stationId, eventId, onCheckInSuccess }: MobileSc
     setIsProcessing(true)
 
     try {
-      // If online, process immediately
+      // Detect QR code type
+      let qrData: any
+      try {
+        qrData = JSON.parse(qrCode)
+      } catch {
+        // If not JSON, assume it's a ticket QR code
+        qrData = { type: 'ticket' }
+      }
+
+      // Handle profile QR code
+      if (qrData.type === 'profile') {
+        console.log('Profile QR code detected')
+
+        const response = await fetch('/api/profile/qr/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ qr_code: qrCode })
+        })
+
+        const result = await response.json()
+
+        if (result.success) {
+          setProfileData(result.data)
+          setShowProfileDialog(true)
+          toast.success('Profile loaded', {
+            description: `${result.data.profile.full_name} - ${result.data.total_events} event(s)`
+          })
+        } else {
+          toast.error('Failed to load profile', {
+            description: result.message || result.error
+          })
+        }
+
+        setIsProcessing(false)
+        return
+      }
+
+      // Handle ticket QR code (existing logic)
       if (isOnline) {
         const response = await fetch('/api/check-in/scan', {
           method: 'POST',
@@ -87,7 +127,7 @@ export function MobileScanner({ stationId, eventId, onCheckInSuccess }: MobileSc
           toast.success('Check-in successful!', {
             description: `Welcome, ${result.data?.attendee_name}!`
           })
-          
+
           if (onCheckInSuccess && result.data) {
             onCheckInSuccess(result.data)
           }
@@ -131,11 +171,54 @@ export function MobileScanner({ stationId, eventId, onCheckInSuccess }: MobileSc
       })
     } finally {
       setIsProcessing(false)
-      
-      // Auto-close dialog after 3 seconds
+
+      // Auto-close dialog after 3 seconds for ticket scans
       setTimeout(() => {
         setShowResultDialog(false)
       }, 3000)
+    }
+  }
+
+  // Handle check-in from profile dialog
+  async function handleProfileCheckIn(ticketId: string, eventTitle: string) {
+    setIsProcessing(true)
+
+    try {
+      const response = await fetch('/api/check-in/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          qr_code: JSON.stringify({ ticket_id: ticketId }),
+          station_id: stationId,
+          check_in_method: 'qr_code'
+        })
+      })
+
+      const result: ScanQRCodeResponse = await response.json()
+
+      if (result.success) {
+        toast.success('Check-in successful!', {
+          description: `Checked in to ${eventTitle}`
+        })
+
+        setShowProfileDialog(false)
+        setProfileData(null)
+
+        if (onCheckInSuccess && result.data) {
+          onCheckInSuccess(result.data)
+        }
+      } else {
+        toast.error('Check-in failed', {
+          description: result.message || result.error
+        })
+      }
+    } catch (error) {
+      console.error('Error processing check-in:', error)
+      toast.error('Error processing check-in', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      })
+    } finally {
+      setIsProcessing(false)
     }
   }
 
@@ -338,6 +421,18 @@ export function MobileScanner({ stationId, eventId, onCheckInSuccess }: MobileSc
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Profile Preview Dialog */}
+      <ProfilePreviewDialog
+        open={showProfileDialog}
+        onClose={() => {
+          setShowProfileDialog(false)
+          setProfileData(null)
+        }}
+        profileData={profileData}
+        onCheckIn={handleProfileCheckIn}
+        isProcessing={isProcessing}
+      />
     </div>
   )
 }

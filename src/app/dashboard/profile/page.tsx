@@ -7,6 +7,7 @@ import { ProfileForm } from '@/components/profile/profile-form'
 import { ProfileHeader } from '@/components/profile/profile-header'
 import { BadgesSection } from '@/components/profile/badges-section'
 import { PointsHistory } from '@/components/profile/points-history'
+import { QRCodeSection } from '@/components/profile/qr-code-section'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -113,8 +114,9 @@ export default function ProfilePage() {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="edit" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 lg:w-auto">
+        <TabsList className="grid w-full grid-cols-4 lg:w-auto">
           <TabsTrigger value="edit">Edit Profile</TabsTrigger>
+          <TabsTrigger value="qr-code">QR Code</TabsTrigger>
           <TabsTrigger value="badges">
             Badges ({badges.length})
           </TabsTrigger>
@@ -126,6 +128,10 @@ export default function ProfilePage() {
             profile={profile}
             onUpdate={handleProfileUpdate}
           />
+        </TabsContent>
+
+        <TabsContent value="qr-code" className="space-y-6">
+          <QRCodeSection userId={user?.id || ''} />
         </TabsContent>
 
         <TabsContent value="badges" className="space-y-6">
