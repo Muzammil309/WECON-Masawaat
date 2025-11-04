@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, CalendarDays, Users2, TicketCheck, BarChart3, Settings, User, LogOut, HelpCircle } from 'lucide-react'
+import { Home, CalendarDays, Users2, TicketCheck, BarChart3, Settings, User, LogOut, HelpCircle, ScanLine } from 'lucide-react'
 import { useAuth } from '@/components/providers/auth-provider'
 
 interface MenuItem {
@@ -22,6 +22,11 @@ const adminMenuItems: MenuItem[] = [
     label: 'Events',
     href: '/dashboard/vision/events',
     icon: <CalendarDays className="h-[18px] w-[18px]" strokeWidth={2.5} />,
+  },
+  {
+    label: 'Check-in',
+    href: '/admin/check-in/dashboard',
+    icon: <ScanLine className="h-[18px] w-[18px]" strokeWidth={2.5} />,
   },
   {
     label: 'Attendees',
