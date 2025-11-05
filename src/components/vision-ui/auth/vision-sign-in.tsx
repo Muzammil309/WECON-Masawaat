@@ -53,15 +53,9 @@ export function VisionSignIn() {
 
       toast.success('Welcome back!')
 
-      // Small delay to ensure auth state is updated
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      // Perform redirect with router.replace to avoid back button issues
+      // Redirect immediately - the AuthProvider will handle the session
       console.log('🔐 [VISION AUTH] Redirecting to dashboard...')
-      router.replace('/dashboard/vision')
-
-      // Reset loading state after redirect
-      setLoading(false)
+      router.push('/dashboard/vision')
     } catch (err) {
       console.error('🔐 [VISION AUTH] Unexpected error:', err)
       setError('An unexpected error occurred')

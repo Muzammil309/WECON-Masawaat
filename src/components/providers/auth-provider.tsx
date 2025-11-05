@@ -42,16 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         console.log('🔐 AuthProvider: Fetching initial session...')
 
-        // Add timeout to prevent infinite loading
-        const sessionPromise = supabase.auth.getSession()
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Session fetch timeout')), 10000)
-        )
-
-        const { data: { session }, error: sessionError } = await Promise.race([
-          sessionPromise,
-          timeoutPromise
-        ]) as any
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
         console.log('🔐 AuthProvider: Session fetch result:', {
           hasSession: !!session,
@@ -81,21 +72,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           try {
             console.log('🔐 AuthProvider: Fetching role for user:', authUser.id)
 
-            // Add timeout for role fetch
-            const rolePromise = supabase
+            const { data, error } = await supabase
               .from('em_profiles')
               .select('role')
               .eq('id', authUser.id)
               .maybeSingle()
-
-            const roleTimeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Role fetch timeout')), 5000)
-            )
-
-            const { data, error } = await Promise.race([
-              rolePromise,
-              roleTimeoutPromise
-            ]) as any
 
             console.log('🔐 AuthProvider: Role fetch result:', {
               role: data?.role,
