@@ -67,9 +67,11 @@ export function VisionSignIn() {
 
   return (
     <div
-      className="min-h-screen flex relative overflow-hidden"
+      className="h-screen flex relative"
       style={{
-        fontFamily: '"Plus Jakarta Display", sans-serif'
+        fontFamily: '"Plus Jakarta Display", sans-serif',
+        background: '#0F1535',
+        overflow: 'hidden'
       }}
     >
       {/* Left Side - Image Section */}
@@ -77,7 +79,7 @@ export function VisionSignIn() {
         className="hidden lg:flex lg:w-1/2 relative items-center justify-center"
         style={{
           background: '#4FD1C5',
-          minHeight: '100vh'
+          height: '100vh'
         }}
       >
         {/* Background Image with Gradient Overlay */}
@@ -127,10 +129,10 @@ export function VisionSignIn() {
 
       {/* Right Side - Form Section */}
       <div
-        className="w-full lg:w-1/2 flex items-center justify-center p-8 relative"
+        className="w-full lg:w-1/2 flex items-center justify-center p-8 relative overflow-y-auto"
         style={{
           background: '#0F1535',
-          minHeight: '100vh'
+          height: '100vh'
         }}
       >
         {/* Form Container */}
