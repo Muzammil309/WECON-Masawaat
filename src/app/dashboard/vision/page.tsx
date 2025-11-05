@@ -13,6 +13,7 @@ export default function VisionDashboardPage() {
   const { user, role, loading: authLoading } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [redirecting, setRedirecting] = useState(false)
 
   // Debug logging
   useEffect(() => {
@@ -26,13 +27,12 @@ export default function VisionDashboardPage() {
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (!authLoading && !user && !redirecting) {
       console.log('🔒 Vision Dashboard: User not authenticated, redirecting to login')
+      setRedirecting(true)
       router.push('/auth/login')
     }
-  }, [user, authLoading, router])
-
-
+  }, [user, authLoading, router, redirecting])
 
   // Show loading state while checking authentication
   if (authLoading) {
