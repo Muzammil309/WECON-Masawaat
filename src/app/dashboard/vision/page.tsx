@@ -1,19 +1,33 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/components/providers/auth-provider'
 import { VisionSidebar } from '@/components/vision-ui/layout/sidebar'
 import { VisionTopbar } from '@/components/vision-ui/layout/topbar'
 import { VisionFooter } from '@/components/vision-ui/layout/footer'
 import { AdminOverviewTab } from '@/components/dashboard/admin/overview-tab'
 import { AttendeeOverviewTab } from '@/components/dashboard/attendee/overview-tab'
+import { EventsContent } from '@/components/dashboard/admin/events-content'
+import { AgendaSessionsContent } from '@/components/dashboard/admin/agenda-sessions-content'
+import { RegistrationContent } from '@/components/dashboard/admin/registration-content'
+import { CheckinBadgesContent } from '@/components/dashboard/admin/checkin-badges-content'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  LayoutDashboard,
+  CalendarDays,
+  ClipboardList,
+  UserPlus,
+  ScanLine
+} from 'lucide-react'
 
-export default function VisionDashboardPage() {
+function VisionDashboardContent() {
   const { user, role, loading: authLoading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
   const [redirecting, setRedirecting] = useState(false)
+  const [activeTab, setActiveTab] = useState(searchParams?.get('tab') || 'overview')
 
   // Debug logging
   useEffect(() => {
@@ -84,7 +98,70 @@ export default function VisionDashboardPage() {
 
         {/* Role-Based Dashboard Content */}
         {role === 'admin' ? (
-          <AdminOverviewTab loading={loading} />
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-[24px]">
+            <TabsList className="bg-white/5 border border-white/10 p-[6px] rounded-[16px] inline-flex gap-[6px]">
+              <TabsTrigger
+                value="overview"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
+                style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+              >
+                <LayoutDashboard className="h-[16px] w-[16px]" strokeWidth={2.5} />
+                Overview
+              </TabsTrigger>
+              <TabsTrigger
+                value="events"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
+                style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+              >
+                <CalendarDays className="h-[16px] w-[16px]" strokeWidth={2.5} />
+                Events
+              </TabsTrigger>
+              <TabsTrigger
+                value="agenda"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
+                style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+              >
+                <ClipboardList className="h-[16px] w-[16px]" strokeWidth={2.5} />
+                Agenda & Sessions
+              </TabsTrigger>
+              <TabsTrigger
+                value="registration"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
+                style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+              >
+                <UserPlus className="h-[16px] w-[16px]" strokeWidth={2.5} />
+                Registration
+              </TabsTrigger>
+              <TabsTrigger
+                value="checkin"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
+                style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+              >
+                <ScanLine className="h-[16px] w-[16px]" strokeWidth={2.5} />
+                Check-in & Badges
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="mt-[24px]">
+              <AdminOverviewTab loading={loading} />
+            </TabsContent>
+
+            <TabsContent value="events" className="mt-[24px]">
+              <EventsContent />
+            </TabsContent>
+
+            <TabsContent value="agenda" className="mt-[24px]">
+              <AgendaSessionsContent />
+            </TabsContent>
+
+            <TabsContent value="registration" className="mt-[24px]">
+              <RegistrationContent />
+            </TabsContent>
+
+            <TabsContent value="checkin" className="mt-[24px]">
+              <CheckinBadgesContent />
+            </TabsContent>
+          </Tabs>
         ) : (
           <AttendeeOverviewTab loading={loading} />
         )}
@@ -93,6 +170,21 @@ export default function VisionDashboardPage() {
         <VisionFooter />
       </div>
     </div>
+  )
+}
+
+export default function VisionDashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0F1535', fontFamily: '"Plus Jakarta Display", sans-serif' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-sm">Loading dashboard...</p>
+        </div>
+      </div>
+    }>
+      <VisionDashboardContent />
+    </Suspense>
   )
 }
 
