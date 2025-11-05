@@ -43,12 +43,13 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ background: '#0F1535', minHeight: '100vh' }}
       >
         <HeroUIProvider>
           <AuthProvider>
-            <div className="min-h-screen">
+            <div className="min-h-screen" style={{ background: '#0F1535' }}>
               <ConditionalHeader />
-              <main className="flex-1">
+              <main className="flex-1" style={{ background: '#0F1535' }}>
                 {children}
             </main>
           </div>
