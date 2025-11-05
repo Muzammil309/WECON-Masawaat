@@ -23,6 +23,16 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+interface CheckInRecord {
+  id: string
+  ticket_id: string
+  checked_in_at: string | null
+  badge_printed: boolean
+  kiosk_id?: string
+  session_id?: string
+  created_at?: string
+}
+
 export function CheckinBadgesContent() {
   const [loading, setLoading] = useState(false)
   const [checkInStats, setCheckInStats] = useState({
@@ -47,14 +57,15 @@ export function CheckinBadgesContent() {
 
       if (error) throw error
 
+      const checkIns = (data || []) as CheckInRecord[]
       const today = new Date().toISOString().split('T')[0]
-      const todayCheckIns = data?.filter(c => c.checked_in_at?.startsWith(today)).length || 0
+      const todayCheckIns = checkIns.filter((c: CheckInRecord) => c.checked_in_at?.startsWith(today)).length
 
       setCheckInStats({
-        totalCheckIns: data?.length || 0,
+        totalCheckIns: checkIns.length,
         todayCheckIns,
         activeKiosks: 3, // Mock data
-        badgesPrinted: data?.filter(c => c.badge_printed).length || 0
+        badgesPrinted: checkIns.filter((c: CheckInRecord) => c.badge_printed).length
       })
     } catch (error: any) {
       console.error('Error fetching check-in stats:', error)
