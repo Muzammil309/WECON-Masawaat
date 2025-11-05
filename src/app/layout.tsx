@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import "../styles/aivent-integration.css";
 import "../styles/navigation-fixes.css";
 import { ConditionalHeader } from "@/components/layout/conditional-header";
 import { Toaster } from "@/components/ui/sonner";
