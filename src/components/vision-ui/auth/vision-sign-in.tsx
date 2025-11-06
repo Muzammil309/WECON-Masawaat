@@ -22,6 +22,7 @@ export function VisionSignIn() {
     setLoading(true)
 
     console.log('🔐 [VISION AUTH] Sign In started')
+    console.log('🔐 [VISION AUTH] Email:', email)
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -29,8 +30,13 @@ export function VisionSignIn() {
         password,
       })
 
+      console.log('🔐 [VISION AUTH] Sign In response received')
+      console.log('🔐 [VISION AUTH] Has error:', !!error)
+      console.log('🔐 [VISION AUTH] Has user:', !!data?.user)
+
       if (error) {
         console.error('🔐 [VISION AUTH] Sign In error:', error.message)
+        console.error('🔐 [VISION AUTH] Error status:', error.status)
         setError(error.message)
         toast.error(error.message)
         setLoading(false)
@@ -53,9 +59,19 @@ export function VisionSignIn() {
 
       toast.success('Welcome back!')
 
-      // Redirect immediately - the AuthProvider will handle the session
+      // Wait for AuthProvider to update session state before redirecting
+      // This prevents race condition where dashboard redirects back to login
+      console.log('🔐 [VISION AUTH] Waiting for session to be established...')
+      await new Promise(resolve => setTimeout(resolve, 800))
+
       console.log('🔐 [VISION AUTH] Redirecting to dashboard...')
       router.push('/dashboard/vision')
+
+      // Force a hard refresh after a short delay to ensure session is fully loaded
+      setTimeout(() => {
+        console.log('🔐 [VISION AUTH] Forcing page refresh to ensure session is loaded')
+        window.location.href = '/dashboard/vision'
+      }, 300)
     } catch (err) {
       console.error('🔐 [VISION AUTH] Unexpected error:', err)
       setError('An unexpected error occurred')
