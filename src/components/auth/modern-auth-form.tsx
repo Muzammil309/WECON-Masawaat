@@ -86,7 +86,7 @@ export function ModernAuthForm() {
       console.log('🔐 [AUTH] User role:', role)
 
       // Determine redirect path
-      const redirectPath = role === 'admin' ? '/admin' : '/dashboard'
+      const redirectPath = role === 'admin' ? '/dashboard/vision' : '/dashboard'
       console.log('🔐 [AUTH] Redirect path:', redirectPath)
 
       // Show success message
