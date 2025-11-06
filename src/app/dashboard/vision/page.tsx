@@ -15,6 +15,7 @@ import { CheckinBadgesContent } from '@/components/dashboard/admin/checkin-badge
 import { SpeakersContent } from '@/components/dashboard/admin/speakers-content'
 import { ExhibitorsSponsorsContent } from '@/components/dashboard/admin/exhibitors-sponsors-content'
 import { AnalyticsEnhancedContent } from '@/components/dashboard/admin/analytics-enhanced-content'
+import { EventManagementContent } from '@/components/dashboard/admin/event-management-content'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   LayoutDashboard,
@@ -24,7 +25,8 @@ import {
   ScanLine,
   Users,
   Store,
-  BarChart3
+  BarChart3,
+  CalendarClock
 } from 'lucide-react'
 
 function VisionDashboardContent() {
@@ -170,6 +172,14 @@ function VisionDashboardContent() {
                 <BarChart3 className="h-[16px] w-[16px]" strokeWidth={2.5} />
                 Analytics
               </TabsTrigger>
+              <TabsTrigger
+                value="event-management"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
+                style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+              >
+                <CalendarClock className="h-[16px] w-[16px]" strokeWidth={2.5} />
+                Event Management
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="mt-[24px]">
@@ -202,6 +212,10 @@ function VisionDashboardContent() {
 
             <TabsContent value="analytics" className="mt-[24px]">
               <AnalyticsEnhancedContent />
+            </TabsContent>
+
+            <TabsContent value="event-management" className="mt-[24px]">
+              <EventManagementContent />
             </TabsContent>
           </Tabs>
         ) : (
