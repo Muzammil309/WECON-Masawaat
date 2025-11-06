@@ -12,13 +12,19 @@ import { EventsContent } from '@/components/dashboard/admin/events-content'
 import { AgendaSessionsContent } from '@/components/dashboard/admin/agenda-sessions-content'
 import { RegistrationContent } from '@/components/dashboard/admin/registration-content'
 import { CheckinBadgesContent } from '@/components/dashboard/admin/checkin-badges-content'
+import { SpeakersContent } from '@/components/dashboard/admin/speakers-content'
+import { ExhibitorsSponsorsContent } from '@/components/dashboard/admin/exhibitors-sponsors-content'
+import { AnalyticsEnhancedContent } from '@/components/dashboard/admin/analytics-enhanced-content'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   LayoutDashboard,
   CalendarDays,
   ClipboardList,
   UserPlus,
-  ScanLine
+  ScanLine,
+  Users,
+  Store,
+  BarChart3
 } from 'lucide-react'
 
 function VisionDashboardContent() {
@@ -140,6 +146,30 @@ function VisionDashboardContent() {
                 <ScanLine className="h-[16px] w-[16px]" strokeWidth={2.5} />
                 Check-in & Badges
               </TabsTrigger>
+              <TabsTrigger
+                value="speakers"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
+                style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+              >
+                <Users className="h-[16px] w-[16px]" strokeWidth={2.5} />
+                Speakers
+              </TabsTrigger>
+              <TabsTrigger
+                value="exhibitors"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
+                style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+              >
+                <Store className="h-[16px] w-[16px]" strokeWidth={2.5} />
+                Exhibitors & Sponsors
+              </TabsTrigger>
+              <TabsTrigger
+                value="analytics"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
+                style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+              >
+                <BarChart3 className="h-[16px] w-[16px]" strokeWidth={2.5} />
+                Analytics
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="mt-[24px]">
@@ -160,6 +190,18 @@ function VisionDashboardContent() {
 
             <TabsContent value="checkin" className="mt-[24px]">
               <CheckinBadgesContent />
+            </TabsContent>
+
+            <TabsContent value="speakers" className="mt-[24px]">
+              <SpeakersContent />
+            </TabsContent>
+
+            <TabsContent value="exhibitors" className="mt-[24px]">
+              <ExhibitorsSponsorsContent />
+            </TabsContent>
+
+            <TabsContent value="analytics" className="mt-[24px]">
+              <AnalyticsEnhancedContent />
             </TabsContent>
           </Tabs>
         ) : (
