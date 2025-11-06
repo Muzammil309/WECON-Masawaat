@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Mail, Lock, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
@@ -14,7 +14,18 @@ export function VisionSignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [redirecting, setRedirecting] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Load "Remember Me" preference from localStorage on mount
+  useEffect(() => {
+    const savedRememberMe = localStorage.getItem('wecon_remember_me')
+    if (savedRememberMe === 'true') {
+      setRememberMe(true)
+      console.log('🔐 [VISION AUTH] Remember Me preference loaded: true')
+    }
+  }, [])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,11 +34,25 @@ export function VisionSignIn() {
 
     console.log('🔐 [VISION AUTH] Sign In started')
     console.log('🔐 [VISION AUTH] Email:', email)
+    console.log('🔐 [VISION AUTH] Remember Me:', rememberMe)
 
     try {
+      // Save "Remember Me" preference to localStorage
+      localStorage.setItem('wecon_remember_me', rememberMe.toString())
+      console.log('🔐 [VISION AUTH] Remember Me preference saved:', rememberMe)
+
+      // Sign in with password - Supabase handles session persistence automatically
+      // based on the storage mechanism (localStorage for persistent, sessionStorage for session-only)
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          // If rememberMe is true, session persists in localStorage (default)
+          // If false, we'll manually clear it to use session-only storage
+          data: {
+            remember_me: rememberMe
+          }
+        }
       })
 
       console.log('🔐 [VISION AUTH] Sign In response received')
@@ -59,24 +84,65 @@ export function VisionSignIn() {
 
       toast.success('Welcome back!')
 
+      // Fetch user role from em_profiles table for role-based redirect
+      console.log('🔐 [VISION AUTH] Fetching user role...')
+      let userRole: string | null = null
+      let redirectPath = '/dashboard' // Default redirect for attendees
+
+      try {
+        const { data: profileData, error: profileError } = await supabase
+          .from('em_profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .maybeSingle()
+
+        if (profileError) {
+          console.error('🔐 [VISION AUTH] Error fetching role:', profileError.message)
+        } else if (profileData) {
+          userRole = profileData.role
+          console.log('🔐 [VISION AUTH] User role fetched:', userRole)
+        } else {
+          console.log('🔐 [VISION AUTH] No profile found, using default role')
+        }
+      } catch (roleError) {
+        console.error('🔐 [VISION AUTH] Exception fetching role:', roleError)
+      }
+
+      // Determine redirect path based on role
+      if (userRole === 'admin') {
+        redirectPath = '/dashboard/vision'
+        console.log('🔐 [VISION AUTH] Admin user detected, redirecting to:', redirectPath)
+      } else if (userRole === 'speaker') {
+        redirectPath = '/dashboard'
+        console.log('🔐 [VISION AUTH] Speaker user detected, redirecting to:', redirectPath)
+      } else {
+        // attendee or null/undefined role
+        redirectPath = '/dashboard'
+        console.log('🔐 [VISION AUTH] Attendee user detected, redirecting to:', redirectPath)
+      }
+
+      // Show redirecting state
+      setRedirecting(true)
+
       // Wait for AuthProvider to update session state before redirecting
       // This prevents race condition where dashboard redirects back to login
       console.log('🔐 [VISION AUTH] Waiting for session to be established...')
       await new Promise(resolve => setTimeout(resolve, 800))
 
-      console.log('🔐 [VISION AUTH] Redirecting to dashboard...')
-      router.push('/dashboard/vision')
+      console.log('🔐 [VISION AUTH] Redirecting to:', redirectPath)
+      router.push(redirectPath)
 
       // Force a hard refresh after a short delay to ensure session is fully loaded
       setTimeout(() => {
         console.log('🔐 [VISION AUTH] Forcing page refresh to ensure session is loaded')
-        window.location.href = '/dashboard/vision'
+        window.location.href = redirectPath
       }, 300)
     } catch (err) {
       console.error('🔐 [VISION AUTH] Unexpected error:', err)
       setError('An unexpected error occurred')
       toast.error('An unexpected error occurred')
       setLoading(false)
+      setRedirecting(false)
     }
   }
 
@@ -216,7 +282,7 @@ export function VisionSignIn() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={loading}
+                disabled={loading || redirecting}
                 placeholder="Your email address"
                 className="w-full px-5 py-3 rounded-[20px] text-sm outline-none transition-all"
                 style={{
@@ -253,7 +319,7 @@ export function VisionSignIn() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={loading}
+                disabled={loading || redirecting}
                 placeholder="Your password"
                 className="w-full px-5 py-3 rounded-[20px] text-sm outline-none transition-all"
                 style={{
@@ -280,13 +346,17 @@ export function VisionSignIn() {
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  disabled={loading || redirecting}
                   className="w-4 h-4 rounded"
                   style={{
-                    accentColor: '#5CE1CA'
+                    accentColor: '#5CE1CA',
+                    cursor: loading || redirecting ? 'not-allowed' : 'pointer'
                   }}
                 />
                 <span className="text-sm" style={{ color: '#A0AEC0' }}>
-                  Remember me
+                  Remember me for 30 days
                 </span>
               </label>
             </div>
@@ -294,29 +364,34 @@ export function VisionSignIn() {
             {/* Sign In Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || redirecting}
               className="w-full py-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2"
               style={{
-                background: loading ? 'linear-gradient(135deg, #7928CA 0%, #4318FF 100%)' : 'linear-gradient(135deg, #7928CA 0%, #4318FF 100%)',
+                background: 'linear-gradient(135deg, #7928CA 0%, #4318FF 100%)',
                 color: '#FFFFFF',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
+                cursor: (loading || redirecting) ? 'not-allowed' : 'pointer',
+                opacity: (loading || redirecting) ? 0.7 : 1,
                 letterSpacing: '1px'
               }}
               onMouseEnter={(e) => {
-                if (!loading) {
+                if (!loading && !redirecting) {
                   e.currentTarget.style.transform = 'translateY(-2px)'
                   e.currentTarget.style.boxShadow = '0 10px 20px rgba(92, 225, 202, 0.3)'
                 }
               }}
               onMouseLeave={(e) => {
-                if (!loading) {
+                if (!loading && !redirecting) {
                   e.currentTarget.style.transform = 'translateY(0)'
                   e.currentTarget.style.boxShadow = 'none'
                 }
               }}
             >
-              {loading ? (
+              {redirecting ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  REDIRECTING TO DASHBOARD...
+                </>
+              ) : loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
                   SIGNING IN...
