@@ -86,7 +86,7 @@ function VisionDashboardContent() {
   const breadcrumb = role === 'admin' ? 'Admin' : 'Attendee'
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: '#0F1535', fontFamily: '"Plus Jakarta Display", sans-serif' }}>
+    <div className="min-h-screen relative" style={{ background: '#0F1535', fontFamily: '"Plus Jakarta Display", sans-serif' }}>
       {/* Decorative Background Image */}
       <div
         className="absolute inset-0 pointer-events-none opacity-30"
@@ -100,14 +100,14 @@ function VisionDashboardContent() {
       <VisionSidebar />
 
       {/* Main Content */}
-      <div className="ml-[284px] p-[20px] relative z-10">
+      <div className="pl-[284px] p-[20px] relative z-10">
         {/* Top Navigation */}
         <VisionTopbar title={dashboardTitle} breadcrumb={breadcrumb} />
 
         {/* Role-Based Dashboard Content */}
         {role === 'admin' ? (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-[24px]">
-            <TabsList className="bg-white/5 border border-white/10 p-[6px] rounded-[16px] inline-flex gap-[6px]">
+            <TabsList className="bg-white/5 border border-white/10 p-[6px] rounded-[16px] inline-flex gap-[6px] overflow-x-auto">
               <TabsTrigger
                 value="overview"
                 className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white text-white/60 px-[20px] py-[10px] rounded-[12px] text-[14px] font-semibold transition-all flex items-center gap-[8px]"
