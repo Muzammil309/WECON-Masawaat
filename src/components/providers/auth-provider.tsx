@@ -135,57 +135,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (authUser) {
           console.log('🔐 AuthProvider: User authenticated:', authUser.id)
 
-          // Ensure profile row exists (but preserve existing role)
-          try {
-            // First check if profile exists
-            const { data: existingProfile } = await supabase
-              .from('em_profiles')
-              .select('id, role')
-              .eq('id', authUser.id)
-              .maybeSingle()
-
-            console.log('🔐 AuthProvider: Existing profile check:', {
-              exists: !!existingProfile,
-              role: existingProfile?.role
-            })
-
-            // Only upsert if profile doesn't exist, or update without touching role
-            if (!existingProfile) {
-              // New user - create profile with default role
-              const { error: insertError } = await supabase
-                .from('em_profiles')
-                .insert({
-                  id: authUser.id,
-                  email: authUser.email!,
-                  full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || null,
-                  avatar_url: authUser.user_metadata?.avatar_url || null,
-                  role: 'attendee', // Default role for new users
-                })
-              if (insertError) {
-                console.error('❌ AuthProvider: Error creating profile:', insertError)
-              } else {
-                console.log('✅ AuthProvider: New profile created with default role')
-              }
-            } else {
-              // Existing user - update profile but preserve role
-              const { error: updateError } = await supabase
-                .from('em_profiles')
-                .update({
-                  email: authUser.email!,
-                  full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || null,
-                  avatar_url: authUser.user_metadata?.avatar_url || null,
-                  // Explicitly do NOT update role - preserve existing value
-                })
-                .eq('id', authUser.id)
-              if (updateError) {
-                console.error('❌ AuthProvider: Error updating profile:', updateError)
-              } else {
-                console.log('✅ AuthProvider: Profile updated (role preserved)')
-              }
-            }
-          } catch (error) {
-            console.error('❌ AuthProvider: Failed to create/update profile:', error)
-          }
+          // DO NOT update profile on login - only fetch role
+          // Profile should be created during signup, not on every login
+          console.log('🔐 AuthProvider: Skipping profile update to preserve role')
 
           // Load role
           try {
