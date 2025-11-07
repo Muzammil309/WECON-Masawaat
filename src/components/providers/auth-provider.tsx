@@ -135,21 +135,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (authUser) {
           console.log('🔐 AuthProvider: User authenticated:', authUser.id)
 
-          // Ensure profile row exists
+          // Ensure profile row exists (but preserve existing role)
           try {
-            const { error: upsertError } = await supabase
+            // First check if profile exists
+            const { data: existingProfile } = await supabase
               .from('em_profiles')
-              .upsert({
-                id: authUser.id,
-                email: authUser.email!,
-                full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || null,
-                avatar_url: authUser.user_metadata?.avatar_url || null,
-              })
-              .select()
-            if (upsertError) {
-              console.error('❌ AuthProvider: Error creating/updating profile:', upsertError)
+              .select('id, role')
+              .eq('id', authUser.id)
+              .maybeSingle()
+
+            console.log('🔐 AuthProvider: Existing profile check:', {
+              exists: !!existingProfile,
+              role: existingProfile?.role
+            })
+
+            // Only upsert if profile doesn't exist, or update without touching role
+            if (!existingProfile) {
+              // New user - create profile with default role
+              const { error: insertError } = await supabase
+                .from('em_profiles')
+                .insert({
+                  id: authUser.id,
+                  email: authUser.email!,
+                  full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || null,
+                  avatar_url: authUser.user_metadata?.avatar_url || null,
+                  role: 'attendee', // Default role for new users
+                })
+              if (insertError) {
+                console.error('❌ AuthProvider: Error creating profile:', insertError)
+              } else {
+                console.log('✅ AuthProvider: New profile created with default role')
+              }
             } else {
-              console.log('✅ AuthProvider: Profile upserted successfully')
+              // Existing user - update profile but preserve role
+              const { error: updateError } = await supabase
+                .from('em_profiles')
+                .update({
+                  email: authUser.email!,
+                  full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || null,
+                  avatar_url: authUser.user_metadata?.avatar_url || null,
+                  // Explicitly do NOT update role - preserve existing value
+                })
+                .eq('id', authUser.id)
+              if (updateError) {
+                console.error('❌ AuthProvider: Error updating profile:', updateError)
+              } else {
+                console.log('✅ AuthProvider: Profile updated (role preserved)')
+              }
             }
           } catch (error) {
             console.error('❌ AuthProvider: Failed to create/update profile:', error)
@@ -163,6 +195,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .select('role')
               .eq('id', authUser.id)
               .maybeSingle()
+
+            console.log('🔐 AuthProvider: Role fetch response:', {
+              hasData: !!data,
+              role: data?.role,
+              error: error ? error.message : 'none'
+            })
+
             if (mounted) {
               if (!error && data) {
                 const userRole = (data.role as any) ?? 'attendee'
@@ -170,13 +209,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 console.log('✅ AuthProvider: Role set to:', userRole)
               } else {
                 setRole('attendee')
-                console.log('⚠️ AuthProvider: No role found, defaulting to attendee')
+                console.log('⚠️ AuthProvider: No role found or error occurred, defaulting to attendee', {
+                  error: error?.message
+                })
               }
             }
           } catch (e) {
             console.error('❌ AuthProvider: Role fetch error:', e)
             if (mounted) {
               setRole('attendee')
+              console.log('⚠️ AuthProvider: Exception caught, defaulting to attendee')
             }
           }
         } else if (mounted) {
