@@ -1,15 +1,21 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, CalendarDays, Users2, TicketCheck, BarChart3, Settings, User, LogOut, HelpCircle, ScanLine, CalendarClock } from 'lucide-react'
+import {
+  Home, CalendarDays, Users2, TicketCheck, BarChart3, Settings, User, LogOut,
+  HelpCircle, ScanLine, CalendarClock, ChevronDown,
+  Presentation, GraduationCap, Users as UsersIcon, Award, Rocket, Store, UtensilsCrossed
+} from 'lucide-react'
 import { useAuth } from '@/components/providers/auth-provider'
 
 interface MenuItem {
   label: string
-  href: string
+  href?: string
   icon: React.ReactNode
   roles?: ('admin' | 'attendee' | 'speaker')[] // If undefined, show to all roles
+  children?: MenuItem[]
 }
 
 const adminMenuItems: MenuItem[] = [
@@ -25,8 +31,44 @@ const adminMenuItems: MenuItem[] = [
   },
   {
     label: 'Event Management',
-    href: '/dashboard/vision?tab=event-management',
     icon: <CalendarClock className="h-[18px] w-[18px]" strokeWidth={2.5} />,
+    children: [
+      {
+        label: 'Conference Sessions',
+        href: '/dashboard/vision/event-management/conference-sessions',
+        icon: <Presentation className="h-[16px] w-[16px]" strokeWidth={2.5} />,
+      },
+      {
+        label: 'Learning Labs',
+        href: '/dashboard/vision/event-management/learning-labs',
+        icon: <GraduationCap className="h-[16px] w-[16px]" strokeWidth={2.5} />,
+      },
+      {
+        label: 'Roundtables',
+        href: '/dashboard/vision/event-management/roundtables',
+        icon: <UsersIcon className="h-[16px] w-[16px]" strokeWidth={2.5} />,
+      },
+      {
+        label: 'Skill Clinics',
+        href: '/dashboard/vision/event-management/skill-clinics',
+        icon: <Award className="h-[16px] w-[16px]" strokeWidth={2.5} />,
+      },
+      {
+        label: 'Startup Stories',
+        href: '/dashboard/vision/event-management/startup-stories',
+        icon: <Rocket className="h-[16px] w-[16px]" strokeWidth={2.5} />,
+      },
+      {
+        label: 'Exhibitors',
+        href: '/dashboard/vision/event-management/exhibitors',
+        icon: <Store className="h-[16px] w-[16px]" strokeWidth={2.5} />,
+      },
+      {
+        label: 'Food Vendors',
+        href: '/dashboard/vision/event-management/food-vendors',
+        icon: <UtensilsCrossed className="h-[16px] w-[16px]" strokeWidth={2.5} />,
+      },
+    ],
   },
   {
     label: 'Check-in',
@@ -76,6 +118,7 @@ const attendeeMenuItems: MenuItem[] = [
 export function VisionSidebar() {
   const pathname = usePathname()
   const { role, signOut } = useAuth()
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([])
 
   // Select menu items based on role
   const menuItems = role === 'admin' ? adminMenuItems : attendeeMenuItems
@@ -83,6 +126,19 @@ export function VisionSidebar() {
   const handleSignOut = async () => {
     await signOut()
     window.location.href = '/auth/login'
+  }
+
+  const toggleMenu = (label: string) => {
+    setExpandedMenus((prev) =>
+      prev.includes(label) ? prev.filter((item) => item !== label) : [...prev, label]
+    )
+  }
+
+  const isMenuExpanded = (label: string) => expandedMenus.includes(label)
+
+  const isChildActive = (children?: MenuItem[]) => {
+    if (!children) return false
+    return children.some((child) => child.href === pathname)
   }
 
   return (
@@ -107,36 +163,95 @@ export function VisionSidebar() {
       <div className="mx-[15px] h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       {/* Menu Items */}
-      <nav className="mt-[23px] px-[16px] space-y-[12px] flex-1 overflow-y-auto">
+      <nav className="mt-[23px] px-[16px] space-y-[8px] flex-1 overflow-y-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.href
+          const hasChildren = item.children && item.children.length > 0
+          const isExpanded = isMenuExpanded(item.label)
+          const hasActiveChild = isChildActive(item.children)
+
+          if (hasChildren) {
+            return (
+              <div key={item.label}>
+                {/* Parent Menu Item */}
+                <button
+                  onClick={() => toggleMenu(item.label)}
+                  className={`
+                    w-full flex items-center justify-between px-[16px] py-[12px] rounded-[15px] transition-all
+                    ${hasActiveChild ? 'vision-sidebar-active' : 'hover:bg-white/5'}
+                  `}
+                >
+                  <div className="flex items-center gap-[15.5px]">
+                    <div
+                      className={`
+                        flex items-center justify-center w-[30px] h-[30px] rounded-[12px]
+                        ${hasActiveChild ? 'bg-gradient-to-br from-[#7928CA] to-[#4318FF]' : 'vision-sidebar-item'}
+                      `}
+                    >
+                      <div className="text-white">{item.icon}</div>
+                    </div>
+                    <span
+                      className="text-[14px] font-medium text-white"
+                      style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
+                  <ChevronDown
+                    className={`h-[16px] w-[16px] text-white/60 transition-transform ${
+                      isExpanded ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {/* Submenu Items */}
+                {isExpanded && (
+                  <div className="mt-[4px] ml-[16px] space-y-[4px]">
+                    {item.children?.map((child) => {
+                      const isChildActiveItem = pathname === child.href
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href || '#'}
+                          className={`
+                            flex items-center gap-[12px] px-[12px] py-[10px] rounded-[12px] transition-all
+                            ${isChildActiveItem ? 'bg-white/10' : 'hover:bg-white/5'}
+                          `}
+                        >
+                          <div className="text-white/80">{child.icon}</div>
+                          <span
+                            className={`text-[13px] font-medium ${
+                              isChildActiveItem ? 'text-white' : 'text-white/70'
+                            }`}
+                            style={{ fontFamily: '"Plus Jakarta Display", sans-serif' }}
+                          >
+                            {child.label}
+                          </span>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )
+          }
 
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={item.href || '#'}
               className={`
                 flex items-center gap-[15.5px] px-[16px] py-[12px] rounded-[15px] transition-all
-                ${
-                  isActive
-                    ? 'vision-sidebar-active'
-                    : 'hover:bg-white/5'
-                }
+                ${isActive ? 'vision-sidebar-active' : 'hover:bg-white/5'}
               `}
             >
               <div
                 className={`
                   flex items-center justify-center w-[30px] h-[30px] rounded-[12px]
-                  ${
-                    isActive
-                      ? 'bg-gradient-to-br from-[#7928CA] to-[#4318FF]'
-                      : 'vision-sidebar-item'
-                  }
+                  ${isActive ? 'bg-gradient-to-br from-[#7928CA] to-[#4318FF]' : 'vision-sidebar-item'}
                 `}
               >
-                <div className="text-white">
-                  {item.icon}
-                </div>
+                <div className="text-white">{item.icon}</div>
               </div>
               <span
                 className="text-[14px] font-medium text-white"
