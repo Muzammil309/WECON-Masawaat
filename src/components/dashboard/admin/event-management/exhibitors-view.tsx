@@ -54,8 +54,8 @@ export default function ExhibitorsView() {
   )
 
   return (
-    <div className="min-h-screen bg-[#0F1535] p-[16px] md:p-[24px] lg:p-[32px]">
-      <div className="max-w-[1440px] mx-auto">
+    <div className="p-[20px]">
+      <div className="max-w-[1440px]">
         <VisionBreadcrumb
           items={[
             { label: 'Admin', href: '/dashboard/vision' },
