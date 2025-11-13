@@ -1,44 +1,30 @@
-import { HeroSection } from '@/components/aivent/hero-section'
-import { AboutSection } from '@/components/aivent/about-section'
-import { MarqueeSection } from '@/components/aivent/marquee-section'
-import { WhyAttendSection } from '@/components/aivent/why-attend-section'
-import { TestimonialSection } from '@/components/aivent/testimonial-section'
-import { SpeakersSection } from '@/components/aivent/speakers-section'
-import { LogoCarouselSection } from '@/components/aivent/logo-carousel-section'
-import { ScheduleSection } from '@/components/aivent/schedule-section'
-import { TicketsSection } from '@/components/aivent/tickets-section'
-import { VenueSection } from '@/components/aivent/venue-section'
-import { FaqSection } from '@/components/aivent/faq-section'
-import { NewsletterSection } from '@/components/aivent/newsletter-section'
-import { FooterSection } from '@/components/aivent/footer-section'
+import { WeconHeader } from '@/components/landing/wecon-header'
+import { WeconHero } from '@/components/landing/wecon-hero'
+import { WeconScheduleCard } from '@/components/landing/wecon-schedule-card'
+import { WeconActivities } from '@/components/landing/wecon-activities'
+import { WeconFooter } from '@/components/landing/wecon-footer'
 
 export default function Home() {
   return (
-    <div id="wrapper" className="aivent-theme dark-scheme">
-      {/* Page preloader */}
-      <div id="de-loader"></div>
+    <div className="min-h-screen bg-white">
+      {/* Header with logos */}
+      <WeconHeader />
 
-      {/* Float text and scrollbar */}
-      <div className="float-text show-on-scroll">
-        <span><a href="#">Scroll to top</a></span>
-      </div>
-      <div className="scrollbar-v show-on-scroll"></div>
+      {/* Main Content Container */}
+      <main className="max-w-[390px] sm:max-w-[768px] lg:max-w-[1200px] mx-auto px-[20px] sm:px-[32px] lg:px-[48px] py-[24px] sm:py-[32px] lg:py-[40px] space-y-[24px] sm:space-y-[32px] lg:space-y-[40px]">
+        {/* Hero Section with WECON branding */}
+        <WeconHero />
 
-      <main>
-        <HeroSection />
-        <AboutSection />
-        <MarqueeSection />
-        <WhyAttendSection />
-        <TestimonialSection />
-        <SpeakersSection />
-        <LogoCarouselSection />
-        <ScheduleSection />
-        <TicketsSection />
-        <VenueSection />
-        <FaqSection />
-        <NewsletterSection />
+        {/* Schedule Card */}
+        <WeconScheduleCard />
+
+        {/* Activities List */}
+        <WeconActivities />
+
+        {/* Footer Card */}
+        <WeconFooter />
       </main>
-      <FooterSection />
     </div>
-  );
+  )
 }
+
